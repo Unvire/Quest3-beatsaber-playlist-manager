@@ -12,6 +12,7 @@
  3. Build a structure for holding a playlist. Header must contain keys: "playlistTitle", "playlistAuthor", "image" and "songs". It must be possible for user to perform add, remove and change order of songs
  4. ADB is dependant on operating system, make a tool for downloading proper version and unzipping it. (factory?)
  5. Build a GUI
+ 6. Build a tool for selecting image: Let user load image and select square area to be cropped. Image will be then scaled down to 256x256 px (in working playlist image is 256x251...)
  
  # Used packages
  - pytest
