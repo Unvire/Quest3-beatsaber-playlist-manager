@@ -18,3 +18,16 @@ def test_generateDictForPlaylist():
         'songName': 'test song'
     }
     assert song.generateDictForPlaylist() == expected
+
+def test_getDataFromBeatSaverApi():
+    song = beatSaberMap.BeatSaberMap('57c2')
+    song.getDataFromBeatSaverApi()
+    
+    assert song.name == 'Rockefeller Street (Nightcore) -  Getter Jaani'
+    assert song.id == '57c2'
+    assert song.hash == 'b8c98ffc598703aadb4a3cb921d2830d270b57a5'
+    assert song.author == 'rinkusenpai'
+    assert song.coverUrl == 'https://eu.cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.jpg'
+    assert song.previewUrl == 'https://eu.cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.mp3'
+    assert song.diffs == ['Hard', 'Expert']
+
