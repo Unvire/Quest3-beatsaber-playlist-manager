@@ -48,7 +48,23 @@ class BeatSaberMap:
     
     def _setDiffs(self, diffsList:list[str]):
         self.diffs = diffsList
+    
+    def getDiffs(self) -> list[str]:
+        return self.diffs[:]
+    
+    def generateDictForPlaylist(self) -> dict:
+        data = {
+            'key': self.id,
+            'hash': self.hash,
+            'songName': self.name
+        }
+        return data
 
+    def getCoverUrl(self) -> str:
+        return self.coverUrl
+    
+    def getPreviewUrl(self) -> str:
+        return self.previewUrl
 
 if __name__ == '__main__':
     beatmap = BeatSaberMap('57c2')
