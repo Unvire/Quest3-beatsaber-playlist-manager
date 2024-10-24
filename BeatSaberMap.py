@@ -1,11 +1,11 @@
 import requests
 
 class BeatSaberMap:
+    BEATSAVER_API_URL = 'https://api.beatsaver.com/maps/id/'
     def __init__(self, id:str):
         self.name = ''
         self.id = id
         self.hash = ''
-        self.beatsaverMapInfoAPI = 'https://api.beatsaver.com/maps/id/'
         self.author = ''
         self.coverUrl = ''
         self.previewUrl = ''
@@ -21,7 +21,7 @@ class BeatSaberMap:
         return f'Song: {result}'
     
     def getDataFromBeatSaverApi(self):
-        url = self.beatsaverMapInfoAPI + self.id
+        url = BeatSaberMap.BEATSAVER_API_URL + self.id
         responseJSON = requests.get(url).json()
 
         name = responseJSON['name']
