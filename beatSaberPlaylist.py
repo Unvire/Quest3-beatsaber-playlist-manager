@@ -1,6 +1,14 @@
+import beatSaberMap
+
 class BeatSaberPlaylist:
     def __init__(self):
-        pass
+        self.playlistTitle = ''
+        self.playlistAuthor = ''
+        self.imageString = ''
+        self.songsList = []
+
+        self._selectedIndexes = set()
+        self._selectionGroups = []
 
     def loadFromFile(self):
         pass
@@ -14,11 +22,27 @@ class BeatSaberPlaylist:
     def removeSong(self):
         pass
 
-    def select(self):
-        pass
+    def select(self, index:int):
+        if 0 <= index < len(self.songsList):
+            self._selectedIndexes.add(index)
+        
+        self._selectionGroups = self._makeSelectionGroups()
 
-    def unselect(self):
-        pass
+    def unselect(self, index:int):
+        if index in self._selectedIndexes:
+            self._selectedIndexes.remove(index)
+    
+    def _makeSelectionGroups(self) -> list[list[int]]:
+        groups = []
+        group = []
+        for index in sorted(list(self._selectedIndexes)):
+            if not group or group[-1] == index + 1:
+                group.append(index)
+            else:
+                groups.append(group)
+                group = []
+        
+        return groups
 
     def moveSelectedItemsUp(self):
         pass
