@@ -1,13 +1,24 @@
 import pytest
 import beatSaberPlaylist
 
-@pytest.mark.parametrize("inputData, expected", [([2, 7, 5, 4], [[2], [4, 5], [7]]), 
-                                                 ([1], [[1]]), ([1, 2], [[1, 2]]), ([], [[]]),
-                                                 ([1, 2, 3, 4, 10, 11, 12, 13], [[1, 2, 3, 4], [10, 11, 12, 13]]),
-                                                 ([1, 3, 5, 7, 9], [[1], [3], [5], [7], [9]])
-                                                ])
-def test__makeSelectionGroups(inputData, expected):
+def test_select():
     instance = beatSaberPlaylist.BeatSaberPlaylist()
-    instance._selectedIndexes = set(inputData)
-    assert expected == instance._makeSelectionGroups()
+    instance.songsList = [i for i in range(20)]
+
+    instance.select(-1)
+    assert instance._selectedIndexes == []
+    instance.select(0)
+    assert instance._selectedIndexes == [0]
+    instance.select(10)
+    assert instance._selectedIndexes == [0, 10]
+    instance.select(0)
+    assert instance._selectedIndexes == [0, 10]
+    instance.select(1)
+    assert instance._selectedIndexes == [0, 1, 10]
+    instance.select(9)
+    assert instance._selectedIndexes == [0, 1, 9, 10]
+    instance.select(11)
+    assert instance._selectedIndexes == [0, 1, 9, 10, 11]
+
     
+
