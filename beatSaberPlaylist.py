@@ -31,16 +31,55 @@ class BeatSaberPlaylist:
         if index in self._selectedIndexes:
             self._selectedIndexes.remove(index)
 
-    def moveSelectedItemsUp(self):
+    def moveSelectedItemsUp(self):        
         pass
 
     def moveSelectedItemsDown(self):
         pass
+    
+    def _calculateIndexesAfterMoveUp(self) -> list[int]:
+        unselectedIndexes = self._getUnselectedIndexes()
+        selectedGroups = self._makeSelectionGroups(self._selectedIndexes)
+        
+        newOrder = []
+        while unselectedIndexes:
+            unselectedIndex = unselectedIndexes.pop(0)
+            if selectedGroups:
+                selectedGroup = selectedGroups[0]
+                if unselectedIndex + 1 == selectedGroup[0] or selectedGroup[0] == 0:
+                    newOrder += selectedGroups.pop(0)
+            newOrder.append(unselectedIndex)
+        
+        if selectedGroups:
+            newOrder += selectedGroups[0]
+        return newOrder
 
-    def _unselectedIndexes(self):
+    def _getUnselectedIndexes(self):
         numberOfSongs = len(self.songsList)
         return [i for i, _ in enumerate(range(numberOfSongs)) if i not in self._selectedIndexes]
+    
+    def _makeSelectionGroups(self, selectedIndexesList:list[int]) -> list[list[int]]:
+        selectedIndexesList = sorted(selectedIndexesList)
+        if not selectedIndexesList:
+            return [[]]
+        
+        firstItem = selectedIndexesList.pop(0)
+        group = [firstItem]
+        groups = []
+        for index in selectedIndexesList:
+            if group[-1] == index - 1:
+                group.append(index)
+            else:
+                groups.append(group)
+                group = [index]
 
+        groups.append(group)
+        
+        return groups
 
 if __name__ == '__main__':
     a = BeatSaberPlaylist()
+    a.songsList = [i for i in range(10)]
+    a._selectedIndexes = [1, 3, 5, 7, 9]
+
+    print(a._calculateIndexesAfterMoveUp())
