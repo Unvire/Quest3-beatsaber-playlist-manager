@@ -33,14 +33,21 @@ class BeatSaberPlaylist:
             self._selectedIndexes.remove(index)
     
     def _makeSelectionGroups(self) -> list[list[int]]:
+        selectedIndexesList = sorted(list(self._selectedIndexes))
+        if not selectedIndexesList:
+            return [[]]
+        
+        firstItem = selectedIndexesList.pop(0)
+        group = [firstItem]
         groups = []
-        group = []
-        for index in sorted(list(self._selectedIndexes)):
-            if not group or group[-1] == index + 1:
+        for index in selectedIndexesList:
+            if group[-1] == index - 1:
                 group.append(index)
             else:
                 groups.append(group)
-                group = []
+                group = [index]
+
+        groups.append(group)
         
         return groups
 
