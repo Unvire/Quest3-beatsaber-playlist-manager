@@ -10,6 +10,9 @@ class BeatSaberPlaylist:
 
         self._selectedIndexes = []
         self._selectionGroups = []
+    
+    def __repr__(self):
+        return self.serializeInstanceToJSON()
 
     def loadFromFile(self, filePath:str):
         fileContent = ''
@@ -197,4 +200,4 @@ if __name__ == '__main__':
     print('\nOrder changed playlist:\n', a.serializeInstanceToJSON())
     a.select(2)
     a.removeSelectedSongs()
-    print('\nSong removed:\n', a.serializeInstanceToJSON())
+    print('\nSong removed:\n', a) # a.__repr__ calls a.serializeInstanceToJSON()
