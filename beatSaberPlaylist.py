@@ -38,18 +38,17 @@ class BeatSaberPlaylist:
             self.addSong(beatSaberMapInstance)
 
     def saveToFile(self, filePath:str):
-        resultDict = self.createJSON_dict()
-        saveJSON = json.dumps(resultDict, indent=4)
+        serializedInstance = self.serializeInstanceToJSON()
         with open(filePath, 'w') as file:
-            file.write(saveJSON)
+            file.write(serializedInstance)
 
-    def createJSON_dict(self) -> dict:
+    def serializeInstanceToJSON(self) -> str:
         result = {}
         result['playlistTitle'] = self.getPlaylistTitle()
         result['playlistAuthor'] = self.getPlaylistAuthor()
         result['image'] = self.getImageString()
         result['songs'] = [beatSaberMapInstance.generateDictForPlaylist() for beatSaberMapInstance in self.songsList]
-        return result
+        return json.dumps(result, indent=4)
 
     def setPlaylistTitle(self, title:str):
         self.playlistTitle = title
@@ -187,8 +186,15 @@ if __name__ == '__main__':
         from tkinter import filedialog
         filePath = filedialog.askopenfile(mode='r', filetypes=[('*', '*')])
         return filePath.name
-
-    a = BeatSaberPlaylist()
+    
     filePath = openFile()
-    a.loadFromFile(filePath)
-    a.saveToFile('test.json')
+    a = BeatSaberPlaylist()
+    a.loadFromFile(filePath)    
+    print('Loaded playlist:\n', a.serializeInstanceToJSON())
+    a.select(1)
+    a.moveSelectedItemsUp()
+    a.unselect(0) # index=1 became index=0 after moving up
+    print('\nOrder changed playlist:\n', a.serializeInstanceToJSON())
+    a.select(2)
+    a.removeSelectedSongs()
+    print('\nSong removed:\n', a.serializeInstanceToJSON())
