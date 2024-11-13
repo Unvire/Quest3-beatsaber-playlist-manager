@@ -17,6 +17,24 @@ class BeatSaberPlaylist:
     def saveToFile(self):
         pass
 
+    def setPlaylistTitle(self, title:str):
+        self.playlistTitle = title
+    
+    def getPlaylistTitle(self) -> str:
+        return self.playlistTitle
+    
+    def setPlaylistAuthor(self, author:str):
+        self.playlistAuthor = author
+    
+    def getPlaylistAuthor(self) -> str:
+        return self.playlistAuthor
+    
+    def setImageString(self, imageString:str):
+        self.imageString = imageString
+    
+    def getImageString(self):
+        return self.imageString
+
     def addSong(self, song:beatSaberMap.BeatSaberMap):
         self.songsList.append(song)
 
