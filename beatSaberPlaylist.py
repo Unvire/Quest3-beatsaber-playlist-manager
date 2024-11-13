@@ -22,7 +22,7 @@ class BeatSaberPlaylist:
 
     def removeSong(self):
         pass
-
+    
     def select(self, index:int):
         if 0 <= index < len(self.songsList) and index not in self._selectedIndexes:
             bisect.insort(self._selectedIndexes, index)
@@ -32,7 +32,11 @@ class BeatSaberPlaylist:
             self._selectedIndexes.remove(index)
 
     def moveSelectedItemsUp(self):
-        pass
+        newSongsOrder = self._calculateIndexesAfterMoveUp()
+        songsAfterReordering = self._reorderSongs(newSongsOrder)
+        
+        self.songsList = songsAfterReordering
+        self._selectedIndexes = self._updateSelectedIndexesAfterMoveUp()
     
     def _calculateIndexesAfterMoveUp(self) -> list[int]:
         unselectedIndexes = self._getUnselectedIndexes()
@@ -50,6 +54,15 @@ class BeatSaberPlaylist:
         if selectedGroups:
             newOrder += selectedGroups[0]
         return newOrder
+    
+    def _updateSelectedIndexesAfterMoveUp(self) -> list[int]:
+        selectedGroups = self._makeSelectionGroups(self._selectedIndexes)
+
+        result = []
+        for group in selectedGroups:
+            result += [index - 1 if 0 not in group else index for index in group]
+    
+        return result
 
     def moveSelectedItemsDown(self):
         pass
@@ -71,6 +84,13 @@ class BeatSaberPlaylist:
             newOrder += selectedGroups[0]
         return newOrder
 
+    def _reorderSongs(self, newOrder:list[int]) -> list[beatSaberMap.BeatSaberMap]:
+        result = []
+        while newOrder:
+            currentIndex = newOrder.pop(0)
+            result.append(self.songsList[currentIndex])
+        return result
+
     def _getUnselectedIndexes(self):
         numberOfSongs = len(self.songsList)
         return [i for i, _ in enumerate(range(numberOfSongs)) if i not in self._selectedIndexes]
@@ -90,13 +110,12 @@ class BeatSaberPlaylist:
                 groups.append(group)
                 group = [index]
 
-        groups.append(group)
-        
+        groups.append(group)        
         return groups
 
 if __name__ == '__main__':
     a = BeatSaberPlaylist()
-    a.songsList = [i for i in range(10)]
+    a.songsList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
     a._selectedIndexes = [2, 4, 5, 7]
 
-    print(a._calculateIndexesAfterMoveDown())
+    a.moveSelectedItemsUp()
