@@ -17,8 +17,8 @@ class BeatSaberPlaylist:
     def saveToFile(self):
         pass
 
-    def addSong(self):
-        pass
+    def addSong(self, song:beatSaberMap.BeatSaberMap):
+        self.songsList.append(song)
 
     def removeSelectedSongs(self):
         while self._selectedIndexes:
