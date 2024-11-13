@@ -65,8 +65,22 @@ class BeatSaberPlaylist:
     
         return result
 
-    def moveSelectedItemsDown(self):
-        pass
+    def moveSelectedItemsDown(self):        
+        newSongsOrder = self._calculateSongIndexesAfterMoveDown()
+        songsAfterReordering = self._reorderSongs(newSongsOrder)
+        
+        self.songsList = songsAfterReordering
+        self._selectedIndexes = self._caluclateSelectedIndexesAfterMoveDown()
+
+    def _caluclateSelectedIndexesAfterMoveDown(self) -> list[int]:
+        selectedGroups = self._makeSelectionGroups(self._selectedIndexes)
+
+        result = []
+        lastItemIndex = len(self.songsList) - 1
+        for group in selectedGroups:
+            result += [index + 1 if lastItemIndex not in group else index for index in group]
+    
+        return result
 
     def _calculateSongIndexesAfterMoveDown(self) -> list[int]:
         unselectedIndexes = self._getUnselectedIndexes()
