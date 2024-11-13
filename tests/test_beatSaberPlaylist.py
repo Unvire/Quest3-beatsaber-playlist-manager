@@ -48,12 +48,12 @@ def test__makeSelectionGroups(inputData, expected):
                                                  ([1, 3, 5, 7, 9], [1, 0, 3, 2, 5, 4, 7, 6, 9, 8]),
                                                  ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                                 ])
-def test__calculateIndexesAfterMoveUp(inputData, expected):
+def test__calculateSongIndexesAfterMoveUp(inputData, expected):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = [i for i in range(10)]
 
     instance._selectedIndexes = inputData
-    assert instance._calculateIndexesAfterMoveUp() == expected
+    assert instance._calculateSongIndexesAfterMoveUp() == expected
 
 @pytest.mark.parametrize("inputData, expected", [
                                                  ([2, 4, 5, 7], [0, 1, 3, 2, 6, 4, 5, 8, 7, 9]),
@@ -66,12 +66,12 @@ def test__calculateIndexesAfterMoveUp(inputData, expected):
                                                  ([0, 2, 4, 6, 8], [1, 0, 3, 2, 5, 4, 7, 6, 9, 8]),
                                                  ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
                                                 ])
-def test__calculateIndexesAfterMoveDown(inputData, expected):
+def test__calculateSongIndexesAfterMoveDown(inputData, expected):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = [i for i in range(10)]
 
     instance._selectedIndexes = inputData
-    assert instance._calculateIndexesAfterMoveDown() == expected
+    assert instance._calculateSongIndexesAfterMoveDown() == expected
 
 @pytest.mark.parametrize("inputData, expected", [([2, 7, 5, 4], [1, 3, 4, 6]), 
                                                  ([1], [0]), 
@@ -81,10 +81,10 @@ def test__calculateIndexesAfterMoveDown(inputData, expected):
                                                  ([0, 1, 7, 8, 11, 12], [0, 1, 6, 7, 10, 11]),
                                                  ([0, 1, 3, 4], [0, 1, 2, 3])
                                                 ])
-def test__updateSelectedIndexesAfterMoveUp(inputData, expected):
+def test__caluclateSelectedIndexesAfterMoveUp(inputData, expected):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance._selectedIndexes = inputData
-    assert instance._updateSelectedIndexesAfterMoveUp() == expected
+    assert instance._caluclateSelectedIndexesAfterMoveUp() == expected
 
 @pytest.mark.parametrize("inputData, expected", [ #0a, 1b, 2c 3d 4e 5f 6g 7h 8i 9j
                                                  ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']),

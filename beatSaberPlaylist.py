@@ -32,13 +32,14 @@ class BeatSaberPlaylist:
             self._selectedIndexes.remove(index)
 
     def moveSelectedItemsUp(self):
-        newSongsOrder = self._calculateIndexesAfterMoveUp()
+        newSongsOrder = self._calculateSongIndexesAfterMoveUp()
         songsAfterReordering = self._reorderSongs(newSongsOrder)
+        selectionIndexesAfterReordering = self._caluclateSelectedIndexesAfterMoveUp()
         
         self.songsList = songsAfterReordering
-        self._selectedIndexes = self._updateSelectedIndexesAfterMoveUp()
+        self._selectedIndexes = selectionIndexesAfterReordering
     
-    def _calculateIndexesAfterMoveUp(self) -> list[int]:
+    def _calculateSongIndexesAfterMoveUp(self) -> list[int]:
         unselectedIndexes = self._getUnselectedIndexes()
         selectedGroups = self._makeSelectionGroups(self._selectedIndexes)
         
@@ -55,7 +56,7 @@ class BeatSaberPlaylist:
             newOrder += selectedGroups[0]
         return newOrder
     
-    def _updateSelectedIndexesAfterMoveUp(self) -> list[int]:
+    def _caluclateSelectedIndexesAfterMoveUp(self) -> list[int]:
         selectedGroups = self._makeSelectionGroups(self._selectedIndexes)
 
         result = []
@@ -67,7 +68,7 @@ class BeatSaberPlaylist:
     def moveSelectedItemsDown(self):
         pass
 
-    def _calculateIndexesAfterMoveDown(self) -> list[int]:
+    def _calculateSongIndexesAfterMoveDown(self) -> list[int]:
         unselectedIndexes = self._getUnselectedIndexes()
         selectedGroups = self._makeSelectionGroups(self._selectedIndexes)
 
