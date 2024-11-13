@@ -20,8 +20,10 @@ class BeatSaberPlaylist:
     def addSong(self):
         pass
 
-    def removeSong(self):
-        pass
+    def removeSelectedSongs(self):
+        while self._selectedIndexes:
+            currentIndex = self._selectedIndexes.pop()
+            self.songsList.pop(currentIndex)
     
     def select(self, index:int):
         if 0 <= index < len(self.songsList) and index not in self._selectedIndexes:

@@ -152,3 +152,19 @@ def test_moveSelectedItemsDown(inputData, expectedSongs, expectedSelection):
     instance.moveSelectedItemsDown()
     assert instance.songsList == expectedSongs
     assert instance._selectedIndexes == expectedSelection
+
+@pytest.mark.parametrize("inputData, expected", [ #0a, 1b, 2c 3d 4e 5f 6g 7h 8i 9j
+                                                 ([2, 4, 5, 7], ['a', 'c', 'd', 'g', 'i', 'j']),
+                                                 ([0, 1], ['c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']),                                                 
+                                                 ([7, 8, 9], ['a', 'b', 'c', 'd', 'e', 'f', 'g']),
+                                                 ([1], ['a', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']),                                                 
+                                                 ([8], ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j']),
+                                                 ([2, 3, 4, 5], ['a', 'b', 'g', 'h', 'i', 'j']),
+                                                 ([0, 1, 9], ['c', 'd', 'e', 'f', 'g', 'h', 'i']),
+                                                 ([0, 2, 4, 6, 8], ['a', 'c', 'e', 'g', 'i']),
+                                                 ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], []),
+                                                ])
+def test_removeSelectedSongs(inputData, expected):
+    instance = beatSaberPlaylist.BeatSaberPlaylist()
+    instance.songsList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+    instance._selectedIndexes = inputData
