@@ -1,5 +1,5 @@
 import beatSaberMap
-import bisect
+import bisect, json
 
 class BeatSaberPlaylist:
     def __init__(self):
@@ -11,11 +11,45 @@ class BeatSaberPlaylist:
         self._selectedIndexes = []
         self._selectionGroups = []
 
-    def loadFromFile(self):
-        pass
+    def loadFromFile(self, filePath:str):
+        fileContent = ''
+        with open(filePath, 'r') as file:
+            fileContent = ''.join(file.readlines())
+        
+        if not fileContent:
+            return
+        
+        playlistJSON = json.loads(fileContent)
+        playlistTitle = playlistJSON.get('playlistTitle', '')
+        playlistAuthor = playlistJSON.get('playlistAuthor', '')
+        playlistImage = playlistJSON.get('image', '')
+        playlistSongs = playlistJSON.get('songs', '')
 
-    def saveToFile(self):
-        pass
+        self.setPlaylistTitle(playlistTitle)
+        self.setPlaylistAuthor(playlistAuthor)
+        self.setImageString(playlistImage)
+        self._createSongsListFromJSON(playlistSongs)
+    
+    def _createSongsListFromJSON(self, songsListJSON:list[dict]):
+        for songJSON in songsListJSON:
+            songID = songJSON['key']
+            beatSaberMapInstance = beatSaberMap.BeatSaberMap(songID)
+            beatSaberMapInstance.getDataFromBeatSaverApi()
+            self.addSong(beatSaberMapInstance)
+
+    def saveToFile(self, filePath:str):
+        resultDict = self.createJSON_dict()
+        saveJSON = json.dumps(resultDict, indent=4)
+        with open(filePath, 'w') as file:
+            file.write(saveJSON)
+
+    def createJSON_dict(self) -> dict:
+        result = {}
+        result['playlistTitle'] = self.getPlaylistTitle()
+        result['playlistAuthor'] = self.getPlaylistAuthor()
+        result['image'] = self.getImageString()
+        result['songs'] = [beatSaberMapInstance.generateDictForPlaylist() for beatSaberMapInstance in self.songsList]
+        return result
 
     def setPlaylistTitle(self, title:str):
         self.playlistTitle = title
@@ -149,8 +183,12 @@ class BeatSaberPlaylist:
         return groups
 
 if __name__ == '__main__':
-    a = BeatSaberPlaylist()
-    a.songsList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
-    a._selectedIndexes = [2, 4, 5, 7]
+    def openFile() -> str:        
+        from tkinter import filedialog
+        filePath = filedialog.askopenfile(mode='r', filetypes=[('*', '*')])
+        return filePath.name
 
-    a.moveSelectedItemsUp()
+    a = BeatSaberPlaylist()
+    filePath = openFile()
+    a.loadFromFile(filePath)
+    a.saveToFile('test.json')
