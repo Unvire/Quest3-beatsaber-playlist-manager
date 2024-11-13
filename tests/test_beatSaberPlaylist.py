@@ -98,3 +98,23 @@ def test__reorderSongs(inputData, expected):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
     assert instance._reorderSongs(inputData) == expected
+
+@pytest.mark.parametrize("inputData, expectedSongs, expectedSelection", [ #0a, 1b, 2c 3d 4e 5f 6g 7h 8i 9j
+                                                 ([2, 4, 5, 7], ['a', 'c', 'b', 'e', 'f', 'd', 'h', 'g', 'i', 'j'], [1, 3, 4, 6]), 
+                                                 ([0, 1], ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'], [0, 1]),
+                                                 ([7, 8, 9], ['a', 'b', 'c', 'd', 'e', 'f', 'h', 'i', 'j', 'g'], [6, 7, 8]), 
+                                                 ([1], ['b', 'a', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'], [0]),
+                                                 ([8], ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'i', 'h', 'j'], [7]),
+                                                 ([2, 3, 4, 5], ['a', 'c', 'd', 'e', 'f', 'b', 'g', 'h', 'i', 'j'], [1, 2, 3, 4]),                                               
+                                                 ([0, 1, 9], ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'i'], [0, 1, 8]),
+                                                 ([1, 3, 5, 7, 9], ['b', 'a', 'd', 'c', 'f', 'e', 'h', 'g', 'j', 'i'], [0, 2, 4, 6, 8]),
+                                                 ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+                                                ])
+def test_moveSelectedItemsUp(inputData, expectedSongs, expectedSelection):
+    instance = beatSaberPlaylist.BeatSaberPlaylist()
+    instance.songsList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+    instance._selectedIndexes = inputData
+
+    instance.moveSelectedItemsUp()
+    assert instance.songsList == expectedSongs
+    assert instance._selectedIndexes == expectedSelection
