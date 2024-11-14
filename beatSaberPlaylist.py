@@ -41,11 +41,12 @@ class BeatSaberPlaylist:
             self.addSong(beatSaberMapInstance)
 
     def serializeInstanceToJSON(self) -> str:
-        result = {}
-        result['playlistTitle'] = self.getPlaylistTitle()
-        result['playlistAuthor'] = self.getPlaylistAuthor()
-        result['image'] = self.getImageString()
-        result['songs'] = [beatSaberMapInstance.generateDictForPlaylist() for beatSaberMapInstance in self.songsList]
+        result = {
+            'playlistTitle': self.getPlaylistTitle(),
+            'playlistAuthor': self.getPlaylistAuthor(),
+            'image': self.getImageString(),
+            'songs': [beatSaberMapInstance.generateDictForPlaylist() for beatSaberMapInstance in self.songsList]
+        }
         return json.dumps(result, indent=4)
 
     def setPlaylistTitle(self, title:str):
