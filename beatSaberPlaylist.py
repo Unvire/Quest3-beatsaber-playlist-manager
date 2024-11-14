@@ -40,11 +40,6 @@ class BeatSaberPlaylist:
             beatSaberMapInstance.getDataFromBeatSaverApi()
             self.addSong(beatSaberMapInstance)
 
-    def saveToFile(self, filePath:str):
-        serializedInstance = self.serializeInstanceToJSON()
-        with open(filePath, 'w') as file:
-            file.write(serializedInstance)
-
     def serializeInstanceToJSON(self) -> str:
         result = {}
         result['playlistTitle'] = self.getPlaylistTitle()
