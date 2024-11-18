@@ -17,30 +17,30 @@ class BeatSaberMap:
             }
         return f'Song: {result}'
     
-    def getDataFromJSON(self, responseJSON:dict):
+    def getDataFromBeatSaverJSON(self, responseJSON:dict):
         name = responseJSON['name']
         hash = responseJSON['versions'][0]['hash']
-        self._setNameAndHash(name, hash)
+        self.setNameAndHash(name, hash)
 
         author = responseJSON['uploader']['name']
         coverUrl = responseJSON['versions'][0]['coverURL']
         previewUrl = responseJSON['versions'][0]['previewURL']
-        self._setAuthorAndUrls(author, coverUrl, previewUrl)
+        self.setAuthorAndUrls(author, coverUrl, previewUrl)
         
         levelsData = responseJSON['versions'][0]['diffs']
         diffsList = [diffData['difficulty'] for diffData in levelsData]
-        self._setDiffs(diffsList)
+        self.setDiffs(diffsList)
     
-    def _setNameAndHash(self, name:str, hash:str):
+    def setNameAndHash(self, name:str, hash:str):
         self.name = name
         self.hash = hash
     
-    def _setAuthorAndUrls(self, author:str, coverUrl:str, previewUrl):
+    def setAuthorAndUrls(self, author:str, coverUrl:str, previewUrl):
         self.author = author
         self.coverUrl = coverUrl
         self.previewUrl = previewUrl
     
-    def _setDiffs(self, diffsList:list[str]):
+    def setDiffs(self, diffsList:list[str]):
         self.diffs = diffsList
     
     def getDiffs(self) -> list[str]:
@@ -61,7 +61,7 @@ class BeatSaberMap:
         return self.previewUrl
 
 if __name__ == '__main__':
-    responseJSON = {
+    responseJSONMock = {
         "id": "4167a",
         "name": "Yorushika - 言って。(Say It)",
         "uploader": {
@@ -96,5 +96,5 @@ if __name__ == '__main__':
     
 
     beatmap = BeatSaberMap('57c2')
-    beatmap.getDataFromJSON(responseJSON)
+    beatmap.getDataFromBeatSaverJSON(responseJSONMock)
     print(beatmap)

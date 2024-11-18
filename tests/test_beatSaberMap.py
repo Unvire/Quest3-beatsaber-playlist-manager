@@ -117,8 +117,8 @@ def exampleJSON_data():
 
 def test_initAndRepr():
     song = beatSaberMap.BeatSaberMap('1234')
-    song._setNameAndHash('test song', 'BHVASJDVHasd')
-    song._setAuthorAndUrls('author', 'a', 'b')
+    song.setNameAndHash('test song', 'BHVASJDVHasd')
+    song.setAuthorAndUrls('author', 'a', 'b')
     expected =  "Song: {'Name': 'test song', 'ID': '1234', 'Hash': 'BHVASJDVHasd', 'Author': 'author'}"
     assert song.__repr__() == expected
 
@@ -133,9 +133,9 @@ def test_generateDictForPlaylist():
     }
     assert song.generateDictForPlaylist() == expected
 
-def test_getDataFromBeatSaverApi(exampleJSON_data):
+def test_getDataFromBeatSaverJSON(exampleJSON_data):
     song = beatSaberMap.BeatSaberMap('57c2')
-    song.getDataFromJSON(exampleJSON_data)
+    song.getDataFromBeatSaverJSON(exampleJSON_data)
     
     assert song.name == 'Rockefeller Street (Nightcore) -  Getter Jaani'
     assert song.id == '57c2'
