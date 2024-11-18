@@ -1,7 +1,4 @@
-import requests
-
 class BeatSaberMap:
-    BEATSAVER_API_URL = 'https://api.beatsaver.com/maps/id/'
     def __init__(self, id:str):
         self.name = ''
         self.id = id
@@ -20,10 +17,7 @@ class BeatSaberMap:
             }
         return f'Song: {result}'
     
-    def getDataFromBeatSaverApi(self):
-        url = BeatSaberMap.BEATSAVER_API_URL + self.id
-        responseJSON = requests.get(url).json()
-
+    def getDataFromJSON(self, responseJSON:dict):
         name = responseJSON['name']
         hash = responseJSON['versions'][0]['hash']
         self._setNameAndHash(name, hash)
@@ -67,6 +61,40 @@ class BeatSaberMap:
         return self.previewUrl
 
 if __name__ == '__main__':
+    responseJSON = {
+        "id": "4167a",
+        "name": "Yorushika - 言って。(Say It)",
+        "uploader": {
+            "name": "cta"
+        },
+        "versions": [
+            {
+                "hash": "ece6be28f7be90b85cc8d4e4fff39356e32ab8d9",
+                "diffs": [
+                    {
+                        "difficulty": "Easy",
+                    },
+                    {                            
+                        "difficulty": "Normal",
+                    },
+                    {                           
+                        "difficulty": "Hard",
+                    },
+                    {
+                        "difficulty": "Expert",
+                    },
+                    {
+                        "difficulty": "ExpertPlus",
+                    }
+                ],
+                "downloadURL": "https://r2cdn.beatsaver.com/ece6be28f7be90b85cc8d4e4fff39356e32ab8d9.zip",
+                "coverURL": "https://eu.cdn.beatsaver.com/ece6be28f7be90b85cc8d4e4fff39356e32ab8d9.jpg",
+                "previewURL": "https://eu.cdn.beatsaver.com/ece6be28f7be90b85cc8d4e4fff39356e32ab8d9.mp3"
+            }
+        ]
+    }
+    
+
     beatmap = BeatSaberMap('57c2')
-    beatmap.getDataFromBeatSaverApi()
+    beatmap.getDataFromJSON(responseJSON)
     print(beatmap)
