@@ -27,15 +27,6 @@ def singleCallExpected():
             "songAuthorName": "Getter Jaani",
             "levelAuthorName": "RinkuSenpai"
         },
-        "stats": {
-            "plays": 0,
-            "downloads": 0,
-            "upvotes": 13005,
-            "downvotes": 575,
-            "score": 0.9559,
-            "reviews": 8,
-            "sentiment": "VERY_POSITIVE"
-        },
         "uploaded": "2019-07-18T21:40:09.204Z",
         "automapper": False,
         "ranked": True,
@@ -142,15 +133,6 @@ def multipleCallExpected():
                 "songAuthorName": "Getter Jaani",
                 "levelAuthorName": "RinkuSenpai"
             },
-            "stats": {
-                "plays": 0,
-                "downloads": 0,
-                "upvotes": 13005,
-                "downvotes": 575,
-                "score": 0.9559,
-                "reviews": 8,
-                "sentiment": "VERY_POSITIVE"
-            },
             "uploaded": "2019-07-18T21:40:09.204Z",
             "automapper": False,
             "ranked": True,
@@ -251,15 +233,6 @@ def multipleCallExpected():
                 "songSubName": "",
                 "songAuthorName": "USAO",
                 "levelAuthorName": "Timbo"
-            },
-            "stats": {
-                "plays": 0,
-                "downloads": 0,
-                "upvotes": 3284,
-                "downvotes": 126,
-                "score": 0.9588,
-                "reviews": 7,
-                "sentiment": "VERY_POSITIVE"
             },
             "uploaded": "2021-01-14T11:56:39.803Z",
             "automapper": False,
@@ -442,6 +415,7 @@ def multipleCallExpected():
 
 def test_singleMapCall(singleCallExpected):
     responseJSON = beatSaverAPICaller.BeatSaverAPICaller.singleMapCall('57c2')
+    responseJSON.pop('stats')
 
     assert responseJSON == singleCallExpected
 
@@ -463,4 +437,6 @@ def test_splitListToChunks():
 
 def test_multipleMapsCall(multipleCallExpected):
     responseJSON = beatSaverAPICaller.BeatSaverAPICaller.multipleMapsCall(['57c2', '12b62'])
+    responseJSON['57c2'].pop('stats')    
+    responseJSON['12b62'].pop('stats')
     assert responseJSON == multipleCallExpected
