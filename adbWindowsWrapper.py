@@ -64,15 +64,16 @@ class AdbWindowsWrapper:
         pyperclip.copy(clipboard)
         return result
     
-    
 
 if __name__ == '__main__':
     a = AdbWindowsWrapper()
 
-    #user must allow debug access from computer
+    ## user must allow debug access from computer in the quest device
     isDebugModeEnabled = a.isDebugModeEnabled()
     print(f'Quest debug mode enabled: {isDebugModeEnabled}')
 
-    #a.getSongKeysFromQuest()
+    a.getSongKeysFromQuest()
     a.getAndCopyPlaylistsFromQuest()
-    a.uploadPlaylistIntoQuest(r'D:\asdasd.txt')
+    
+    # filepath = ...
+    # a.uploadPlaylistIntoQuest(filepath)
