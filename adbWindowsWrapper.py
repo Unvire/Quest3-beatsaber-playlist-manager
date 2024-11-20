@@ -54,8 +54,11 @@ class AdbWindowsWrapper:
             self._executeAdbCommand(command)
     
     def _executeAdbCommand(self, command:str) -> str:
+        clipboard = pyperclip.paste()
         subprocess.run(command, shell=True, cwd=self.adbPath)
-        return pyperclip.paste()
+        result = pyperclip.paste()
+        pyperclip.copy(clipboard)
+        return result
 
 if __name__ == '__main__':
     a = AdbWindowsWrapper()
