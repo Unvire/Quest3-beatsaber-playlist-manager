@@ -53,12 +53,18 @@ class AdbWindowsWrapper:
             command = f'adb pull "{playlistPath}" "{targetPath}"'
             self._executeAdbCommand(command)
     
+    def uploadPlaylistIntoQuest(self, filePath:str):
+        command = f'adb push "{filePath}" "{AdbWindowsWrapper.BEATSABER_PLAYLISTS_PATH}"'
+        self._executeAdbCommand(command)
+    
     def _executeAdbCommand(self, command:str) -> str:
         clipboard = pyperclip.paste()
         subprocess.run(command, shell=True, cwd=self.adbPath)
         result = pyperclip.paste()
         pyperclip.copy(clipboard)
         return result
+    
+    
 
 if __name__ == '__main__':
     a = AdbWindowsWrapper()
@@ -69,3 +75,4 @@ if __name__ == '__main__':
 
     #a.getSongKeysFromQuest()
     a.getAndCopyPlaylistsFromQuest()
+    a.uploadPlaylistIntoQuest(r'D:\asdasd.txt')
