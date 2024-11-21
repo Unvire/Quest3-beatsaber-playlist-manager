@@ -35,26 +35,32 @@ class AdbWindowsWrapper:
         command = f'adb shell ls {AdbWindowsWrapper.BEATSABER_SONGS_PATH} | clip'         
         result = self._executeAdbCommand(command)
 
-        keys = [line.split(' ')[0] for line in result.split('\n')]
+        keys = [line.split(' ')[0] for line in result.splitlines()]
         return keys
     
-    def getAndCopyPlaylistsFromQuest(self):
+    def getPlaylistsNamesFromQuest(self) -> list[str]:
         # coping to clipboard is a workaround about the fact that for some IDEs capturing stdo doesn't work
         command = f'adb shell ls {AdbWindowsWrapper.BEATSABER_PLAYLISTS_PATH} | clip' 
         result = self._executeAdbCommand(command)
-        playlists = [line for line in result.split('\n') if line]
-        
+        playlists = [line for line in result.splitlines() if line]
+        return playlists
+    
+    def pullPlaylistsFromQuest(self, playlistNamesList:list[str]):
         targetPath = os.path.join(os.getcwd(), 'tempPlaylists')
         if not os.path.exists(targetPath):
             os.makedirs(targetPath)
                 
-        for playlist in playlists:
+        for playlist in playlistNamesList:
             playlistPath = f'{AdbWindowsWrapper.BEATSABER_PLAYLISTS_PATH}/{playlist}'
             command = f'adb pull "{playlistPath}" "{targetPath}"'
             self._executeAdbCommand(command)
     
     def uploadPlaylistIntoQuest(self, filePath:str):
         command = f'adb push "{filePath}" "{AdbWindowsWrapper.BEATSABER_PLAYLISTS_PATH}"'
+        self._executeAdbCommand(command)
+    
+    def deletePlaylistFromQuest(self, playlistName:str):
+        command = f'adb shell rm "{AdbWindowsWrapper.BEATSABER_PLAYLISTS_PATH}/{playlistName}"'
         self._executeAdbCommand(command)
     
     def _executeAdbCommand(self, command:str) -> str:
@@ -72,8 +78,10 @@ if __name__ == '__main__':
     isDebugModeEnabled = a.isDebugModeEnabled()
     print(f'Quest debug mode enabled: {isDebugModeEnabled}')
 
-    a.getSongKeysFromQuest()
-    a.getAndCopyPlaylistsFromQuest()
+    keys = a.getSongKeysFromQuest()
+    playlistNameList = a.getPlaylistsNamesFromQuest()
+    a.pullPlaylistsFromQuest(playlistNameList)
     
-    # filepath = ...
-    # a.uploadPlaylistIntoQuest(filepath)
+    filepath = os.path.join(os.getcwd(), 'tempPlaylists', 'test.txt')
+    #a.uploadPlaylistIntoQuest(filepath)
+    a.deletePlaylistFromQuest('test.txt')
