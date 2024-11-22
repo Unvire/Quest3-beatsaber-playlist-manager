@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1209</width>
-    <height>638</height>
+    <height>629</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,9 +23,9 @@
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout_6">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,0,3,0,2">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,0,3,0,0">
       <property name="sizeConstraint">
        <enum>QLayout::SetNoConstraint</enum>
       </property>
@@ -42,6 +42,20 @@
          </widget>
         </item>
         <item>
+         <widget class="Line" name="line_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="filterPlaylistMapsEdit">
+          <property name="placeholderText">
+           <string>Search maps</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="10,1">
           <item>
            <widget class="QTableWidget" name="playlistsMapsTable">
@@ -52,7 +66,7 @@
              <number>70</number>
             </attribute>
             <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>50</number>
+             <number>200</number>
             </attribute>
             <attribute name="horizontalHeaderHighlightSections">
              <bool>true</bool>
@@ -77,11 +91,6 @@
             <column>
              <property name="text">
               <string>Diffs</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Length</string>
              </property>
             </column>
            </widget>
@@ -174,7 +183,24 @@
          </widget>
         </item>
         <item>
+         <widget class="Line" name="line_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="searchAllMapsEdit">
+          <property name="placeholderText">
+           <string>Search maps</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QTableWidget" name="allMapsTable">
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>250</number>
+          </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
           </attribute>
@@ -186,11 +212,6 @@
           <column>
            <property name="text">
             <string>Diffs</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Length</string>
            </property>
           </column>
          </widget>
@@ -205,7 +226,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0">
         <item>
          <widget class="QLabel" name="mapDetailsLabel">
           <property name="text">
@@ -217,7 +238,130 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="mapDetailsWidget" native="true"/>
+         <widget class="Line" name="line_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGraphicsView" name="mapImageView"/>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="songTitleLabel">
+            <property name="text">
+             <string>Author</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="songAuthorLabel">
+            <property name="text">
+             <string>Title</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="songMapperLabel">
+          <property name="text">
+           <string>Mapper</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="songBPMLabel">
+          <property name="text">
+           <string>BPM: </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="diffsLabel">
+          <property name="text">
+           <string>Levels:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="tagsLabel">
+          <property name="text">
+           <string>Tags:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="playMusicButton">
+            <property name="text">
+             <string>Play</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="stopMusicButton">
+            <property name="text">
+             <string>Stop</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
       </item>
@@ -236,12 +380,71 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Quest</string>
     </property>
+    <addaction name="PullPlaylistsFromQuestAction"/>
+    <addaction name="PushPlaylisToQuestAction"/>
+   </widget>
+   <widget class="QMenu" name="menuPlaylist">
+    <property name="title">
+     <string>Playlist</string>
+    </property>
+    <widget class="QMenu" name="menuChange">
+     <property name="title">
+      <string>Change</string>
+     </property>
+     <addaction name="changeImageAction"/>
+     <addaction name="changeAuthorTitleAction"/>
+    </widget>
+    <addaction name="newPlaylistAction"/>
+    <addaction name="savePlaylistAction"/>
+    <addaction name="loadPlaylistAction"/>
+    <addaction name="menuChange"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuPlaylist"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="PullPlaylistsFromQuestAction">
+   <property name="text">
+    <string>Pull playlists from Quest</string>
+   </property>
+  </action>
+  <action name="savePlaylistAction">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="loadPlaylistAction">
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </action>
+  <action name="newPlaylistAction">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionChange_title">
+   <property name="text">
+    <string>Change title</string>
+   </property>
+  </action>
+  <action name="changeImageAction">
+   <property name="text">
+    <string>Image</string>
+   </property>
+  </action>
+  <action name="changeAuthorTitleAction">
+   <property name="text">
+    <string>Title/Author</string>
+   </property>
+  </action>
+  <action name="PushPlaylisToQuestAction">
+   <property name="text">
+    <string>Push playlist to Quest</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
