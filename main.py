@@ -12,7 +12,7 @@ from beatSaberMap import BeatSaberMap
 class MainWindow(QMainWindow):
     def __init__(self):
         self.allMapsList = []
-        self.tableEventType = ['Append', 'Removed', 'ChangedOrder'][0]
+        self.playListMaps = []
 
         super().__init__()
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
@@ -63,34 +63,28 @@ class MainWindow(QMainWindow):
 
     def startDrag(self, supportedActions):
         drag = QDrag(self)
-        mime_data = QMimeData()
-        selected_row = self.allMapsTable.currentRow()
-        data = [self.allMapsTable.item(selected_row, col).text() if self.allMapsTable.item(selected_row, col) else ""
-                for col in range(self.allMapsTable.columnCount())]
+        mimeData = QMimeData()
+        selectedRow = self.allMapsTable.currentRow()
         
-        mime_data.setText("|".join(data))  # Łączymy dane kolumn jako string
-        drag.setMimeData(mime_data)
-        # Wykonaj akcję przeciągania
+        mimeData.setText(f'{selectedRow}')
+        drag.setMimeData(mimeData)
         drag.exec_(Qt.CopyAction)    
 
     def dropEvent(self, event):
-        # Obsługa upuszczenia w tej tabeli
-        data = event.mimeData().text()
-        row_data = data.split("|")
-        print(row_data)
-        event.accept()
+        mapIndex = int(event.mimeData().text())
+        mapInstance = self.allMapsList[mapIndex]
+        if mapInstance not in self.playListMaps:
+            self.playListMaps.append(mapInstance)
+            self.addTableRow(self.playlistsMapsTable, mapInstance)
+            event.accept()
+        else:
+            event.ignore()
     
     def dragMoveEvent(self, event):
-        if event.mimeData().hasText():
-            event.accept()
-        else:
-            event.ignore()
+        event.accept()
     
     def dragEnterEvent(self, event):
-        if event.mimeData().hasText():
-            event.accept()
-        else:
-            event.ignore()
+        event.accept()
 
     
 
