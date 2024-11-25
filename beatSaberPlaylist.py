@@ -67,8 +67,11 @@ class BeatSaberPlaylist:
     def getImageString(self):
         return self.imageString
 
-    def addSong(self, song:beatSaberMap.BeatSaberMap):
-        self.songsList.append(song)
+    def addSongIfNotPresent(self, song:beatSaberMap.BeatSaberMap) -> bool:
+        if song not in self.songsList:
+            self.songsList.append(song)
+            return True
+        return False
 
     def removeSelectedSongs(self):
         while self._selectedIndexes:

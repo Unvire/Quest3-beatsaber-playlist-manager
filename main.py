@@ -12,7 +12,7 @@ from beatSaberMap import BeatSaberMap
 class MainWindow(QMainWindow):
     def __init__(self):
         self.allMapsList = []
-        self.playListMaps = []
+        self.playlistInstance = BeatSaberPlaylist()
 
         super().__init__()
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
@@ -73,12 +73,11 @@ class MainWindow(QMainWindow):
     def targetTableDropEvent(self, event):
         mapIndex = int(event.mimeData().text())
         mapInstance = self.allMapsList[mapIndex]
-        if mapInstance not in self.playListMaps:
-            self.playListMaps.append(mapInstance)
+        isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
+
+        if isMapAdded:
             self.addTableRow(self.playlistsMapsTable, mapInstance)
-            event.accept()
-        else:
-            event.ignore()
+        event.accept()
     
     def targetTableDragMoveEvent(self, event):
         event.accept()
@@ -92,6 +91,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     mainWindowInstance = MainWindow()
     mainWindowInstance.show()
-
-    
     sys.exit(app.exec_())
