@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem
-from PyQt5.QtCore import Qt, QMimeData
+from PyQt5.QtCore import Qt, QMimeData, QItemSelection
 from PyQt5.QtGui import QDrag
 from PyQt5 import uic
 
@@ -25,12 +25,14 @@ class MainWindow(QMainWindow):
         self.allMapsTable.setDragEnabled(True)
         self.allMapsTable.setDragDropMode(QTableWidget.DragOnly)
         self.allMapsTable.startDrag = self.sourceTableStartDrag
+        self.allMapsTable.selectionModel().selectionChanged.connect(self.sourceTableOnSelectionChanged)
 
         self.playlistsMapsTable.setAcceptDrops(True)
         self.playlistsMapsTable.setDragDropMode(QTableWidget.DropOnly)
         self.playlistsMapsTable.dragEnterEvent = self.targetTableDragEnterEvent
         self.playlistsMapsTable.dragMoveEvent = self.targetTableDragMoveEvent 
         self.playlistsMapsTable.dropEvent = self.targetTableDropEvent
+        self.playlistsMapsTable.selectionModel().selectionChanged.connect(self.targetTableOnSelectionChanged)
         
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
     
@@ -84,6 +86,14 @@ class MainWindow(QMainWindow):
     def targetTableDragEnterEvent(self, event):
         event.accept()
 
+    def sourceTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
+        selectedRows = {index.row() for index in self.allMapsTable.selectionModel().selectedIndexes()}
+        row = list(selectedRows)[0]
+        print(f"Row: {row}")
+    
+    def targetTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
+        selectedRows = {index.row() for index in self.playlistsMapsTable.selectionModel().selectedIndexes()}
+        print(f"Rows: {sorted(selectedRows)}")
     
 
 if __name__ == '__main__':
