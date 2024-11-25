@@ -75,6 +75,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="10,1">
           <item>
            <widget class="QTableWidget" name="playlistsMapsTable">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
             <property name="dragDropMode">
              <enum>QAbstractItemView::DropOnly</enum>
             </property>
@@ -223,6 +226,12 @@
         </item>
         <item>
          <widget class="QTableWidget" name="allMapsTable">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
