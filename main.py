@@ -25,13 +25,13 @@ class MainWindow(QMainWindow):
 
         self.allMapsTable.setDragEnabled(True)
         self.allMapsTable.setDragDropMode(QTableWidget.DragOnly)
-        self.allMapsTable.startDrag = self.startDrag
+        self.allMapsTable.startDrag = self.sourceTableStartDrag
 
         self.playlistsMapsTable.setAcceptDrops(True)
         self.playlistsMapsTable.setDragDropMode(QTableWidget.DropOnly)
-        self.playlistsMapsTable.dragEnterEvent = self.dragEnterEvent
-        self.playlistsMapsTable.dragMoveEvent = self.dragMoveEvent 
-        self.playlistsMapsTable.dropEvent = self.dropEvent
+        self.playlistsMapsTable.dragEnterEvent = self.targetTableDragEnterEvent
+        self.playlistsMapsTable.dragMoveEvent = self.targetTableDragMoveEvent 
+        self.playlistsMapsTable.dropEvent = self.targetTableDropEvent
         
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
     
@@ -42,7 +42,7 @@ class MainWindow(QMainWindow):
             BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
             self.allMapsList.append(BeatSaberMapInstance)
         
-        self.updateTable(self.allMapsTable, self.allMapsList)
+        self.addTableRows(self.allMapsTable, self.allMapsList)
 
     def __mockGetSongsFromQuest(self) -> dict:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
@@ -51,7 +51,7 @@ class MainWindow(QMainWindow):
         songsIDsList = [line.split('\\')[0] for line in buffer]
         return BeatSaverAPICaller.multipleMapsCall(songsIDsList)
     
-    def updateTable(self, table:QWidget, mapsList:list[BeatSaberMap]):
+    def addTableRows(self, table:QWidget, mapsList:list[BeatSaberMap]):
         for mapInstance in mapsList:
             self.addTableRow(table, mapInstance)
 
@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         table.setItem(rowCount, 0, QTableWidgetItem(f'{map.name}'))
         table.setItem(rowCount, 1, QTableWidgetItem(f'a'))
 
-    def startDrag(self, supportedActions):
+    def sourceTableStartDrag(self, supportedActions):
         drag = QDrag(self)
         mimeData = QMimeData()
         selectedRow = self.allMapsTable.currentRow()
@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
         drag.setMimeData(mimeData)
         drag.exec_(Qt.CopyAction)    
 
-    def dropEvent(self, event):
+    def targetTableDropEvent(self, event):
         mapIndex = int(event.mimeData().text())
         mapInstance = self.allMapsList[mapIndex]
         if mapInstance not in self.playListMaps:
@@ -80,10 +80,10 @@ class MainWindow(QMainWindow):
         else:
             event.ignore()
     
-    def dragMoveEvent(self, event):
+    def targetTableDragMoveEvent(self, event):
         event.accept()
     
-    def dragEnterEvent(self, event):
+    def targetTableDragEnterEvent(self, event):
         event.accept()
 
     
