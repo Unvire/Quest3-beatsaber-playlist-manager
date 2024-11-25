@@ -1,12 +1,6 @@
-import os
-import subprocess
+import os, subprocess
 import pyperclip
-
-class AdbFolderDoNotExist(Exception):
-    pass
-
-class AdbExeNotExist(Exception):
-    pass
+import adbException
 
 class AdbWindowsWrapper:
     BEATSABER_SONGS_PATH = '/sdcard/ModData/com.beatgames.beatsaber/Mods/SongCore/CustomLevels'
@@ -16,14 +10,14 @@ class AdbWindowsWrapper:
         self.adbPath = os.path.join(os.getcwd(), 'adb')
         
         if not os.path.exists(self.adbPath):
-            raise AdbFolderDoNotExist
+            raise adbException.AdbFolderDoNotExist
         
         try:
             result = subprocess.run('adb/adb devices', capture_output=True, text=True)
             if 'List of devices attached' not in result.stdout:
-                raise AdbExeNotExist
+                raise adbException.AdbExeNotExist
         except FileNotFoundError:
-            raise AdbExeNotExist
+            raise adbException.AdbExeNotExist
     
     def isDebugModeEnabled(self) -> bool:
         result = subprocess.run('adb/adb devices', capture_output=True, text=True).stdout
