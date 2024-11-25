@@ -27,7 +27,6 @@ class BeatSaverAPICaller:
         for subList in subLists:
             idsString = COMMA_SEPARATOR.join(subList)
             url = BeatSaverAPICaller.MULTIPLE_MAP_CALL_LINK + idsString
-            print(url)
             responseJSON = requests.get(url).json()
             result.update(responseJSON)
         return result
