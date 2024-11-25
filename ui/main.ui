@@ -417,6 +417,7 @@
     <property name="title">
      <string>Quest</string>
     </property>
+    <addaction name="actionConnect"/>
     <addaction name="PullPlaylistsFromQuestAction"/>
     <addaction name="PushPlaylisToQuestAction"/>
    </widget>
@@ -478,6 +479,11 @@
   <action name="PushPlaylisToQuestAction">
    <property name="text">
     <string>Push playlist to Quest</string>
+   </property>
+  </action>
+  <action name="actionConnect">
+   <property name="text">
+    <string>Connect</string>
    </property>
   </action>
  </widget>
