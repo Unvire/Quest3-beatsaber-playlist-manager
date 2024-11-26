@@ -48,7 +48,7 @@ class MainWindow(QMainWindow):
             BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
             self.allMapsPlayList.addSongIfNotPresent(BeatSaberMapInstance)
         
-        self.__addTableRows(self.allMapsTable, self.allMapsPlayList)
+        self._addTableRows(self.allMapsTable, self.allMapsPlayList)
 
     def __mockGetSongsFromQuest(self) -> dict:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
         self.diffsLabel.setText(f'Levels: {mapInstance.diffs}')
         self.tagsLabel.setText(f'Tags: {mapInstance.tagsList}')
 
-    def __addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
+    def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
         for mapInstance in playlist:
             self._addTableRow(table, mapInstance)
 
@@ -143,7 +143,7 @@ class MainWindow(QMainWindow):
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
         self.playlistInstance.removeSelectedSongs()
         self._clearTable(table)
-        self.__addTableRows(table, self.playlistInstance)
+        self._addTableRows(table, self.playlistInstance)
     
     def _moveSelectedRowsUpDown(self, table:QTableWidget, direction:str):
         functionDict = {
@@ -157,7 +157,7 @@ class MainWindow(QMainWindow):
         indexes = self.playlistInstance.getSelectedIndexes()
 
         self._clearTable(table)
-        self.__addTableRows(table, self.playlistInstance)
+        self._addTableRows(table, self.playlistInstance)
         self._selectRowsInTable(table, indexes)
 
     def _getSelectedRowsInTable(self, table:QTableWidget) -> list[int]:
