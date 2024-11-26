@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem
-from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray
+from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray, QItemSelectionModel
 from PyQt5.QtGui import QDrag, QPixmap
 from PyQt5 import uic
 
@@ -36,6 +36,10 @@ class MainWindow(QMainWindow):
         self.playlistsMapsTable.selectionModel().selectionChanged.connect(self.targetTableOnSelectionChanged)
         
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
+
+        self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
+        self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
+        self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
     
     def getSongsFromQuest(self) -> dict:
         responseJSON = self.__mockGetSongsFromQuest()
@@ -44,7 +48,7 @@ class MainWindow(QMainWindow):
             BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
             self.allMapsPlayList.addSongIfNotPresent(BeatSaberMapInstance)
         
-        self.addTableRows(self.allMapsTable, self.allMapsPlayList)
+        self.__addTableRows(self.allMapsTable, self.allMapsPlayList)
 
     def __mockGetSongsFromQuest(self) -> dict:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
@@ -66,11 +70,11 @@ class MainWindow(QMainWindow):
         self.diffsLabel.setText(f'Levels: {mapInstance.diffs}')
         self.tagsLabel.setText(f'Tags: {mapInstance.tagsList}')
 
-    def addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
+    def __addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
         for mapInstance in playlist:
-            self.addTableRow(table, mapInstance)
+            self._addTableRow(table, mapInstance)
 
-    def addTableRow(self, table:QWidget, map:BeatSaberMap):
+    def _addTableRow(self, table:QWidget, map:BeatSaberMap):
         rowCount = table.rowCount()
         table.insertRow(rowCount)
         table.setItem(rowCount, 0, QTableWidgetItem(f'{map.name}'))
@@ -91,7 +95,7 @@ class MainWindow(QMainWindow):
         isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
 
         if isMapAdded:
-            self.addTableRow(self.playlistsMapsTable, mapInstance)
+            self._addTableRow(self.playlistsMapsTable, mapInstance)
         event.accept()
     
     def targetTableDragMoveEvent(self, event):
@@ -101,15 +105,14 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def sourceTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
-        selectedRows = {index.row() for index in self.allMapsTable.selectionModel().selectedIndexes()}
-        row = list(selectedRows)[0]
+        selectedRowsList = self._getSelectedRowsInTable(self.allMapsTable)
+        row = selectedRowsList[0]
         mapInstance = self.allMapsPlayList[row]
         self.setMapDetails(mapInstance)
     
     def targetTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
-        selectedRows = {index.row() for index in self.playlistsMapsTable.selectionModel().selectedIndexes()}
-        selectedRowsList = list(selectedRows)
-        if len(selectedRows) == 1:
+        selectedRowsList = self._getSelectedRowsInTable(self.playlistsMapsTable)
+        if len(selectedRowsList) == 1:
             index = selectedRowsList[0]
             mapInstance = self.playlistInstance[index]
             self.setMapDetails(mapInstance)
@@ -129,6 +132,50 @@ class MainWindow(QMainWindow):
         minutes, seconds = divmod(lengthSeconds, 60)
         return f'{minutes}:{seconds}'
     
+    def moveSelectedSongsUp(self):
+        self._moveSelectedRowsUpDown(self.playlistsMapsTable, 'up')
+    
+    def moveSelectedSongsDown(self):
+        self._moveSelectedRowsUpDown(self.playlistsMapsTable, 'down')
+
+    def deleteSelectedSongs(self, table:QTableWidget):
+        selectedRowsList = self._getSelectedRowsInTable(table)
+        self.playlistInstance.setSelectedIndexes(selectedRowsList)
+        self.playlistInstance.removeSelectedSongs()
+        self._clearTable(table)
+        self.__addTableRows(table, self.playlistInstance)
+    
+    def _moveSelectedRowsUpDown(self, table:QTableWidget, direction:str):
+        functionDict = {
+            'up': self.playlistInstance.moveSelectedItemsUp,
+            'down': self.playlistInstance.moveSelectedItemsDown
+        }
+
+        selectedRowsList = self._getSelectedRowsInTable(table)
+        self.playlistInstance.setSelectedIndexes(selectedRowsList)
+        functionDict[direction]() #move up or down
+        indexes = self.playlistInstance.getSelectedIndexes()
+
+        self._clearTable(table)
+        self.__addTableRows(table, self.playlistInstance)
+        self._selectRowsInTable(table, indexes)
+
+    def _getSelectedRowsInTable(self, table:QTableWidget) -> list[int]:
+        selectedRows = {index.row() for index in table.selectionModel().selectedIndexes()}
+        return list(selectedRows)
+
+    def _unselectAllRowsInTable(self, table:QTableWidget):
+        table.selectionModel().clearSelection()
+    
+    def _selectRowsInTable(self,  table:QTableWidget, indexList:list[int]):
+        selectionModelInstance = table.selectionModel()
+        for index in indexList:
+            selectionModelInstance.select(table.model().index(index, 0), QItemSelectionModel.Rows | QItemSelectionModel.Select)
+    
+    def _clearTable(self, table:QTableWidget):
+        selectionModelInstance = table.model()
+        if selectionModelInstance is not None:
+            selectionModelInstance.removeRows(0, selectionModelInstance.rowCount())
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
