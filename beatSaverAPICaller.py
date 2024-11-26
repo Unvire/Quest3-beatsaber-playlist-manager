@@ -31,6 +31,11 @@ class BeatSaverAPICaller:
             result.update(responseJSON)
         return result
     
+    @staticmethod
+    def getImageByteString(url:str) -> str:
+        response = requests.get(url)
+        return response.content
+    
     def splitListToChunks(items:list) -> list[list]:        
         chunkSize = BeatSaverAPICaller.MULTIPLE_MAP_CALL_LIST_LENGTH
         fullChunks, lastChunk = divmod(len(items), chunkSize)
