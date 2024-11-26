@@ -599,7 +599,7 @@
   </action>
   <action name="actionFrom_downloaded_maps">
    <property name="text">
-    <string>From downloaded maps</string>
+    <string>From local downloaded maps</string>
    </property>
   </action>
  </widget>
