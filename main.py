@@ -1,9 +1,11 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem
-from PyQt5.QtCore import Qt, QMimeData, QItemSelection
-from PyQt5.QtGui import QDrag
+from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray
+from PyQt5.QtGui import QDrag, QPixmap
 from PyQt5 import uic
 
 import os, sys
+import requests
+
 from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
@@ -52,6 +54,19 @@ class MainWindow(QMainWindow):
         songsIDsList = [line.split('\\')[0] for line in buffer]
         return BeatSaverAPICaller.multipleMapsCall(songsIDsList)
     
+    def setMapDetails(self, mapInstance:BeatSaberMap):
+        pixmap = self._getImagePixmap(mapInstance)
+        self.mapImageLabel.setPixmap(pixmap)
+
+        lenthTime = self._formatSeconds(mapInstance.lengthSeconds)
+
+        self.songAuthorLabel.setText(f'Author: {mapInstance.author}')
+        self.songTitleLabel.setText(f'Title: {mapInstance.title}')
+        self.songBPMLabel.setText(f'BPM: {mapInstance.bpm}')
+        self.songLengthLabel.setText(f'Length: {lenthTime}')
+        self.diffsLabel.setText(f'Levels: {mapInstance.diffs}')
+        self.tagsLabel.setText(f'Tags: {mapInstance.tagsList}')
+
     def addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
         for mapInstance in playlist:
             self.addTableRow(table, mapInstance)
@@ -89,11 +104,25 @@ class MainWindow(QMainWindow):
     def sourceTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
         selectedRows = {index.row() for index in self.allMapsTable.selectionModel().selectedIndexes()}
         row = list(selectedRows)[0]
-        print(f"Row: {row}")
+        mapInstance = self.allMapsPlayList[row]
+        self.setMapDetails(mapInstance)
     
     def targetTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
         selectedRows = {index.row() for index in self.playlistsMapsTable.selectionModel().selectedIndexes()}
         print(f"Rows: {sorted(selectedRows)}")
+    
+    def _getImagePixmap(self, mapInstance:BeatSaberMap) -> QPixmap:
+        url = mapInstance.coverUrl
+        byteString = BeatSaverAPICaller.getImageByteString(url)
+        byteArray = QByteArray(byteString)
+
+        pixmap = QPixmap()
+        pixmap.loadFromData(byteArray)
+        return pixmap
+
+    def _formatSeconds(self, lengthSeconds:int) -> str:
+        minutes, seconds = divmod(lengthSeconds, 60)
+        return f'{minutes}:{seconds}'
     
 
 if __name__ == '__main__':
