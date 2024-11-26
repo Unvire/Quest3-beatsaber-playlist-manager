@@ -13,6 +13,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         self.allMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
+        self.sortingOrder = 'Upload date'
 
         super().__init__()
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
@@ -38,6 +39,8 @@ class MainWindow(QMainWindow):
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
 
         self.sortAllMapsComboBox.currentIndexChanged.connect(self.sortAllMaps)
+        self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
+
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
         self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
@@ -124,9 +127,18 @@ class MainWindow(QMainWindow):
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
     
     def sortAllMaps(self, index:int):        
+        self.sortingOrder = self.sortAllMapsComboBox.itemText(index)
+        self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
+        
         self._unselectAllRowsInTable(self.allMapsTable)
-        order = self.sortAllMapsComboBox.itemText(index)
-        self.allMapsPlaylist.sortPlaylistInPlaceBy(order)
+        self._clearTable(self.allMapsTable)
+        self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
+    
+    def reverseAllMapsSorting(self):
+        self.allMapsPlaylist.changeSortingOrder()
+        self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
+        
+        self._unselectAllRowsInTable(self.allMapsTable)    
         self._clearTable(self.allMapsTable)
         self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
     

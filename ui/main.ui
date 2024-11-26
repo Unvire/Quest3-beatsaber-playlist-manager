@@ -318,6 +318,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="reverseSortingOrderButton">
+              <property name="text">
+               <string>Reverse order</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_5">
               <property name="orientation">
                <enum>Qt::Vertical</enum>

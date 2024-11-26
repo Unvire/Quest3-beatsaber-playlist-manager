@@ -11,8 +11,7 @@ class BeatSaberPlaylist:
         self._selectedIndexes = []
         self._selectionGroups = []
 
-        self._isSortingOrderReversed = False
-        self._previousSortingOrder = ''
+        self._isSortingReversed = False
 
     def __repr__(self):
         return self.serializeInstanceToJSON()
@@ -124,18 +123,11 @@ class BeatSaberPlaylist:
         }
         
         if order in sortingOrderKeysDict:
-            self._evaluateSortingOrderReverseInPlace(order)
             sortingKey = sortingOrderKeysDict[order]
-            self.songsList = sorted(self.songsList, reverse=self._isSortingOrderReversed, key=sortingKey)
+            self.songsList = sorted(self.songsList, reverse=self._isSortingReversed, key=sortingKey)
     
-    def _evaluateSortingOrderReverseInPlace(self, order:str):
-        isOrderTheSame = order == self._isSortingOrderReversed
-        self._previousSortingOrder = order
-
-        if isOrderTheSame:
-            self._isSortingOrderReversed = not self._isSortingOrderReversed
-        else:
-            self._isSortingOrderReversed = False
+    def changeSortingOrder(self):
+        self._isSortingReversed = not self._isSortingReversed
     
     def _calculateSongIndexesAfterMoveUp(self) -> list[int]:
         unselectedIndexes = self._getUnselectedIndexes()
