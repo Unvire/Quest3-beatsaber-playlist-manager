@@ -38,7 +38,7 @@ class MainWindow(QMainWindow):
         
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
 
-        self.sortAllMapsComboBox.currentIndexChanged.connect(self.sortAllMaps)
+        self.sortAllMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
 
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
@@ -52,6 +52,7 @@ class MainWindow(QMainWindow):
             BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
             self.allMapsPlaylist.addSongIfNotPresent(BeatSaberMapInstance)
         
+        self.allMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
         self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
 
     def __mockGetSongsFromQuest(self) -> dict:
@@ -126,8 +127,9 @@ class MainWindow(QMainWindow):
 
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
     
-    def sortAllMaps(self, index:int):        
-        self.sortingOrder = self.sortAllMapsComboBox.itemText(index)
+    def sortAllMapsBy(self, index:int):        
+        self.sortingOrder = self.sortAllMapsByComboBox.itemText(index)
+        self.allMapsPlaylist.resetSortingReverseMode()
         self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
         
         self._unselectAllRowsInTable(self.allMapsTable)

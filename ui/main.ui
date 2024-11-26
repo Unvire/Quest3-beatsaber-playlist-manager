@@ -279,7 +279,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="sortAllMapsComboBox">
+             <widget class="QComboBox" name="sortAllMapsByComboBox">
               <item>
                <property name="text">
                 <string>Upload date</string>
@@ -297,7 +297,7 @@
               </item>
               <item>
                <property name="text">
-                <string>Arthist</string>
+                <string>Author</string>
                </property>
               </item>
               <item>

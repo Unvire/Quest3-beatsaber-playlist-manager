@@ -113,19 +113,22 @@ class BeatSaberPlaylist:
     
     def sortPlaylistInPlaceBy(self, order:str):
         sortingOrderKeysDict = {
-            'Upload Date': lambda mapInstance: mapInstance.id,
-            'Title': lambda mapInstance: mapInstance.title,
-            'Author': lambda mapInstance: mapInstance.author,
+            'Upload date': lambda mapInstance: mapInstance.id,
+            'Title': lambda mapInstance: mapInstance.title.lower(),
+            'Author': lambda mapInstance: mapInstance.author.lower(),
             'BPM': lambda mapInstance: mapInstance.bpm,
             'Difficulty': ...,
             'Ranked state': lambda mapInstance: mapInstance.rankedState,
-            'Mapper': lambda mapInstance: mapInstance.mapper,
+            'Mapper': lambda mapInstance: mapInstance.mapper.lower(),
         }
-        
+
         if order in sortingOrderKeysDict:
             sortingKey = sortingOrderKeysDict[order]
             self.songsList = sorted(self.songsList, reverse=self._isSortingReversed, key=sortingKey)
-    
+
+    def resetSortingReverseMode(self):
+        self._isSortingReversed = False
+        
     def changeSortingOrder(self):
         self._isSortingReversed = not self._isSortingReversed
     
