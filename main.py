@@ -10,7 +10,7 @@ from beatSaberMap import BeatSaberMap
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        self.allMapsList = []
+        self.allMapsPlayList = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
 
         super().__init__()
@@ -41,9 +41,9 @@ class MainWindow(QMainWindow):
         for key, mapJSON in responseJSON.items():
             BeatSaberMapInstance = BeatSaberMap(key)
             BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
-            self.allMapsList.append(BeatSaberMapInstance)
+            self.allMapsPlayList.addSongIfNotPresent(BeatSaberMapInstance)
         
-        self.addTableRows(self.allMapsTable, self.allMapsList)
+        self.addTableRows(self.allMapsTable, self.allMapsPlayList)
 
     def __mockGetSongsFromQuest(self) -> dict:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
@@ -52,8 +52,8 @@ class MainWindow(QMainWindow):
         songsIDsList = [line.split('\\')[0] for line in buffer]
         return BeatSaverAPICaller.multipleMapsCall(songsIDsList)
     
-    def addTableRows(self, table:QWidget, mapsList:list[BeatSaberMap]):
-        for mapInstance in mapsList:
+    def addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
+        for mapInstance in playlist:
             self.addTableRow(table, mapInstance)
 
     def addTableRow(self, table:QWidget, map:BeatSaberMap):
@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
 
     def targetTableDropEvent(self, event):
         mapIndex = int(event.mimeData().text())
-        mapInstance = self.allMapsList[mapIndex]
+        mapInstance = self.allMapsPlayList[mapIndex]
         isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
 
         if isMapAdded:
