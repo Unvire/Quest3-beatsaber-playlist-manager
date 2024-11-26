@@ -8,11 +8,13 @@ import os, sys
 from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
+from byteStringMusicPlayer import ByteStringMusicPlayer
 
 class MainWindow(QMainWindow):
     def __init__(self):
         self.allMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
+        self.musicPlayer = ByteStringMusicPlayer()
         self.sortingOrder = 'Upload date'
 
         super().__init__()
@@ -40,6 +42,10 @@ class MainWindow(QMainWindow):
 
         self.sortAllMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
+
+        self.playMusicButton.clicked.connect(self.playMusic)
+        self.stopMusicButton.clicked.connect(self.stopMusic)
+
 
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
@@ -76,6 +82,8 @@ class MainWindow(QMainWindow):
         self.songRankedStateLabel.setText(f'Ranked state: {mapInstance.rankedState}')
         self.diffsLabel.setText(f'Levels: {mapInstance.diffs}')
         self.tagsLabel.setText(f'Tags: {mapInstance.tagsList}')
+
+        self.musicPlayer.loadMusicFromUrl(mapInstance.previewUrl)
 
     def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
         for mapInstance in playlist:
@@ -143,6 +151,12 @@ class MainWindow(QMainWindow):
         self._unselectAllRowsInTable(self.allMapsTable)    
         self._clearTable(self.allMapsTable)
         self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
+    
+    def playMusic(self):
+        self.musicPlayer.play()
+    
+    def stopMusic(self):
+        self.musicPlayer.stop()
     
     def _getImagePixmap(self, mapInstance:BeatSaberMap) -> QPixmap:
         url = mapInstance.coverUrl
