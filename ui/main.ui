@@ -124,7 +124,21 @@
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,1,0,0">
+           <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0,0,1,0,0">
+            <item>
+             <widget class="QPushButton" name="setTitleAuthorButton">
+              <property name="text">
+               <string>Title, Author</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="setImageButton">
+              <property name="text">
+               <string>Image</string>
+              </property>
+             </widget>
+            </item>
             <item>
              <spacer name="verticalSpacer_2">
               <property name="orientation">
@@ -257,6 +271,13 @@
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Sorting order:</string>
+              </property>
+             </widget>
+            </item>
             <item>
              <widget class="QComboBox" name="sortAllMapsComboBox">
               <item>
@@ -491,27 +512,34 @@
      <string>Quest</string>
     </property>
     <addaction name="actionConnect"/>
-    <addaction name="PullPlaylistsFromQuestAction"/>
+    <addaction name="separator"/>
+    <addaction name="actionGet_songs_from_Quest"/>
     <addaction name="PushPlaylisToQuestAction"/>
+    <addaction name="PullPlaylistsFromQuestAction"/>
    </widget>
    <widget class="QMenu" name="menuPlaylist">
     <property name="title">
      <string>Playlist</string>
     </property>
-    <widget class="QMenu" name="menuChange">
+    <widget class="QMenu" name="menuNew_2">
      <property name="title">
-      <string>Change</string>
+      <string>New</string>
      </property>
-     <addaction name="changeImageAction"/>
-     <addaction name="changeAuthorTitleAction"/>
+     <addaction name="actionEmpty_playlist_2"/>
+     <addaction name="actionFrom_downloaded_maps"/>
     </widget>
-    <addaction name="newPlaylistAction"/>
+    <addaction name="menuNew_2"/>
     <addaction name="savePlaylistAction"/>
     <addaction name="loadPlaylistAction"/>
-    <addaction name="menuChange"/>
    </widget>
-   <addaction name="menuFile"/>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
    <addaction name="menuPlaylist"/>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="PullPlaylistsFromQuestAction">
@@ -527,11 +555,6 @@
   <action name="loadPlaylistAction">
    <property name="text">
     <string>Load</string>
-   </property>
-  </action>
-  <action name="newPlaylistAction">
-   <property name="text">
-    <string>New</string>
    </property>
   </action>
   <action name="actionChange_title">
@@ -557,6 +580,26 @@
   <action name="actionConnect">
    <property name="text">
     <string>Connect</string>
+   </property>
+  </action>
+  <action name="actionGet_songs_from_Quest">
+   <property name="text">
+    <string>Get songs from Quest</string>
+   </property>
+  </action>
+  <action name="actionEmpty_playlist">
+   <property name="text">
+    <string>Empty playlist</string>
+   </property>
+  </action>
+  <action name="actionEmpty_playlist_2">
+   <property name="text">
+    <string>Empty playlist</string>
+   </property>
+  </action>
+  <action name="actionFrom_downloaded_maps">
+   <property name="text">
+    <string>From downloaded maps</string>
    </property>
   </action>
  </widget>
