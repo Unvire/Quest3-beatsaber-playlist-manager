@@ -20,6 +20,11 @@ def test_select():
     instance.select(11)
     assert instance._selectedIndexes == [0, 1, 9, 10, 11]
 
+def test__setSelectedIndexes():
+    instance = beatSaberPlaylist.BeatSaberPlaylist()
+    instance.setSelectedIndexes([0, 1, 9, 10, 11])
+    assert instance._selectedIndexes == [0, 1, 9, 10, 11]
+
 def test__unselectedIndexes():
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = [i for i in range(10)]

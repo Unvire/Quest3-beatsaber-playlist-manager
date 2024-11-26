@@ -94,6 +94,9 @@ class BeatSaberPlaylist:
     def unselect(self, index:int):
         if index in self._selectedIndexes:
             self._selectedIndexes.remove(index)
+    
+    def setSelectedIndexes(self, indexesList:list[int]):
+        self._selectedIndexes = indexesList
 
     def moveSelectedItemsUp(self):
         newSongsOrder = self._calculateSongIndexesAfterMoveUp()
