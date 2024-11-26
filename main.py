@@ -11,7 +11,7 @@ from beatSaberMap import BeatSaberMap
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        self.allMapsPlayList = BeatSaberPlaylist()
+        self.allMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
 
         super().__init__()
@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
         
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
 
+        self.sortAllMapsComboBox.currentIndexChanged.connect(self.sortAllMaps)
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
         self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
@@ -46,9 +47,9 @@ class MainWindow(QMainWindow):
         for key, mapJSON in responseJSON.items():
             BeatSaberMapInstance = BeatSaberMap(key)
             BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
-            self.allMapsPlayList.addSongIfNotPresent(BeatSaberMapInstance)
+            self.allMapsPlaylist.addSongIfNotPresent(BeatSaberMapInstance)
         
-        self._addTableRows(self.allMapsTable, self.allMapsPlayList)
+        self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
 
     def __mockGetSongsFromQuest(self) -> dict:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
@@ -68,6 +69,7 @@ class MainWindow(QMainWindow):
         self.songMapperLabel.setText(f'Mapper: {mapInstance.mapper}')
         self.songBPMLabel.setText(f'BPM: {mapInstance.bpm}')
         self.songLengthLabel.setText(f'Length: {lenthTime}')
+        self.songRankedStateLabel.setText(f'Ranked state: {mapInstance.rankedState}')
         self.diffsLabel.setText(f'Levels: {mapInstance.diffs}')
         self.tagsLabel.setText(f'Tags: {mapInstance.tagsList}')
 
@@ -92,7 +94,7 @@ class MainWindow(QMainWindow):
 
     def targetTableDropEvent(self, event):
         mapIndex = int(event.mimeData().text())
-        mapInstance = self.allMapsPlayList[mapIndex]
+        mapInstance = self.allMapsPlaylist[mapIndex]
         isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
 
         if isMapAdded:
@@ -107,9 +109,10 @@ class MainWindow(QMainWindow):
 
     def sourceTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
         selectedRowsList = self._getSelectedRowsInTable(self.allMapsTable)
-        row = selectedRowsList[0]
-        mapInstance = self.allMapsPlayList[row]
-        self.setMapDetails(mapInstance)
+        if selectedRowsList:
+            row = selectedRowsList[0]
+            mapInstance = self.allMapsPlaylist[row]
+            self.setMapDetails(mapInstance)
     
     def targetTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
         selectedRowsList = self._getSelectedRowsInTable(self.playlistsMapsTable)
@@ -119,6 +122,13 @@ class MainWindow(QMainWindow):
             self.setMapDetails(mapInstance)
 
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
+    
+    def sortAllMaps(self, index:int):        
+        self._unselectAllRowsInTable(self.allMapsTable)
+        order = self.sortAllMapsComboBox.itemText(index)
+        self.allMapsPlaylist.sortPlaylistInPlaceBy(order)
+        self._clearTable(self.allMapsTable)
+        self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
     
     def _getImagePixmap(self, mapInstance:BeatSaberMap) -> QPixmap:
         url = mapInstance.coverUrl
@@ -131,6 +141,7 @@ class MainWindow(QMainWindow):
 
     def _formatSeconds(self, lengthSeconds:int) -> str:
         minutes, seconds = divmod(lengthSeconds, 60)
+        seconds = f'0{seconds}' if seconds < 10 else seconds
         return f'{minutes}:{seconds}'
     
     def moveSelectedSongsUp(self):

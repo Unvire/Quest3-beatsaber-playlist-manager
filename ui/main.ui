@@ -282,6 +282,11 @@
              <widget class="QComboBox" name="sortAllMapsComboBox">
               <item>
                <property name="text">
+                <string>Upload date</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>Title</string>
                </property>
               </item>
@@ -339,7 +344,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0">
         <item>
          <widget class="QLabel" name="mapDetailsLabel">
           <property name="text">
@@ -424,6 +429,13 @@
          <widget class="QLabel" name="songLengthLabel">
           <property name="text">
            <string>Length:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="songRankedStateLabel">
+          <property name="text">
+           <string>Ranked state:</string>
           </property>
          </widget>
         </item>
