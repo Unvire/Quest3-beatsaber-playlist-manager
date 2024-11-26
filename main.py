@@ -109,7 +109,12 @@ class MainWindow(QMainWindow):
     
     def targetTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
         selectedRows = {index.row() for index in self.playlistsMapsTable.selectionModel().selectedIndexes()}
-        print(f"Rows: {sorted(selectedRows)}")
+        if len(selectedRows) == 1:
+            index = list(selectedRows)[0]
+            mapInstance = self.playlistInstance[index]
+            self.setMapDetails(mapInstance)
+        else:
+            print(f"Rows: {sorted(selectedRows)}")
     
     def _getImagePixmap(self, mapInstance:BeatSaberMap) -> QPixmap:
         url = mapInstance.coverUrl
