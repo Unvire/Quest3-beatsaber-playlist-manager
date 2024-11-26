@@ -4,7 +4,6 @@ from PyQt5.QtGui import QDrag, QPixmap
 from PyQt5 import uic
 
 import os, sys
-import requests
 
 from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
@@ -109,12 +108,13 @@ class MainWindow(QMainWindow):
     
     def targetTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
         selectedRows = {index.row() for index in self.playlistsMapsTable.selectionModel().selectedIndexes()}
+        selectedRowsList = list(selectedRows)
         if len(selectedRows) == 1:
-            index = list(selectedRows)[0]
+            index = selectedRowsList[0]
             mapInstance = self.playlistInstance[index]
             self.setMapDetails(mapInstance)
-        else:
-            print(f"Rows: {sorted(selectedRows)}")
+
+        self.playlistInstance.setSelectedIndexes(selectedRowsList)
     
     def _getImagePixmap(self, mapInstance:BeatSaberMap) -> QPixmap:
         url = mapInstance.coverUrl
