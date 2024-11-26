@@ -7,6 +7,7 @@ class AdbWrapperFactory():
     WRAPPERS = {
             'windows': adbWindowsWrapper.AdbWindowsWrapper
         }
+    
     def __init__(self, osName:str):
         osName = osName.lower()
         
@@ -25,13 +26,13 @@ class AdbWrapperFactory():
         self.adbWrapper.getPlaylistsNamesFromQuest()
     
     def pullPlaylistsFromQuest(self, playlistNamesList:list[str]):
-        self.pullPlaylistsFromQuest(playlistNamesList)
+        self.adbWrapper.pullPlaylistsFromQuest(playlistNamesList)
     
     def uploadPlaylistIntoQuest(self, filePath:str):
-        self.uploadPlaylistIntoQuest(filePath)
+        self.adbWrapper.uploadPlaylistIntoQuest(filePath)
     
     def deletePlaylistFromQuest(self, playlistName:str):
-        self.deletePlaylistFromQuest(playlistName)
+        self.adbWrapper.deletePlaylistFromQuest(playlistName)
 
 if __name__ == '__main__':
     wrapper = AdbWrapperFactory('windows')
