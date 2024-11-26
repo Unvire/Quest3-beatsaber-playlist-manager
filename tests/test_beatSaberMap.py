@@ -153,3 +153,18 @@ def test_getDataFromBeatSaverJSON(exampleJSON_data):
     assert song.rankedState == 'Ranked'
     assert song.diffs == ['Hard', 'Expert']
     assert song.tagsList == ['pop']
+
+def test_setRankedState():
+    song = beatSaberMap.BeatSaberMap('57c2')
+
+    song.setRankedState(isRanked=False, isQualified=False)
+    assert song.rankedState == 'Graveyard'
+
+    song.setRankedState(isRanked=False, isQualified=True)
+    assert song.rankedState == 'Qualified'
+
+    song.setRankedState(isRanked=True, isQualified=True)
+    assert song.rankedState == 'Ranked'
+
+    song.setRankedState(isRanked=True, isQualified=False)
+    assert song.rankedState == 'Ranked'
