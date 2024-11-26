@@ -84,7 +84,7 @@ class MainWindow(QMainWindow):
     def _addTableRow(self, table:QWidget, mapInstance:BeatSaberMap):
         rowCount = table.rowCount()
         table.insertRow(rowCount)
-        table.setItem(rowCount, 0, QTableWidgetItem(f'{mapInstance.author} - {mapInstance.title}'))
+        table.setItem(rowCount, 0, QTableWidgetItem(f'{mapInstance.title} by {mapInstance.author}'))
         table.setItem(rowCount, 1, QTableWidgetItem(f'a'))
 
     def sourceTableStartDrag(self, supportedActions):
