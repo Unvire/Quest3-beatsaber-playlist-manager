@@ -6,29 +6,29 @@ def test_select():
     instance.songsList = [i for i in range(20)]
 
     instance.select(-1)
-    assert instance._selectedIndexes == []
+    assert instance.getSelectedIndexes() == []
     instance.select(0)
-    assert instance._selectedIndexes == [0]
+    assert instance.getSelectedIndexes() == [0]
     instance.select(10)
-    assert instance._selectedIndexes == [0, 10]
+    assert instance.getSelectedIndexes() == [0, 10]
     instance.select(0)
-    assert instance._selectedIndexes == [0, 10]
+    assert instance.getSelectedIndexes() == [0, 10]
     instance.select(1)
-    assert instance._selectedIndexes == [0, 1, 10]
+    assert instance.getSelectedIndexes() == [0, 1, 10]
     instance.select(9)
-    assert instance._selectedIndexes == [0, 1, 9, 10]
+    assert instance.getSelectedIndexes() == [0, 1, 9, 10]
     instance.select(11)
-    assert instance._selectedIndexes == [0, 1, 9, 10, 11]
+    assert instance.getSelectedIndexes() == [0, 1, 9, 10, 11]
 
 def test__setSelectedIndexes():
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.setSelectedIndexes([0, 1, 9, 10, 11])
-    assert instance._selectedIndexes == [0, 1, 9, 10, 11]
+    assert instance.getSelectedIndexes() == [0, 1, 9, 10, 11]
 
 def test__unselectedIndexes():
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = [i for i in range(10)]
-    instance._selectedIndexes = [2, 4, 5, 7]
+    instance.setSelectedIndexes([2, 4, 5, 7])
     assert instance._getUnselectedIndexes() == [0, 1, 3, 6, 8, 9]
 
 @pytest.mark.parametrize("inputData, expected", [([2, 7, 5, 4], [[2], [4, 5], [7]]), 
@@ -57,7 +57,7 @@ def test__calculateSongIndexesAfterMoveUp(inputData, expected):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = [i for i in range(10)]
 
-    instance._selectedIndexes = inputData
+    instance.setSelectedIndexes(inputData)
     assert instance._calculateSongIndexesAfterMoveUp() == expected
 
 @pytest.mark.parametrize("inputData, expected", [
@@ -88,7 +88,7 @@ def test__calculateSongIndexesAfterMoveDown(inputData, expected):
                                                 ])
 def test__caluclateSelectedIndexesAfterMoveUp(inputData, expected):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
-    instance._selectedIndexes = inputData
+    instance.setSelectedIndexes(inputData)
     assert instance._caluclateSelectedIndexesAfterMoveUp() == expected
 
 @pytest.mark.parametrize("inputData, expected", [([2, 7, 5, 4], [3, 5, 6, 8]), 
@@ -102,7 +102,7 @@ def test__caluclateSelectedIndexesAfterMoveUp(inputData, expected):
 def test__caluclateSelectedIndexesAfterMoveDown(inputData, expected):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = [i for i in range(10)]
-    instance._selectedIndexes = inputData
+    instance.setSelectedIndexes(inputData)
     assert instance._caluclateSelectedIndexesAfterMoveDown() == expected
 
 @pytest.mark.parametrize("inputData, expected", [ #0a, 1b, 2c 3d 4e 5f 6g 7h 8i 9j
@@ -132,11 +132,11 @@ def test__reorderSongs(inputData, expected):
 def test_moveSelectedItemsUp(inputData, expectedSongs, expectedSelection):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
-    instance._selectedIndexes = inputData
+    instance.setSelectedIndexes(inputData)
 
     instance.moveSelectedItemsUp()
     assert instance.songsList == expectedSongs
-    assert instance._selectedIndexes == expectedSelection
+    assert instance.getSelectedIndexes() == expectedSelection
 
 @pytest.mark.parametrize("inputData, expectedSongs, expectedSelection", [ #0a, 1b, 2c 3d 4e 5f 6g 7h 8i 9j 
                                                  ([2, 4, 5, 7], ['a', 'b', 'd', 'c', 'g', 'e', 'f', 'i', 'h', 'j'], [3, 5, 6, 8]),
@@ -152,24 +152,27 @@ def test_moveSelectedItemsUp(inputData, expectedSongs, expectedSelection):
 def test_moveSelectedItemsDown(inputData, expectedSongs, expectedSelection):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
-    instance._selectedIndexes = inputData
+    instance.setSelectedIndexes(inputData)
 
     instance.moveSelectedItemsDown()
     assert instance.songsList == expectedSongs
-    assert instance._selectedIndexes == expectedSelection
+    assert instance.getSelectedIndexes() == expectedSelection
 
 @pytest.mark.parametrize("inputData, expected", [ #0a, 1b, 2c 3d 4e 5f 6g 7h 8i 9j
-                                                 ([2, 4, 5, 7], ['a', 'c', 'd', 'g', 'i', 'j']),
+                                                 ([2, 4, 5, 7], ['a', 'b', 'd', 'g', 'i', 'j']),
                                                  ([0, 1], ['c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']),                                                 
                                                  ([7, 8, 9], ['a', 'b', 'c', 'd', 'e', 'f', 'g']),
                                                  ([1], ['a', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']),                                                 
                                                  ([8], ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j']),
                                                  ([2, 3, 4, 5], ['a', 'b', 'g', 'h', 'i', 'j']),
                                                  ([0, 1, 9], ['c', 'd', 'e', 'f', 'g', 'h', 'i']),
-                                                 ([0, 2, 4, 6, 8], ['a', 'c', 'e', 'g', 'i']),
+                                                 ([0, 2, 4, 6, 8], ['b', 'd', 'f', 'h', 'j']),
                                                  ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], []),
                                                 ])
 def test_removeSelectedSongs(inputData, expected):
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
-    instance._selectedIndexes = inputData
+    instance.setSelectedIndexes(inputData)
+
+    instance.removeSelectedSongs()
+    assert instance.songsList == expected
