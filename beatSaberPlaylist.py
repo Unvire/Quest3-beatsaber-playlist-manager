@@ -1,4 +1,4 @@
-import beatSaberMap
+import beatSaberMap, beatSaverAPICaller
 import bisect, json
 
 class BeatSaberPlaylist:
@@ -10,13 +10,16 @@ class BeatSaberPlaylist:
 
         self._selectedIndexes = []
         self._selectionGroups = []
-    
+
     def __repr__(self):
         return self.serializeInstanceToJSON()
 
+    def __iter__(self):
+        return iter(self.songsList)
+
     def loadFromFile(self, filePath:str):
         fileContent = ''
-        with open(filePath, 'r') as file:
+        with open(filePath, 'r', encoding='utf-8') as file:
             fileContent = ''.join(file.readlines())
         
         if not fileContent:
@@ -33,12 +36,15 @@ class BeatSaberPlaylist:
         self.setImageString(playlistImage)
         self._createSongsListFromJSON(playlistSongs)
     
-    def _createSongsListFromJSON(self, songsListJSON:list[dict]):
-        for songJSON in songsListJSON:
-            songID = songJSON['key']
-            beatSaberMapInstance = beatSaberMap.BeatSaberMap(songID)
-            beatSaberMapInstance.getDataFromBeatSaverApi()
-            self.addSong(beatSaberMapInstance)
+    def _createSongsListFromJSON(self, songsListJSON:list[dict]):        
+        apiCaller = beatSaverAPICaller.BeatSaverAPICaller
+        
+        songIDList = [songJSON['key'] for songJSON in songsListJSON]
+        responseJSON = apiCaller.multipleMapsCall(songIDList)
+        for mapID, mapJSON in responseJSON.items():
+            beatSaberMapInstance = beatSaberMap.BeatSaberMap(mapID)
+            beatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
+            self.addSongIfNotPresent(beatSaberMapInstance)
 
     def serializeInstanceToJSON(self) -> str:
         result = {
@@ -191,7 +197,12 @@ if __name__ == '__main__':
     
     filePath = openFile()
     a = BeatSaberPlaylist()
-    a.loadFromFile(filePath)    
+    a.loadFromFile(filePath)
+
+    print('Iteration over playlist')
+    for song in a:
+        print(song)
+
     print('Loaded playlist:\n', a.serializeInstanceToJSON())
     a.select(1)
     a.moveSelectedItemsUp()
