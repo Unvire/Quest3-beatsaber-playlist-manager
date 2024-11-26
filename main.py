@@ -65,6 +65,7 @@ class MainWindow(QMainWindow):
 
         self.songAuthorLabel.setText(f'Author: {mapInstance.author}')
         self.songTitleLabel.setText(f'Title: {mapInstance.title}')
+        self.songMapperLabel.setText(f'Mapper: {mapInstance.mapper}')
         self.songBPMLabel.setText(f'BPM: {mapInstance.bpm}')
         self.songLengthLabel.setText(f'Length: {lenthTime}')
         self.diffsLabel.setText(f'Levels: {mapInstance.diffs}')
@@ -74,10 +75,10 @@ class MainWindow(QMainWindow):
         for mapInstance in playlist:
             self._addTableRow(table, mapInstance)
 
-    def _addTableRow(self, table:QWidget, map:BeatSaberMap):
+    def _addTableRow(self, table:QWidget, mapInstance:BeatSaberMap):
         rowCount = table.rowCount()
         table.insertRow(rowCount)
-        table.setItem(rowCount, 0, QTableWidgetItem(f'{map.name}'))
+        table.setItem(rowCount, 0, QTableWidgetItem(f'{mapInstance.author} - {mapInstance.title}'))
         table.setItem(rowCount, 1, QTableWidgetItem(f'a'))
 
     def sourceTableStartDrag(self, supportedActions):
