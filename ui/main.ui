@@ -339,7 +339,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0">
         <item>
          <widget class="QLabel" name="mapDetailsLabel">
           <property name="text">
@@ -358,30 +358,58 @@
          </widget>
         </item>
         <item>
-         <widget class="QGraphicsView" name="mapImageView"/>
+         <widget class="QLabel" name="mapImageLabel">
+          <property name="minimumSize">
+           <size>
+            <width>256</width>
+            <height>256</height>
+           </size>
+          </property>
+          <property name="baseSize">
+           <size>
+            <width>256</width>
+            <height>256</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QLabel" name="songTitleLabel">
-            <property name="text">
-             <string>Author</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="songAuthorLabel">
-            <property name="text">
-             <string>Title</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="Line" name="line_6">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="songTitleLabel">
+          <property name="text">
+           <string>Author:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="songAuthorLabel">
+          <property name="text">
+           <string>Title:</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="songMapperLabel">
           <property name="text">
-           <string>Mapper</string>
+           <string>Mapper:</string>
           </property>
          </widget>
         </item>
@@ -389,6 +417,13 @@
          <widget class="QLabel" name="songBPMLabel">
           <property name="text">
            <string>BPM: </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="songLengthLabel">
+          <property name="text">
+           <string>Length:</string>
           </property>
          </widget>
         </item>
