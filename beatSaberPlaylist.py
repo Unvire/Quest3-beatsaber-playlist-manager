@@ -16,6 +16,9 @@ class BeatSaberPlaylist:
 
     def __iter__(self):
         return iter(self.songsList)
+    
+    def __getitem__(self, index):
+        return self.songsList[index]
 
     def loadFromFile(self, filePath:str):
         fileContent = ''
@@ -38,7 +41,7 @@ class BeatSaberPlaylist:
     
     def _createSongsListFromJSON(self, songsListJSON:list[dict]):        
         apiCaller = beatSaverAPICaller.BeatSaverAPICaller
-        
+
         songIDList = [songJSON['key'] for songJSON in songsListJSON]
         responseJSON = apiCaller.multipleMapsCall(songIDList)
         for mapID, mapJSON in responseJSON.items():
@@ -202,6 +205,8 @@ if __name__ == '__main__':
     print('Iteration over playlist')
     for song in a:
         print(song)
+    print('Accessing element by index')
+    print(a[1])
 
     print('Loaded playlist:\n', a.serializeInstanceToJSON())
     a.select(1)
