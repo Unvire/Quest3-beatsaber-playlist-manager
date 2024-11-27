@@ -55,6 +55,10 @@ class MainWindow(QMainWindow):
     
     def getSongsFromQuest(self) -> dict:
         responseJSON = self.__mockGetSongsFromQuest()
+        if not responseJSON:
+            print('Data from server was not obtained')
+            return
+            
         for key, mapJSON in responseJSON.items():
             BeatSaberMapInstance = BeatSaberMap(key)
             BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
@@ -103,6 +107,7 @@ class MainWindow(QMainWindow):
     def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
         for mapInstance in playlist:
             self._addTableRow(table, mapInstance)
+        table.viewport().update()
 
     def _addTableRow(self, table:QWidget, mapInstance:BeatSaberMap):
         rowCount = table.rowCount()
@@ -124,7 +129,8 @@ class MainWindow(QMainWindow):
         isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
 
         if isMapAdded:
-            self._addTableRow(self.playlistsMapsTable, mapInstance)
+            self._addTableRow(self.playlistsMapsTable, mapInstance)            
+        self.playlistsMapsTable.viewport().update()
         event.accept()
     
     def targetTableDragMoveEvent(self, event):
@@ -232,8 +238,10 @@ class MainWindow(QMainWindow):
             selectionModelInstance.removeRows(0, selectionModelInstance.rowCount())
 
 if __name__ == '__main__':
+    import time
+
     app = QApplication(sys.argv)
     mainWindowInstance = MainWindow()
-    app.processEvents()
+    time.sleep(1)
     mainWindowInstance.show()
     sys.exit(app.exec_())
