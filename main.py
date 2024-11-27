@@ -59,6 +59,7 @@ class MainWindow(QMainWindow):
             BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
             self.allMapsPlaylist.addSongIfNotPresent(BeatSaberMapInstance)
         
+        self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
         self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
 
