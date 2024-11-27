@@ -81,7 +81,7 @@ class MainWindow(QMainWindow):
         self.mapLengthLabel.setText(f'Length: {lenthTime}')
         self.mapRankedStateLabel.setText(f'Ranked state: {mapInstance.rankedState}')
         self.mapUploadedLabel.setText(f'Uploaded: {mapInstance.uploaded}')
-        self.mapTagsLabel.setText(f'Tags: {mapInstance.tagsList}')
+        self.mapTagsLabel.setText(f'Tags: {", ".join(mapInstance.tagsList)}')
         self.mapLevelsLabel.setText(f'Levels: {mapInstance.diffs}')
 
         self.musicPlayer.loadMusicFromUrl(mapInstance.previewUrl)
