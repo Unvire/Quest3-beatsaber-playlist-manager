@@ -35,13 +35,15 @@ class ByteStringMusicPlayer():
     
     def stop(self):
         self.isPlaying = False
+        
         if self.thread and self.thread.is_alive():
             self.thread.join()
-            self.thread = None
+            self.thread = None            
         if self.stream:
             self.stream.stop_stream()
             self.stream.close()
-        self.player.terminate()
+        if self.player:
+            self.player.terminate()
     
     def _playAudioInChunks(self, audio:pydub.AudioSegment):
         audioData = io.BytesIO(audio.raw_data)
