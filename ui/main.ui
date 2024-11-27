@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1209</width>
-    <height>627</height>
+    <width>1268</width>
+    <height>769</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -452,6 +452,17 @@
         </item>
         <item>
          <widget class="QTableWidget" name="mapLevelsTable">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>7</pointsize>
+           </font>
+          </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
@@ -593,7 +604,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1209</width>
+     <width>1268</width>
      <height>21</height>
     </rect>
    </property>

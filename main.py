@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray, QItemSelectionModel
-from PyQt5.QtGui import QDrag, QPixmap
+from PyQt5.QtGui import QDrag, QPixmap, QFont
 from PyQt5 import uic
 
 import os, sys
@@ -98,6 +98,14 @@ class MainWindow(QMainWindow):
             self.mapLevelsTable.setItem(rowCount, 3, QTableWidgetItem(f'{level.njs}'))
             self.mapLevelsTable.setItem(rowCount, 4, QTableWidgetItem(f'{level.nps}'))
             self.mapLevelsTable.setItem(rowCount, 5, QTableWidgetItem(f'{level.requiredMods}'))
+        self._adjustTableHeight(self.mapLevelsTable)
+
+    def _adjustTableHeight(self, table:QTableWidget):
+        MARGIN_HEIGHT = 2
+        totalTableHeight = table.horizontalHeader().height()
+        for row in range(table.rowCount()):
+            totalTableHeight += table.rowHeight(row)
+        table.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
 
     def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
         for mapInstance in playlist:
