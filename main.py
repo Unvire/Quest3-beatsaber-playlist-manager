@@ -94,7 +94,6 @@ class MainWindow(QMainWindow):
         self._setMapDetails(author=mapInstance.author, title=mapInstance.title, mapper=mapInstance.mapper, bpm=mapInstance.bpm, lengthTime=lengthTime,
                             rankedState=mapInstance.rankedState, uploaded=mapInstance.uploaded, tags=tags)
         self._generateMapLevelsTable(mapInstance)
-        thread.join()
 
     def sourceTableStartDrag(self, supportedActions):
         drag = QDrag(self)
