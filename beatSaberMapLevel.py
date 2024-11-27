@@ -1,12 +1,12 @@
 class BeatSaberMapLevel():
-    def __init__(self, level:dict):
-        self.difficulty = level['difficulty']
-        self.characteristic = level['characteristic']
-        self.njs = level['njs']
-        self.nps = level['nps']
-        self.stars = level['stars']
+    def __init__(self, Data:dict):
+        self.difficulty = Data.get('difficulty', '?')
+        self.characteristic = Data.get('characteristic', '?')
+        self.njs = Data.get('njs', '?')
+        self.nps = Data.get('nps', '?')
+        self.stars = Data.get('stars', '?')
         allModsNames = ['chroma', 'me', 'ne', 'cinema']
-        self.requiredMods = [modName for modName in allModsNames if level[modName]]
+        self.requiredMods = ', '.join([modName for modName in allModsNames if Data[modName]])
     
     def __repr__(self):
         return f'{self.difficulty}[{self.characteristic}] {self.stars}*'
@@ -39,5 +39,5 @@ if __name__ == '__main__':
         'environment': 'NiceEnvironment'
     }
     
-    a = BeatSaberMapLevel(mockDict)
+    a = BeatSaberMapData(mockDict)
     print(a)
