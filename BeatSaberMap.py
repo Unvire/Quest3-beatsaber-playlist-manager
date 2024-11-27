@@ -1,4 +1,5 @@
 import datetime, re
+from beatSaberMapLevel import BeatSaberMapLevel
 
 class BeatSaberMap:
     def __init__(self, id:str):        
@@ -63,7 +64,7 @@ class BeatSaberMap:
         self.setUrls(coverUrl, previewUrl)
         
         levelsData = responseJSON['versions'][0]['diffs']
-        diffsList = [diffData['difficulty'] for diffData in levelsData]
+        diffsList = [BeatSaberMapLevel(diffData) for diffData in levelsData]
         self.setDiffs(diffsList)
     
     def setNameAndHash(self, name:str, hash:str):
