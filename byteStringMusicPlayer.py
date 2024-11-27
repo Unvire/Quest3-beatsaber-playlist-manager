@@ -13,8 +13,11 @@ class ByteStringMusicPlayer():
         self.fileFormat = ''
 
     def loadMusicFromUrl(self, url:str):
-        response = requests.get(url)
-        self.unconvertedByteString = response.content
+        try:
+            response = requests.get(url)
+            self.unconvertedByteString = response.content
+        except requests.exceptions.MissingSchema:
+            self.unconvertedByteString = ''
         self.fileFormat = url.split('.')[-1]
         self.thread = None
     

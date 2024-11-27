@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem
-from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray, QItemSelectionModel
-from PyQt5.QtGui import QDrag, QPixmap, QFont
+from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray, QItemSelectionModel, QSize
+from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
 
 import os, sys
@@ -52,8 +52,15 @@ class MainWindow(QMainWindow):
     def blankNewPlaylist(self):
         self.allMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
+        self.musicPlayer = ByteStringMusicPlayer()
+
         self._clearTable(self.allMapsTable)
         self._clearTable(self.playlistsMapsTable)
+        self._clearTable(self.mapLevelsTable)
+
+        pixmap = QPixmap(QSize(256, 256))
+        pixmap.fill(QColor(0, 0, 0, 0))
+        self._setMapDetails(image=pixmap)
     
     def getSongsFromQuest(self) -> dict:
         responseJSON = self.__mockGetSongsFromQuest()
@@ -77,23 +84,13 @@ class MainWindow(QMainWindow):
         songsIDsList = [line.split('\\')[0] for line in buffer]
         return BeatSaverAPICaller.multipleMapsCall(songsIDsList)
     
-    def setMapDetails(self, mapInstance:BeatSaberMap):
+    def generateMapDetails(self, mapInstance:BeatSaberMap):
         pixmap = self._getImagePixmap(mapInstance)
-        self.mapImageLabel.setPixmap(pixmap)
-
-        lenthTime = self._formatSeconds(mapInstance.lengthSeconds)
-
-        self.mapAuthorLabel.setText(f'Author: {mapInstance.author}')
-        self.mapTitleLabel.setText(f'Title: {mapInstance.title}')
-        self.mapMapperLabel.setText(f'Mapper: {mapInstance.mapper}')
-        self.mapBPMLabel.setText(f'BPM: {mapInstance.bpm}')
-        self.mapLengthLabel.setText(f'Length: {lenthTime}')
-        self.mapRankedStateLabel.setText(f'Ranked state: {mapInstance.rankedState}')
-        self.mapUploadedLabel.setText(f'Uploaded: {mapInstance.uploaded}')
-        self.mapTagsLabel.setText(f'Tags: {", ".join(mapInstance.tagsList)}')
+        lengthTime = self._formatSeconds(mapInstance.lengthSeconds)
+        tags = ", ".join(mapInstance.tagsList)
+        self._setMapDetails(image=pixmap, author=mapInstance.author, title=mapInstance.title, mapper=mapInstance.mapper, bpm=mapInstance.bpm, lengthTime=lengthTime,
+                            rankedState=mapInstance.rankedState, uploaded=mapInstance.uploaded, tags=tags, previewUrl=mapInstance.previewUrl)
         self._generateMapLevelsTable(mapInstance)
-
-        self.musicPlayer.loadMusicFromUrl(mapInstance.previewUrl)
 
     def sourceTableStartDrag(self, supportedActions):
         drag = QDrag(self)
@@ -124,14 +121,14 @@ class MainWindow(QMainWindow):
         if selectedRowsList:
             row = selectedRowsList[0]
             mapInstance = self.allMapsPlaylist[row]
-            self.setMapDetails(mapInstance)
+            self.generateMapDetails(mapInstance)
     
     def targetTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
         selectedRowsList = self._getSelectedRowsInTable(self.playlistsMapsTable)
         if len(selectedRowsList) == 1:
             index = selectedRowsList[0]
             mapInstance = self.playlistInstance[index]
-            self.setMapDetails(mapInstance)
+            self.generateMapDetails(mapInstance)
 
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
     
@@ -183,6 +180,18 @@ class MainWindow(QMainWindow):
             self.mapLevelsTable.setItem(rowCount, 4, QTableWidgetItem(f'{level.nps}'))
             self.mapLevelsTable.setItem(rowCount, 5, QTableWidgetItem(f'{level.requiredMods}'))
         self._adjustTableHeight(self.mapLevelsTable)
+
+    def _setMapDetails(self, image:QPixmap, author:str='', title:str='', mapper:str='', bpm:str='', lengthTime:str='', rankedState:str='', uploaded:str='', tags:str='', previewUrl:str=''):
+        self.mapImageLabel.setPixmap(image)
+        self.mapAuthorLabel.setText(f'Author: {author}')
+        self.mapTitleLabel.setText(f'Title: {title}')
+        self.mapMapperLabel.setText(f'Mapper: {mapper}')
+        self.mapBPMLabel.setText(f'BPM: {bpm}')
+        self.mapLengthLabel.setText(f'Length: {lengthTime}')
+        self.mapRankedStateLabel.setText(f'Ranked state: {rankedState}')
+        self.mapUploadedLabel.setText(f'Uploaded: {uploaded}')
+        self.mapTagsLabel.setText(f'Tags: {tags}')
+        self.musicPlayer.loadMusicFromUrl(previewUrl)
 
     def _adjustTableHeight(self, table:QTableWidget):
         MARGIN_HEIGHT = 2
