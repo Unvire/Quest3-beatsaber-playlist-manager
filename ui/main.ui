@@ -292,11 +292,6 @@
               </item>
               <item>
                <property name="text">
-                <string>Difficulty</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
                 <string>Ranked state</string>
                </property>
               </item>

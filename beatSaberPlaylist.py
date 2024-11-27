@@ -117,7 +117,6 @@ class BeatSaberPlaylist:
             'Title': lambda mapInstance: mapInstance.title.lower(),
             'Author': lambda mapInstance: mapInstance.author.lower(),
             'BPM': lambda mapInstance: mapInstance.bpm,
-            'Difficulty': ...,
             'Ranked state': lambda mapInstance: mapInstance.rankedState,
             'Mapper': lambda mapInstance: mapInstance.mapper.lower(),
         }
