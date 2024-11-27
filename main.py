@@ -20,12 +20,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
         uic.loadUi(uiFilePath, self)
-
-        for table in (self.playlistsMapsTable, self.allMapsTable):
-            header = table.horizontalHeader()  
-            header.setSectionResizeMode(0, QHeaderView.Stretch)
-            header.setSectionResizeMode(1, QHeaderView.Stretch)
-
+        
         self.allMapsTable.setDragEnabled(True)
         self.allMapsTable.setDragDropMode(QTableWidget.DragOnly)
         self.allMapsTable.startDrag = self.sourceTableStartDrag
@@ -58,7 +53,7 @@ class MainWindow(QMainWindow):
         if not responseJSON:
             print('Data from server was not obtained')
             return
-            
+
         for key, mapJSON in responseJSON.items():
             BeatSaberMapInstance = BeatSaberMap(key)
             BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
@@ -107,12 +102,12 @@ class MainWindow(QMainWindow):
     def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
         for mapInstance in playlist:
             self._addTableRow(table, mapInstance)
-        table.viewport().update()
 
     def _addTableRow(self, table:QWidget, mapInstance:BeatSaberMap):
-        rowCount = table.rowCount()
-        table.insertRow(rowCount)
-        table.setItem(rowCount, 0, QTableWidgetItem(f'{mapInstance.title} by {mapInstance.author}'))
+        lastRowID = table.rowCount()
+        table.insertRow(lastRowID)
+        newRow = QTableWidgetItem(f'{mapInstance.title} by {mapInstance.author}')
+        table.setItem(lastRowID, 0, newRow)
 
     def sourceTableStartDrag(self, supportedActions):
         drag = QDrag(self)
@@ -129,8 +124,7 @@ class MainWindow(QMainWindow):
         isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
 
         if isMapAdded:
-            self._addTableRow(self.playlistsMapsTable, mapInstance)            
-        self.playlistsMapsTable.viewport().update()
+            self._addTableRow(self.playlistsMapsTable, mapInstance)      
         event.accept()
     
     def targetTableDragMoveEvent(self, event):
@@ -238,10 +232,7 @@ class MainWindow(QMainWindow):
             selectionModelInstance.removeRows(0, selectionModelInstance.rowCount())
 
 if __name__ == '__main__':
-    import time
-
     app = QApplication(sys.argv)
     mainWindowInstance = MainWindow()
-    time.sleep(1)
     mainWindowInstance.show()
     sys.exit(app.exec_())
