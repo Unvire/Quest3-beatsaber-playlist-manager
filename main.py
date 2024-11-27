@@ -74,14 +74,15 @@ class MainWindow(QMainWindow):
 
         lenthTime = self._formatSeconds(mapInstance.lengthSeconds)
 
-        self.songAuthorLabel.setText(f'Author: {mapInstance.author}')
-        self.songTitleLabel.setText(f'Title: {mapInstance.title}')
-        self.songMapperLabel.setText(f'Mapper: {mapInstance.mapper}')
-        self.songBPMLabel.setText(f'BPM: {mapInstance.bpm}')
-        self.songLengthLabel.setText(f'Length: {lenthTime}')
-        self.songRankedStateLabel.setText(f'Ranked state: {mapInstance.rankedState}')
-        self.diffsLabel.setText(f'Levels: {mapInstance.diffs}')
-        self.tagsLabel.setText(f'Tags: {mapInstance.tagsList}')
+        self.mapAuthorLabel.setText(f'Author: {mapInstance.author}')
+        self.mapTitleLabel.setText(f'Title: {mapInstance.title}')
+        self.mapMapperLabel.setText(f'Mapper: {mapInstance.mapper}')
+        self.mapBPMLabel.setText(f'BPM: {mapInstance.bpm}')
+        self.mapLengthLabel.setText(f'Length: {lenthTime}')
+        self.mapRankedStateLabel.setText(f'Ranked state: {mapInstance.rankedState}')
+        self.mapUploadedLabel.setText(f'Uploaded: {mapInstance.uploaded}')
+        self.mapTagsLabel.setText(f'Tags: {mapInstance.tagsList}')
+        self.mapLevelsLabel.setText(f'Levels: {mapInstance.diffs}')
 
         self.musicPlayer.loadMusicFromUrl(mapInstance.previewUrl)
 

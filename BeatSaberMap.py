@@ -1,3 +1,5 @@
+import datetime, re
+
 class BeatSaberMap:
     def __init__(self, id:str):        
         ## data for playlist entry
@@ -16,12 +18,10 @@ class BeatSaberMap:
         self.coverUrl = ''
         self.previewUrl = ''
 
-        #
         self.rankedState = ''
-
         self.diffs = []
-
         self.tagsList = []
+        self.uploaded = datetime.datetime.strptime('1970-01-01T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.%fZ')
     
     def __repr__(self) -> str:
         result = {
@@ -47,6 +47,10 @@ class BeatSaberMap:
         isRanked = responseJSON['ranked']
         isQualified = responseJSON['qualified']
         self.setRankedState(isRanked, isQualified)
+
+        uploadedTimeStr = responseJSON['uploaded']
+        uploadedDateTime = self.timeStrToDateTime(uploadedTimeStr)
+        self.setUploaded(uploadedDateTime)
         
         try:
             tagsList = responseJSON['tags']        
@@ -109,6 +113,18 @@ class BeatSaberMap:
     
     def getPreviewUrl(self) -> str:
         return self.previewUrl
+    
+    def timeStrToDateTime(self, timeStr:str) -> datetime.datetime:
+        DATE_PATTERN = '^\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2}Z$'
+        timeStr = timeStr[:19] + 'Z'
+        if re.search(DATE_PATTERN, timeStr):
+            uploadedDateTime = datetime.datetime.strptime(timeStr, '%Y-%m-%dT%H:%M:%SZ')
+        else:
+            uploadedDateTime = datetime.datetime.strptime('1970-01-01T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.%fZ')
+        return uploadedDateTime
+
+    def setUploaded(self, uploadedDateTime:datetime.datetime):
+        self.uploaded = uploadedDateTime
 
 if __name__ == '__main__':
     responseJSONMock = {

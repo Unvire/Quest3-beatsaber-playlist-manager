@@ -113,7 +113,7 @@ class BeatSaberPlaylist:
     
     def sortPlaylistInPlaceBy(self, order:str):
         sortingOrderKeysDict = {
-            'Upload date': lambda mapInstance: mapInstance.id,
+            'Upload date': lambda mapInstance: mapInstance.uploaded,
             'Title': lambda mapInstance: mapInstance.title.lower(),
             'Author': lambda mapInstance: mapInstance.author.lower(),
             'BPM': lambda mapInstance: mapInstance.bpm,

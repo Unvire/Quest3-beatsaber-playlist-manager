@@ -351,7 +351,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0">
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
         <item>
          <widget class="QLabel" name="mapDetailsLabel">
           <property name="text">
@@ -405,58 +405,65 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="songTitleLabel">
+         <widget class="QLabel" name="mapTitleLabel">
           <property name="text">
            <string>Author:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="songAuthorLabel">
+         <widget class="QLabel" name="mapAuthorLabel">
           <property name="text">
            <string>Title:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="songMapperLabel">
+         <widget class="QLabel" name="mapMapperLabel">
           <property name="text">
            <string>Mapper:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="songBPMLabel">
+         <widget class="QLabel" name="mapBPMLabel">
           <property name="text">
            <string>BPM: </string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="songLengthLabel">
+         <widget class="QLabel" name="mapLengthLabel">
           <property name="text">
            <string>Length:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="songRankedStateLabel">
+         <widget class="QLabel" name="mapRankedStateLabel">
           <property name="text">
            <string>Ranked state:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="diffsLabel">
+         <widget class="QLabel" name="mapUploadedLabel">
           <property name="text">
-           <string>Levels:</string>
+           <string>Uploaded:</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="tagsLabel">
+         <widget class="QLabel" name="mapTagsLabel">
           <property name="text">
            <string>Tags:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="mapLevelsLabel">
+          <property name="text">
+           <string>Levels:</string>
           </property>
          </widget>
         </item>
