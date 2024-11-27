@@ -12,13 +12,17 @@ class ByteStringMusicPlayer():
         self.unconvertedByteString = ''
         self.fileFormat = ''
 
-    def loadMusicFromUrl(self, url:str):
+    def downloadMusicFromUrl(self, url:str) -> str:
         try:
             response = requests.get(url)
-            self.unconvertedByteString = response.content
+            unconvertedByteString = response.content
         except requests.exceptions.MissingSchema:
-            self.unconvertedByteString = ''
-        self.fileFormat = url.split('.')[-1]
+            unconvertedByteString = ''
+        return unconvertedByteString
+    
+    def loadMusicFromByteStr(self, byteStr:str, fileFormat:str):
+        self.unconvertedByteString = byteStr
+        self.fileFormat = fileFormat
         self.thread = None
     
     def play(self):
@@ -62,8 +66,12 @@ if __name__ == '__main__':
     '''
     this class requires FFMPEG installed
     '''
+    url = 'https://eu.cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.mp3'
+    fileFormat = 'mp3'
+    
     a = ByteStringMusicPlayer()
-    a.loadMusicFromUrl('https://eu.cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.mp3')
+    byteStr = a.downloadMusicFromUrl('')
+    a.loadMusicFromByteStr(byteStr, fileFormat)
     a.play()
     input('Press any key to stop...')
     a.stop()

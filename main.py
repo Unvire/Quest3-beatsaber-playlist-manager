@@ -3,7 +3,7 @@ from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray, QItemSelecti
 from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
 
-import os, sys
+import os, sys, threading
 
 from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
@@ -60,7 +60,8 @@ class MainWindow(QMainWindow):
 
         pixmap = QPixmap(QSize(256, 256))
         pixmap.fill(QColor(0, 0, 0, 0))
-        self._setMapDetails(image=pixmap)
+        self._setMapDetails()
+        self._setMapImageAndMusic(pixmap, '', '')
     
     def getSongsFromQuest(self) -> dict:
         responseJSON = self.__mockGetSongsFromQuest()
@@ -85,12 +86,15 @@ class MainWindow(QMainWindow):
         return BeatSaverAPICaller.multipleMapsCall(songsIDsList)
     
     def generateMapDetails(self, mapInstance:BeatSaberMap):
-        pixmap = self._getImagePixmap(mapInstance)
+        thread = threading.Thread(target=self._downloadAndSetImageAndMusic, args=(mapInstance,))
+        thread.start()     
+
         lengthTime = self._formatSeconds(mapInstance.lengthSeconds)
         tags = ", ".join(mapInstance.tagsList)
-        self._setMapDetails(image=pixmap, author=mapInstance.author, title=mapInstance.title, mapper=mapInstance.mapper, bpm=mapInstance.bpm, lengthTime=lengthTime,
-                            rankedState=mapInstance.rankedState, uploaded=mapInstance.uploaded, tags=tags, previewUrl=mapInstance.previewUrl)
+        self._setMapDetails(author=mapInstance.author, title=mapInstance.title, mapper=mapInstance.mapper, bpm=mapInstance.bpm, lengthTime=lengthTime,
+                            rankedState=mapInstance.rankedState, uploaded=mapInstance.uploaded, tags=tags)
         self._generateMapLevelsTable(mapInstance)
+        thread.join()
 
     def sourceTableStartDrag(self, supportedActions):
         drag = QDrag(self)
@@ -181,8 +185,7 @@ class MainWindow(QMainWindow):
             self.mapLevelsTable.setItem(rowCount, 5, QTableWidgetItem(f'{level.requiredMods}'))
         self._adjustTableHeight(self.mapLevelsTable)
 
-    def _setMapDetails(self, image:QPixmap, author:str='', title:str='', mapper:str='', bpm:str='', lengthTime:str='', rankedState:str='', uploaded:str='', tags:str='', previewUrl:str=''):
-        self.mapImageLabel.setPixmap(image)
+    def _setMapDetails(self, author:str='', title:str='', mapper:str='', bpm:str='', lengthTime:str='', rankedState:str='', uploaded:str='', tags:str=''):        
         self.mapAuthorLabel.setText(f'Author: {author}')
         self.mapTitleLabel.setText(f'Title: {title}')
         self.mapMapperLabel.setText(f'Mapper: {mapper}')
@@ -191,7 +194,20 @@ class MainWindow(QMainWindow):
         self.mapRankedStateLabel.setText(f'Ranked state: {rankedState}')
         self.mapUploadedLabel.setText(f'Uploaded: {uploaded}')
         self.mapTagsLabel.setText(f'Tags: {tags}')
-        self.musicPlayer.loadMusicFromUrl(previewUrl)
+    
+    def _downloadAndSetImageAndMusic(self, mapInstance:BeatSaberMap):
+        pixmap, musicByteStr, fileFormat = self._downloadImageAndMusic(mapInstance)
+        self._setMapImageAndMusic(pixmap, musicByteStr, fileFormat)
+    
+    def _downloadImageAndMusic(self, mapInstance:BeatSaberMap) -> tuple[QPixmap, str, str]:
+        pixmap = self._getImagePixmap(mapInstance.coverUrl)
+        musicByteStr = self.musicPlayer.downloadMusicFromUrl(mapInstance.previewUrl)
+        fileFormat = mapInstance.previewUrl.split('.')[-1]
+        return pixmap, musicByteStr, fileFormat
+    
+    def _setMapImageAndMusic(self, pixmap:QPixmap, musicByteStr:str, fileFormat:str):
+        self.mapImageLabel.setPixmap(pixmap)
+        self.musicPlayer.loadMusicFromByteStr(musicByteStr, fileFormat)
 
     def _adjustTableHeight(self, table:QTableWidget):
         MARGIN_HEIGHT = 2
@@ -247,9 +263,8 @@ class MainWindow(QMainWindow):
         seconds = f'0{seconds}' if seconds < 10 else seconds
         return f'{minutes}:{seconds}'
     
-    def _getImagePixmap(self, mapInstance:BeatSaberMap) -> QPixmap:
-        url = mapInstance.coverUrl
-        byteString = BeatSaverAPICaller.getImageByteString(url)
+    def _getImagePixmap(self, imageUrl:str) -> QPixmap:
+        byteString = BeatSaverAPICaller.getImageByteString(imageUrl)
         byteArray = QByteArray(byteString)
 
         pixmap = QPixmap()
