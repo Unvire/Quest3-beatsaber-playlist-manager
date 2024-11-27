@@ -621,8 +621,8 @@
      <property name="title">
       <string>New</string>
      </property>
-     <addaction name="actionEmpty_playlist_2"/>
-     <addaction name="actionFrom_downloaded_maps"/>
+     <addaction name="actionNewEmptyPlaylist"/>
+     <addaction name="actionNewFromDownloadedMaps"/>
     </widget>
     <addaction name="menuNew_2"/>
     <addaction name="savePlaylistAction"/>
@@ -688,12 +688,12 @@
     <string>Empty playlist</string>
    </property>
   </action>
-  <action name="actionEmpty_playlist_2">
+  <action name="actionNewEmptyPlaylist">
    <property name="text">
     <string>Empty playlist</string>
    </property>
   </action>
-  <action name="actionFrom_downloaded_maps">
+  <action name="actionNewFromDownloadedMaps">
    <property name="text">
     <string>From local downloaded maps</string>
    </property>

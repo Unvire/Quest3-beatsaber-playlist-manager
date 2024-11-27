@@ -37,6 +37,7 @@ class MainWindow(QMainWindow):
         header.setSectionResizeMode(QHeaderView.Stretch)
         
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
+        self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
 
         self.sortAllMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
@@ -47,6 +48,12 @@ class MainWindow(QMainWindow):
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
         self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
+    
+    def blankNewPlaylist(self):
+        self.allMapsPlaylist = BeatSaberPlaylist()
+        self.playlistInstance = BeatSaberPlaylist()
+        self._clearTable(self.allMapsTable)
+        self._clearTable(self.playlistsMapsTable)
     
     def getSongsFromQuest(self) -> dict:
         responseJSON = self.__mockGetSongsFromQuest()
@@ -87,36 +94,6 @@ class MainWindow(QMainWindow):
         self._generateMapLevelsTable(mapInstance)
 
         self.musicPlayer.loadMusicFromUrl(mapInstance.previewUrl)
-
-    def _generateMapLevelsTable(self, mapInstance:BeatSaberMap):
-        self._clearTable(self.mapLevelsTable)
-        for level in mapInstance.diffs:
-            rowCount = self.mapLevelsTable.rowCount()
-            self.mapLevelsTable.insertRow(rowCount)
-            self.mapLevelsTable.setItem(rowCount, 0, QTableWidgetItem(f'{level.difficulty}'))
-            self.mapLevelsTable.setItem(rowCount, 1, QTableWidgetItem(f'{level.characteristic}'))
-            self.mapLevelsTable.setItem(rowCount, 2, QTableWidgetItem(f'{level.stars}'))
-            self.mapLevelsTable.setItem(rowCount, 3, QTableWidgetItem(f'{level.njs}'))
-            self.mapLevelsTable.setItem(rowCount, 4, QTableWidgetItem(f'{level.nps}'))
-            self.mapLevelsTable.setItem(rowCount, 5, QTableWidgetItem(f'{level.requiredMods}'))
-        self._adjustTableHeight(self.mapLevelsTable)
-
-    def _adjustTableHeight(self, table:QTableWidget):
-        MARGIN_HEIGHT = 2
-        totalTableHeight = table.horizontalHeader().height()
-        for row in range(table.rowCount()):
-            totalTableHeight += table.rowHeight(row)
-        table.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
-
-    def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
-        for mapInstance in playlist:
-            self._addTableRow(table, mapInstance)
-
-    def _addTableRow(self, table:QWidget, mapInstance:BeatSaberMap):
-        lastRowID = table.rowCount()
-        table.insertRow(lastRowID)
-        newRow = QTableWidgetItem(f'{mapInstance.title} by {mapInstance.author}')
-        table.setItem(lastRowID, 0, newRow)
 
     def sourceTableStartDrag(self, supportedActions):
         drag = QDrag(self)
@@ -181,20 +158,6 @@ class MainWindow(QMainWindow):
     def stopMusic(self):
         self.musicPlayer.stop()
     
-    def _getImagePixmap(self, mapInstance:BeatSaberMap) -> QPixmap:
-        url = mapInstance.coverUrl
-        byteString = BeatSaverAPICaller.getImageByteString(url)
-        byteArray = QByteArray(byteString)
-
-        pixmap = QPixmap()
-        pixmap.loadFromData(byteArray)
-        return pixmap
-
-    def _formatSeconds(self, lengthSeconds:int) -> str:
-        minutes, seconds = divmod(lengthSeconds, 60)
-        seconds = f'0{seconds}' if seconds < 10 else seconds
-        return f'{minutes}:{seconds}'
-    
     def moveSelectedSongsUp(self):
         self._moveSelectedRowsUpDown(self.playlistsMapsTable, 'up')
     
@@ -207,6 +170,36 @@ class MainWindow(QMainWindow):
         self.playlistInstance.removeSelectedSongs()
         self._clearTable(table)
         self._addTableRows(table, self.playlistInstance)
+    
+    def _generateMapLevelsTable(self, mapInstance:BeatSaberMap):
+        self._clearTable(self.mapLevelsTable)
+        for level in mapInstance.diffs:
+            rowCount = self.mapLevelsTable.rowCount()
+            self.mapLevelsTable.insertRow(rowCount)
+            self.mapLevelsTable.setItem(rowCount, 0, QTableWidgetItem(f'{level.difficulty}'))
+            self.mapLevelsTable.setItem(rowCount, 1, QTableWidgetItem(f'{level.characteristic}'))
+            self.mapLevelsTable.setItem(rowCount, 2, QTableWidgetItem(f'{level.stars}'))
+            self.mapLevelsTable.setItem(rowCount, 3, QTableWidgetItem(f'{level.njs}'))
+            self.mapLevelsTable.setItem(rowCount, 4, QTableWidgetItem(f'{level.nps}'))
+            self.mapLevelsTable.setItem(rowCount, 5, QTableWidgetItem(f'{level.requiredMods}'))
+        self._adjustTableHeight(self.mapLevelsTable)
+
+    def _adjustTableHeight(self, table:QTableWidget):
+        MARGIN_HEIGHT = 2
+        totalTableHeight = table.horizontalHeader().height()
+        for row in range(table.rowCount()):
+            totalTableHeight += table.rowHeight(row)
+        table.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
+
+    def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
+        for mapInstance in playlist:
+            self._addTableRow(table, mapInstance)
+
+    def _addTableRow(self, table:QWidget, mapInstance:BeatSaberMap):
+        lastRowID = table.rowCount()
+        table.insertRow(lastRowID)
+        newRow = QTableWidgetItem(f'{mapInstance.title} by {mapInstance.author}')
+        table.setItem(lastRowID, 0, newRow)
     
     def _moveSelectedRowsUpDown(self, table:QTableWidget, direction:str):
         functionDict = {
@@ -239,6 +232,21 @@ class MainWindow(QMainWindow):
         selectionModelInstance = table.model()
         if selectionModelInstance is not None:
             selectionModelInstance.removeRows(0, selectionModelInstance.rowCount())
+
+    def _formatSeconds(self, lengthSeconds:int) -> str:
+        minutes, seconds = divmod(lengthSeconds, 60)
+        seconds = f'0{seconds}' if seconds < 10 else seconds
+        return f'{minutes}:{seconds}'
+    
+    def _getImagePixmap(self, mapInstance:BeatSaberMap) -> QPixmap:
+        url = mapInstance.coverUrl
+        byteString = BeatSaverAPICaller.getImageByteString(url)
+        byteArray = QByteArray(byteString)
+
+        pixmap = QPixmap()
+        pixmap.loadFromData(byteArray)
+        return pixmap
+    
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
