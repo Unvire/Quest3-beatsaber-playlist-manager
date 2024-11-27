@@ -100,7 +100,7 @@
              <bool>true</bool>
             </attribute>
             <attribute name="horizontalHeaderStretchLastSection">
-             <bool>false</bool>
+             <bool>true</bool>
             </attribute>
             <attribute name="verticalHeaderVisible">
              <bool>true</bool>
@@ -114,11 +114,6 @@
             <column>
              <property name="text">
               <string>Name</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Diffs</string>
              </property>
             </column>
            </widget>
@@ -260,11 +255,6 @@
             <column>
              <property name="text">
               <string>Name</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Diffs</string>
              </property>
             </column>
            </widget>

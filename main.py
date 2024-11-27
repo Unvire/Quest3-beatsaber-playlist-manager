@@ -94,7 +94,6 @@ class MainWindow(QMainWindow):
         rowCount = table.rowCount()
         table.insertRow(rowCount)
         table.setItem(rowCount, 0, QTableWidgetItem(f'{mapInstance.title} by {mapInstance.author}'))
-        table.setItem(rowCount, 1, QTableWidgetItem(f'a'))
 
     def sourceTableStartDrag(self, supportedActions):
         drag = QDrag(self)
