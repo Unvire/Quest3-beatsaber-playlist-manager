@@ -37,6 +37,9 @@ class MainWindow(QMainWindow):
         self.playlistsMapsTable.dragMoveEvent = self.targetTableDragMoveEvent 
         self.playlistsMapsTable.dropEvent = self.targetTableDropEvent
         self.playlistsMapsTable.selectionModel().selectionChanged.connect(self.targetTableOnSelectionChanged)
+
+        header = self.mapLevelsTable.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
         
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
 
@@ -45,7 +48,6 @@ class MainWindow(QMainWindow):
 
         self.playMusicButton.clicked.connect(self.playMusic)
         self.stopMusicButton.clicked.connect(self.stopMusic)
-
 
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
@@ -82,9 +84,21 @@ class MainWindow(QMainWindow):
         self.mapRankedStateLabel.setText(f'Ranked state: {mapInstance.rankedState}')
         self.mapUploadedLabel.setText(f'Uploaded: {mapInstance.uploaded}')
         self.mapTagsLabel.setText(f'Tags: {", ".join(mapInstance.tagsList)}')
-        self.mapLevelsLabel.setText(f'Levels: {mapInstance.diffs}')
+        self._generateMapLevelsTable(mapInstance)
 
         self.musicPlayer.loadMusicFromUrl(mapInstance.previewUrl)
+
+    def _generateMapLevelsTable(self, mapInstance:BeatSaberMap):
+        self._clearTable(self.mapLevelsTable)
+        for level in mapInstance.diffs:
+            rowCount = self.mapLevelsTable.rowCount()
+            self.mapLevelsTable.insertRow(rowCount)
+            self.mapLevelsTable.setItem(rowCount, 0, QTableWidgetItem(f'{level.difficulty}'))
+            self.mapLevelsTable.setItem(rowCount, 1, QTableWidgetItem(f'{level.characteristic}'))
+            self.mapLevelsTable.setItem(rowCount, 2, QTableWidgetItem(f'{level.stars}'))
+            self.mapLevelsTable.setItem(rowCount, 3, QTableWidgetItem(f'{level.njs}'))
+            self.mapLevelsTable.setItem(rowCount, 4, QTableWidgetItem(f'{level.nps}'))
+            self.mapLevelsTable.setItem(rowCount, 5, QTableWidgetItem(f'{level.requiredMods}'))
 
     def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
         for mapInstance in playlist:
@@ -220,5 +234,6 @@ class MainWindow(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     mainWindowInstance = MainWindow()
+    app.processEvents()
     mainWindowInstance.show()
     sys.exit(app.exec_())
