@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem, QLabel, QFileDialog
+from PyQt5.QtWidgets import QInputDialog, QMessageBox
 from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray, QItemSelectionModel, QSize
 from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
@@ -39,6 +40,7 @@ class MainWindow(QMainWindow):
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
+        self.savePlaylistAction.triggered.connect(self.savePlaylistAs)
 
         self.sortAllMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
@@ -77,6 +79,18 @@ class MainWindow(QMainWindow):
 
         self._clearTable(self.playlistsMapsTable)
         self._addTableRows(self.playlistsMapsTable, self.playlistInstance)
+    
+    def savePlaylistAs(self):
+        fileName, ok = QInputDialog.getText(self, "Save playlist as:", "Name of playlist")
+        if not(ok and fileName):
+            return
+        
+        fileName = fileName if fileName.endswith('json') else f'{fileName}.json'
+        path = os.path.join(os.getcwd(), 'playlists', fileName)
+        playlistContent = self.playlistInstance.serializeInstanceToJSON()
+        with open(path, 'w') as file:
+            file.write(playlistContent)
+        QMessageBox.information(self, "Information", f"Playlist saved")
     
     def getSongsFromQuest(self) -> dict:
         mapIDs = self.__mockGetSongsFromQuest()
