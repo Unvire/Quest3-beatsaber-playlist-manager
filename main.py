@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem, QLabel, QFileDialog
 from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray, QItemSelectionModel, QSize
 from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
@@ -38,6 +38,7 @@ class MainWindow(QMainWindow):
         
         self.actionConnect.triggered.connect(self.getSongsFromQuest)
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
+        self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
 
         self.sortAllMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
@@ -63,27 +64,32 @@ class MainWindow(QMainWindow):
         self._setMapDetails()
         self._setMapImageAndMusic(pixmap, '', '')
     
-    def getSongsFromQuest(self) -> dict:
-        responseJSON = self.__mockGetSongsFromQuest()
-        if not responseJSON:
-            print('Data from server was not obtained')
+    def newPlaylistFromDownloadedSongs(self):
+        folderPath = str(QFileDialog.getExistingDirectory(self, 'Select Directory'))
+        if not folderPath:
             return
-
-        for key, mapJSON in responseJSON.items():
-            BeatSaberMapInstance = BeatSaberMap(key)
-            BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
-            self.allMapsPlaylist.addSongIfNotPresent(BeatSaberMapInstance)
         
+        filesList = os.listdir(folderPath)
+        mapIDs = [fileName.split(' ')[0] for fileName in filesList]
+        responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
+        self.playlistInstance.generateFromResponseDict(responseDict)
+        self._addTableRows(self.playlistsMapsTable, self.playlistInstance)
+    
+    def getSongsFromQuest(self) -> dict:
+        mapIDs = self.__mockGetSongsFromQuest()
+        responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
+        
+        self.allMapsPlaylist.generateFromResponseDict(responseDict)        
         self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
         self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
 
-    def __mockGetSongsFromQuest(self) -> dict:
+    def __mockGetSongsFromQuest(self) -> list[str]:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
         with open(mapsIDsPath, 'r', encoding='utf-8') as file:
             buffer = file.readlines()
         songsIDsList = [line.split('\\')[0] for line in buffer]
-        return BeatSaverAPICaller.multipleMapsCall(songsIDsList)
+        return songsIDsList
     
     def generateMapDetails(self, mapInstance:BeatSaberMap):
         thread = threading.Thread(target=self._downloadAndSetImageAndMusic, args=(mapInstance,))
@@ -299,6 +305,13 @@ class MainWindow(QMainWindow):
         tableCoords = self.mapLevelsTable.geometry()
         playButtonCoords = self.playMusicButton.geometry()
         return playButtonCoords.y() - tableCoords.y()
+    
+    def _getResponseJSONFromMapsIDList(self, listID:list[str]) -> dict:
+        responseDict = BeatSaverAPICaller.multipleMapsCall(listID)
+        if not responseDict:
+            print('Data from server was not obtained')
+            return {}
+        return responseDict
         
     
 if __name__ == '__main__':

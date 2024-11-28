@@ -59,6 +59,12 @@ class BeatSaberPlaylist:
             'songs': [beatSaberMapInstance.generateDictForPlaylist() for beatSaberMapInstance in self.songsList]
         }
         return json.dumps(result, indent=4)
+    
+    def generateFromResponseDict(self, playlistJSON:dict):
+        for key, mapJSON in playlistJSON.items():
+            BeatSaberMapInstance = beatSaberMap.BeatSaberMap(key)
+            BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
+            self.addSongIfNotPresent(BeatSaberMapInstance)
 
     def setPlaylistTitle(self, title:str):
         self.playlistTitle = title
