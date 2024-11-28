@@ -1,6 +1,17 @@
 import pytest
 import beatSaberPlaylist
 
+class CustomString:
+    def __init__(self, value):
+        self.id = value
+    
+    def __repr__(self):
+        return self.id
+
+    def __eq__(self, customString:'CustomString'):
+        return self.id == customString.id
+    
+
 def test_select():
     instance = beatSaberPlaylist.BeatSaberPlaylist()
     instance.songsList = [i for i in range(20)]
@@ -170,17 +181,6 @@ def test_moveSelectedItemsDown(inputData, expectedSongs, expectedSelection):
                                                  ([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], []),
                                                 ])
 def test_removeSelectedSongs(inputData, expected):
-    class CustomString:
-        def __init__(self, value):
-            self.id = value
-        
-        def __repr__(self):
-            return self.id
-
-        def __eq__(self, customString:'CustomString'):
-            return self.id == customString.id
-    
-    
     rawStringList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
     customStringList = [CustomString(letter) for letter in rawStringList]
 
