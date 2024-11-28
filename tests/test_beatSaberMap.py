@@ -151,8 +151,24 @@ def test_getDataFromBeatSaverJSON(exampleJSON_data):
     assert song.previewUrl == 'https://eu.cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.mp3'
 
     assert song.rankedState == 'Ranked'
-    assert song.diffs == ['Hard', 'Expert']
     assert song.tagsList == ['pop']
+
+    ## TEST LEVEL INSTANCES
+    hardLevel = song.diffs[0]
+    assert hardLevel.difficulty == 'Hard'
+    assert hardLevel.characteristic == 'Standard'
+    assert hardLevel.njs == 13
+    assert hardLevel.nps == 3.884
+    assert hardLevel.stars == 3.4
+    assert hardLevel.requiredMods == ''
+
+    expertLevel = song.diffs[1]
+    assert expertLevel.difficulty == 'Expert'
+    assert expertLevel.characteristic == 'Standard'
+    assert expertLevel.njs == 17
+    assert expertLevel.nps == 5.053
+    assert expertLevel.stars == 3.7
+    assert expertLevel.requiredMods == ''
 
 def test_setRankedState():
     song = beatSaberMap.BeatSaberMap('57c2')
