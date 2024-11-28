@@ -12,6 +12,7 @@ class BeatSaberPlaylist:
         self._selectionGroups = []
 
         self._isSortingReversed = False
+        self._idSet = set()
 
     def __repr__(self):
         return self.serializeInstanceToJSON()
@@ -46,10 +47,8 @@ class BeatSaberPlaylist:
 
         songIDList = [songJSON['key'] for songJSON in songsListJSON]
         responseJSON = apiCaller.multipleMapsCall(songIDList)
-        for mapID, mapJSON in responseJSON.items():
-            beatSaberMapInstance = beatSaberMap.BeatSaberMap(mapID)
-            beatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
-            self.addSongIfNotPresent(beatSaberMapInstance)
+        for key, mapJSON in responseJSON.items():
+            self._addMapFromJSON(key, mapJSON)
 
     def serializeInstanceToJSON(self) -> str:
         result = {
@@ -62,9 +61,12 @@ class BeatSaberPlaylist:
     
     def generateFromResponseDict(self, playlistJSON:dict):
         for key, mapJSON in playlistJSON.items():
-            BeatSaberMapInstance = beatSaberMap.BeatSaberMap(key)
-            BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
-            self.addSongIfNotPresent(BeatSaberMapInstance)
+            self._addMapFromJSON(key, mapJSON)
+    
+    def _addMapFromJSON(self, key:str, mapJSON:dict):
+        BeatSaberMapInstance = beatSaberMap.BeatSaberMap(key)
+        BeatSaberMapInstance.getDataFromBeatSaverJSON(mapJSON)
+        self.addSongIfNotPresent(BeatSaberMapInstance)
 
     def setPlaylistTitle(self, title:str):
         self.playlistTitle = title
@@ -84,15 +86,18 @@ class BeatSaberPlaylist:
     def getImageString(self):
         return self.imageString
 
-    def addSongIfNotPresent(self, song:beatSaberMap.BeatSaberMap) -> bool:
-        if song not in self.songsList:
-            self.songsList.append(song)
+    def addSongIfNotPresent(self, newSong:beatSaberMap.BeatSaberMap) -> bool:
+        if newSong.id not in self._idSet:
+            self.songsList.append(newSong)
+            self._idSet.add(newSong.id)
             return True
         return False
 
     def removeSelectedSongs(self):
         while self._selectedIndexes:
             currentIndex = self._selectedIndexes.pop()
+            song = self.songsList[currentIndex]
+            self._idSet.pop(song)
             self.songsList.pop(currentIndex)
     
     def select(self, index:int):
