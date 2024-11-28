@@ -39,5 +39,5 @@ if __name__ == '__main__':
         'environment': 'NiceEnvironment'
     }
     
-    a = BeatSaberMapData(mockDict)
+    a = BeatSaberMapLevel(mockDict)
     print(a)
