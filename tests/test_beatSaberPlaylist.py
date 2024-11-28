@@ -193,3 +193,30 @@ def test_removeSelectedSongs(inputData, expected):
 
     expected = [CustomString(letter) for letter in expected]
     assert instance.songsList == expected
+
+def test_addSongIfNotPresent():
+    instance = beatSaberPlaylist.BeatSaberPlaylist()
+
+    song = CustomString('a')
+    assert instance.addSongIfNotPresent(song) == True
+    assert instance.songsList == [CustomString('a')]
+    assert instance._idSet == set(['a'])
+
+    assert instance.addSongIfNotPresent(song) == False
+    assert instance.songsList == [CustomString('a')]
+    assert instance._idSet == set(['a'])
+
+    song = CustomString('b')
+    assert instance.addSongIfNotPresent(song) == True
+    assert instance.songsList == [CustomString('a'), CustomString('b')]
+    assert instance._idSet == set(['a', 'b'])
+
+    song = CustomString('c')
+    assert instance.addSongIfNotPresent(song) == True
+    assert instance.songsList == [CustomString('a'), CustomString('b'), CustomString('c')]
+    assert instance._idSet == set(['a', 'b', 'c'])
+
+    song = CustomString('a')
+    assert instance.addSongIfNotPresent(song) == False
+    assert instance.songsList == [CustomString('a'), CustomString('b'), CustomString('c')]
+    assert instance._idSet == set(['a', 'b', 'c'])
