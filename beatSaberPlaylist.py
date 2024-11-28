@@ -97,7 +97,7 @@ class BeatSaberPlaylist:
         while self._selectedIndexes:
             currentIndex = self._selectedIndexes.pop()
             song = self.songsList[currentIndex]
-            self._idSet.pop(song)
+            self._idSet.remove(song.id)
             self.songsList.pop(currentIndex)
     
     def select(self, index:int):
