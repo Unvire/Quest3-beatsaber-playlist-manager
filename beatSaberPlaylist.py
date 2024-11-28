@@ -87,11 +87,13 @@ class BeatSaberPlaylist:
         return self.imageString
 
     def addSongIfNotPresent(self, newSong:beatSaberMap.BeatSaberMap) -> bool:
+        isAdded = False
         if newSong.id not in self._idSet:
             self.songsList.append(newSong)
             self._idSet.add(newSong.id)
-            return True
-        return False
+            isAdded = True
+
+        return isAdded
 
     def removeSelectedSongs(self):
         while self._selectedIndexes:
