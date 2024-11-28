@@ -217,9 +217,14 @@ class MainWindow(QMainWindow):
         self.musicPlayer.loadMusicFromByteStr(musicByteStr, fileFormat)
 
     def _adjustTableHeight(self, table:QTableWidget):
-        MARGIN_HEIGHT = 2
+        MARGIN_HEIGHT = 2        
+        maxHeight = self._calculateAvailableSpaceForMapDetailsTable()
+
         totalTableHeight = table.horizontalHeader().height()
         for row in range(table.rowCount()):
+            rowHeight = table.rowHeight(row)
+            if totalTableHeight + rowHeight > maxHeight + MARGIN_HEIGHT:
+                break
             totalTableHeight += table.rowHeight(row)
         table.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
 
@@ -289,7 +294,13 @@ class MainWindow(QMainWindow):
             elidedText = "..."
 
         label.setText(elidedText)
-
+    
+    def _calculateAvailableSpaceForMapDetailsTable(self) -> int:
+        tableCoords = self.mapLevelsTable.geometry()
+        playButtonCoords = self.playMusicButton.geometry()
+        return playButtonCoords.y() - tableCoords.y()
+        
+    
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     mainWindowInstance = MainWindow()
