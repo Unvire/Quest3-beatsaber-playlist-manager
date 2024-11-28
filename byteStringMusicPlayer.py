@@ -40,8 +40,7 @@ class ByteStringMusicPlayer():
         self.thread.start()
     
     def stop(self):
-        self.isPlaying = False
-        
+        self.isPlaying = False        
         if self.thread and self.thread.is_alive():
             self.thread.join()
             self.thread = None            
@@ -57,8 +56,7 @@ class ByteStringMusicPlayer():
             chunk = audioData.read(ByteStringMusicPlayer.CHUNK_SIZE_BYTES)
             if not chunk:
                 break
-            self.stream.write(chunk)    
-        self.isPlaying = False 
+            self.stream.write(chunk)
 
 
 if __name__ == '__main__':
