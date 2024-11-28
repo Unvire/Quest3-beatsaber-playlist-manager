@@ -72,7 +72,10 @@ class MainWindow(QMainWindow):
         filesList = os.listdir(folderPath)
         mapIDs = [fileName.split(' ')[0] for fileName in filesList]
         responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
+
         self.playlistInstance.generateFromResponseDict(responseDict)
+
+        self._clearTable(self.playlistsMapsTable)
         self._addTableRows(self.playlistsMapsTable, self.playlistInstance)
     
     def getSongsFromQuest(self) -> dict:
@@ -82,6 +85,7 @@ class MainWindow(QMainWindow):
         self.allMapsPlaylist.generateFromResponseDict(responseDict)        
         self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
+        self._clearTable(self.allMapsTable)
         self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
 
     def __mockGetSongsFromQuest(self) -> list[str]:
