@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem, QLabel
 from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray, QItemSelectionModel, QSize
 from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
@@ -171,6 +171,14 @@ class MainWindow(QMainWindow):
         self._clearTable(table)
         self._addTableRows(table, self.playlistInstance)
     
+    def resizeEvent(self, event):
+        labels = [self.mapTitleLabel, self.mapAuthorLabel, self.mapMapperLabel, self.mapBPMLabel, self.mapLengthLabel, 
+                  self.mapRankedStateLabel, self.mapUploadedLabel, self.mapTagsLabel]
+        for label in labels:
+            text = label.toolTip()
+            self._elideLabel(label, text)
+        super().resizeEvent(event)
+    
     def _generateMapLevelsTable(self, mapInstance:BeatSaberMap):
         self._clearTable(self.mapLevelsTable)
         for level in mapInstance.diffs:
@@ -184,15 +192,15 @@ class MainWindow(QMainWindow):
             self.mapLevelsTable.setItem(rowCount, 5, QTableWidgetItem(f'{level.requiredMods}'))
         self._adjustTableHeight(self.mapLevelsTable)
 
-    def _setMapDetails(self, author:str='', title:str='', mapper:str='', bpm:str='', lengthTime:str='', rankedState:str='', uploaded:str='', tags:str=''):        
-        self.mapAuthorLabel.setText(f'Author: {author}')
-        self.mapTitleLabel.setText(f'Title: {title}')
-        self.mapMapperLabel.setText(f'Mapper: {mapper}')
-        self.mapBPMLabel.setText(f'BPM: {bpm}')
-        self.mapLengthLabel.setText(f'Length: {lengthTime}')
-        self.mapRankedStateLabel.setText(f'Ranked state: {rankedState}')
-        self.mapUploadedLabel.setText(f'Uploaded: {uploaded}')
-        self.mapTagsLabel.setText(f'Tags: {tags}')
+    def _setMapDetails(self, author:str='', title:str='', mapper:str='', bpm:str='', lengthTime:str='', rankedState:str='', uploaded:str='', tags:str=''):   
+        self._elideLabel(self.mapAuthorLabel, f'Author: {author}')
+        self._elideLabel(self.mapTitleLabel, f'Title: {title}')
+        self._elideLabel(self.mapMapperLabel, f'Mapper: {mapper}')
+        self._elideLabel(self.mapBPMLabel, f'BPM: {bpm}')
+        self._elideLabel(self.mapLengthLabel, f'Length: {lengthTime}')
+        self._elideLabel(self.mapRankedStateLabel, f'Ranked state: {rankedState}')
+        self._elideLabel(self.mapUploadedLabel, f'Uploaded: {uploaded}')
+        self._elideLabel(self.mapTagsLabel, f'Tags: {tags}')
     
     def _downloadAndSetImageAndMusic(self, mapInstance:BeatSaberMap):
         pixmap, musicByteStr, fileFormat = self._downloadImageAndMusic(mapInstance)
@@ -270,6 +278,17 @@ class MainWindow(QMainWindow):
         pixmap.loadFromData(byteArray)
         return pixmap
     
+    def _elideLabel(self, label:QLabel, text:str):
+        label.setToolTip(text)
+        labelWidth = label.width()
+        fontMetrics = label.fontMetrics()
+
+        if labelWidth > 50:
+            elidedText = fontMetrics.elidedText(text, Qt.ElideRight, labelWidth)
+        else:
+            elidedText = "..."
+
+        label.setText(elidedText)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
