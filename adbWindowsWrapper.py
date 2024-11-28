@@ -76,6 +76,6 @@ if __name__ == '__main__':
     playlistNameList = a.getPlaylistsNamesFromQuest()
     a.pullPlaylistsFromQuest(playlistNameList)
     
-    filepath = os.path.join(os.getcwd(), 'tempPlaylists', 'test.txt')
+    filepath = os.path.join(os.getcwd(), 'playlists', 'test.txt')
     #a.uploadPlaylistIntoQuest(filepath)
     a.deletePlaylistFromQuest('test.txt')
