@@ -26,8 +26,7 @@ class ByteStringMusicPlayer():
         self.thread = None
     
     def play(self):
-        if not self.unconvertedByteString or self.thread or self.isPlaying:
-            return
+        self.stop()
         
         self.player = pyaudio.PyAudio()
         audio = pydub.AudioSegment.from_file(io.BytesIO(self.unconvertedByteString), 
@@ -70,7 +69,7 @@ if __name__ == '__main__':
     fileFormat = 'mp3'
     
     a = ByteStringMusicPlayer()
-    byteStr = a.downloadMusicFromUrl('')
+    byteStr = a.downloadMusicFromUrl(url)
     a.loadMusicFromByteStr(byteStr, fileFormat)
     a.play()
     input('Press any key to stop...')
