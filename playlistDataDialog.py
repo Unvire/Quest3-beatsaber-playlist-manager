@@ -1,5 +1,5 @@
 import sys, os, base64
-from PyQt5.QtWidgets import QApplication, QDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import QByteArray, QBuffer
 
@@ -12,9 +12,17 @@ class PlaylistDataDialog(QDialog):
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'playlistHeaderDialog.ui')
         uic.loadUi(uiFilePath, self)
 
-        self.titleEdit.setText(title)
-        self.authorEdit.setText(author)
+        self.title = title
+        self.author = author
+        self.imageBase64String = ''        
+
+        self.titleEdit.setText(self.title)
+        self.authorEdit.setText(self.author)
         self._setImage(imageBase64String)
+
+        self.loadImageButton.clicked.connect(self.loadImage)
+        self.cancelButton.clicked.connect(self.confirmChanges)
+        self.cancelButton.clicked.connect(self.discardChanges)
     
     def _setImage(self, imageBase64String:str):
         pixmap = QPixmap()
@@ -29,9 +37,18 @@ class PlaylistDataDialog(QDialog):
             return
         
         self.imageLabel.setPixmap(pixmap)
+        self.imageBase64String = imageBase64String
     
     def loadImage(self):
-        pass
+        filePath, _ = QFileDialog.getOpenFileName(self, "Select image", "","Images (*.png *.jpg *.jpeg *.bmp *.gif *.tiff);;All files (*)")
+        if not filePath:
+            return
+        
+        pixmap = QPixmap(filePath)
+        scaledPixmap = pixmap.scaled(256, 256)
+        if not scaledPixmap.isNull():            
+            base64String = self._pixmapToBase64(scaledPixmap)
+            self._setImage(base64String)
 
     def confirmChanges(self):
         pass
@@ -41,6 +58,14 @@ class PlaylistDataDialog(QDialog):
 
     def getData(self):
         pass
+
+    def _pixmapToBase64(self, pixmap:QPixmap) -> str:
+        image = pixmap.toImage()
+        byteArray = QByteArray()
+        buffer = QBuffer(byteArray)
+        buffer.open(QBuffer.WriteOnly)
+        image.save(buffer, "PNG")
+        return base64.b64encode(byteArray).decode('utf-8')
     
 if __name__ == "__main__":
     title = 'title'
