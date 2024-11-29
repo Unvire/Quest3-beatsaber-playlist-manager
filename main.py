@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem, QLabel, QFileDialog, QDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem, QLabel, QFileDialog, QDialog, QMessageBox
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
 from PyQt5.QtCore import Qt, QMimeData, QByteArray, QItemSelectionModel, QSize
 from PyQt5.QtGui import QDrag, QPixmap, QColor
@@ -56,11 +56,17 @@ class MainWindow(QMainWindow):
         self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
     
     def blankNewPlaylist(self):
-        self.allMapsPlaylist = BeatSaberPlaylist()
+        isYesClicked = False
+        if not self.playlistInstance.isEmpty():
+            isYesClicked = self._yesNoWarning('Do you want to save current playlist?')
+        
+        if isYesClicked:
+            self.savePlaylistAs()
+
+
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
 
-        self._clearTable(self.allMapsTable)
         self._clearTable(self.playlistsMapsTable)
         self._clearTable(self.mapLevelsTable)
 
@@ -354,6 +360,10 @@ class MainWindow(QMainWindow):
             print('Data from server was not obtained')
             return {}
         return responseDict
+
+    def _yesNoWarning(self, message:str) -> bool:
+        reply = QMessageBox.warning(self, 'Warning', message, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        return reply == QMessageBox.Yes
 
         
     

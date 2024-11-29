@@ -149,6 +149,9 @@ class BeatSaberPlaylist:
     def changeSortingOrder(self):
         self._isSortingReversed = not self._isSortingReversed
     
+    def isEmpty(self) -> bool:
+        return len(self.songsList) == 0
+    
     def _calculateSongIndexesAfterMoveUp(self) -> list[int]:
         unselectedIndexes = self._getUnselectedIndexes()
         selectedGroups = self._makeSelectionGroups(self._selectedIndexes)
