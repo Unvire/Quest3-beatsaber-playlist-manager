@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>authorTitleDialog</class>
  <widget class="QWidget" name="authorTitleDialog">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>291</width>
-    <height>486</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -129,7 +132,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit_2"/>
+          <widget class="QLineEdit" name="authorEdit"/>
          </item>
         </layout>
        </item>
