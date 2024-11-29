@@ -12,16 +12,14 @@ class PlaylistDataDialog(QDialog):
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'playlistHeaderDialog.ui')
         uic.loadUi(uiFilePath, self)
 
-        self.title = title
-        self.author = author
         self.imageBase64String = ''        
 
-        self.titleEdit.setText(self.title)
-        self.authorEdit.setText(self.author)
+        self.titleEdit.setText(title)
+        self.authorEdit.setText(author)
         self._setImage(imageBase64String)
 
         self.loadImageButton.clicked.connect(self.loadImage)
-        self.cancelButton.clicked.connect(self.accept)
+        self.confirmButton.clicked.connect(self.accept)
         self.cancelButton.clicked.connect(self.discardChanges)
     
     def _setImage(self, imageBase64String:str):
@@ -55,8 +53,8 @@ class PlaylistDataDialog(QDialog):
 
     def getData(self) -> dict:
         response = {
-            'title': self.title,
-            'author': self.author,
+            'title': self.titleEdit.text(),
+            'author': self.authorEdit.text(),
             'image': self.imageBase64String
         }
         return response

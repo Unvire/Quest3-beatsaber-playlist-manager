@@ -119,18 +119,11 @@
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0,0,1,0,0">
+           <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0,1,0,0">
             <item>
-             <widget class="QPushButton" name="setTitleAuthorButton">
+             <widget class="QPushButton" name="setPlaylistHeaderButton">
               <property name="text">
-               <string>Title, Author</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="setImageButton">
-              <property name="text">
-               <string>Image</string>
+               <string>Header</string>
               </property>
              </widget>
             </item>

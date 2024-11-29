@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem, QLabel, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem, QLabel, QFileDialog, QDialog
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
-from PyQt5.QtCore import Qt, QMimeData, QItemSelection, QByteArray, QItemSelectionModel, QSize
+from PyQt5.QtCore import Qt, QMimeData, QByteArray, QItemSelectionModel, QSize
 from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
 
@@ -10,6 +10,7 @@ from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
 from byteStringMusicPlayer import ByteStringMusicPlayer
+from playlistDataDialog import PlaylistDataDialog
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -49,6 +50,7 @@ class MainWindow(QMainWindow):
         self.playMusicButton.clicked.connect(self.playMusic)
         self.stopMusicButton.clicked.connect(self.stopMusic)
 
+        self.setPlaylistHeaderButton.clicked.connect(self.openDialogWindow)
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
         self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
@@ -186,6 +188,18 @@ class MainWindow(QMainWindow):
     def stopMusic(self):
         self.musicPlayer.stop()
     
+    def openDialogWindow(self):
+        title = self.playlistInstance.getPlaylistTitle()
+        author = self.playlistInstance.getPlaylistAuthor()
+        image = self.playlistInstance.getImageString()
+        
+        dialogWindow = PlaylistDataDialog(title, author, image)
+        if dialogWindow.exec_() == QDialog.Accepted:
+            response = dialogWindow.getData()
+            self.playlistInstance.setPlaylistTitle(response['title'])
+            self.playlistInstance.setPlaylistAuthor(response['author'])
+            self.playlistInstance.setImageString(response['image'])
+
     def moveSelectedSongsUp(self):
         self._moveSelectedRowsUpDown(self.playlistsMapsTable, 'up')
     
