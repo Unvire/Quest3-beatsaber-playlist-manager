@@ -203,6 +203,10 @@ class MainWindow(QMainWindow):
             self._elideLabel(label, text)
         super().resizeEvent(event)
     
+    def closeEvent(self, event):
+        self.musicPlayer.stop()
+        event.accept()
+
     def _generateMapLevelsTable(self, mapInstance:BeatSaberMap):
         self._clearTable(self.mapLevelsTable)
         for level in mapInstance.diffs:
