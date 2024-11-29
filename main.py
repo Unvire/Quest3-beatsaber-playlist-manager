@@ -41,6 +41,7 @@ class MainWindow(QMainWindow):
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
         self.savePlaylistAction.triggered.connect(self.savePlaylistAs)
+        self.loadPlaylistAction.triggered.connect(self.loadPlaylist)
 
         self.sortAllMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
@@ -91,6 +92,15 @@ class MainWindow(QMainWindow):
         with open(path, 'w') as file:
             file.write(playlistContent)
         QMessageBox.information(self, "Information", f"Playlist saved")
+    
+    def loadPlaylist(self):
+        filePath, _ = QFileDialog.getOpenFileName(self, "Select Directory", "","BeatSaber playlist(*.json *.bplist)")
+        if not filePath:
+            return
+        
+        self.playlistInstance.loadFromFile(filePath)
+        self._clearTable(self.playlistsMapsTable)
+        self._addTableRows(self.playlistsMapsTable, self.playlistInstance)
     
     def getSongsFromQuest(self) -> dict:
         mapIDs = self.__mockGetSongsFromQuest()
