@@ -77,9 +77,7 @@ class MainWindow(QMainWindow):
         responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
 
         self.playlistInstance.generateFromResponseDict(responseDict)
-
-        self._clearTable(self.playlistsMapsTable)
-        self._addTableRows(self.playlistsMapsTable, self.playlistInstance)
+        self._updateSongsTable(self.playlistsMapsTable, self.playlistInstance)
     
     def savePlaylistAs(self):
         fileName, ok = QInputDialog.getText(self, "Save playlist as:", "Name of playlist")
@@ -99,8 +97,7 @@ class MainWindow(QMainWindow):
             return
         
         self.playlistInstance.loadFromFile(filePath)
-        self._clearTable(self.playlistsMapsTable)
-        self._addTableRows(self.playlistsMapsTable, self.playlistInstance)
+        self._updateSongsTable(self.playlistsMapsTable, self.playlistInstance)
     
     def getSongsFromQuest(self) -> dict:
         mapIDs = self.__mockGetSongsFromQuest()
@@ -109,8 +106,7 @@ class MainWindow(QMainWindow):
         self.allMapsPlaylist.generateFromResponseDict(responseDict)        
         self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
-        self._clearTable(self.allMapsTable)
-        self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
+        self._updateSongsTable(self.allMapsTable, self.allMapsPlaylist)
 
     def __mockGetSongsFromQuest(self) -> list[str]:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
@@ -175,16 +171,14 @@ class MainWindow(QMainWindow):
         self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
         
         self._unselectAllRowsInTable(self.allMapsTable)
-        self._clearTable(self.allMapsTable)
-        self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
+        self._updateSongsTable(self.allMapsTable, self.allMapsPlaylist)
     
     def reverseAllMapsSorting(self):
         self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
         
-        self._unselectAllRowsInTable(self.allMapsTable)    
-        self._clearTable(self.allMapsTable)
-        self._addTableRows(self.allMapsTable, self.allMapsPlaylist)
+        self._unselectAllRowsInTable(self.allMapsTable)
+        self._updateSongsTable(self.allMapsTable, self.allMapsPlaylist)
     
     def playMusic(self):
         self.musicPlayer.play()
@@ -202,8 +196,7 @@ class MainWindow(QMainWindow):
         selectedRowsList = self._getSelectedRowsInTable(table)
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
         self.playlistInstance.removeSelectedSongs()
-        self._clearTable(table)
-        self._addTableRows(table, self.playlistInstance)
+        self._updateSongsTable(table, self.playlistInstance)
     
     def resizeEvent(self, event):
         labels = [self.mapTitleLabel, self.mapAuthorLabel, self.mapMapperLabel, self.mapBPMLabel, self.mapLengthLabel, 
@@ -265,6 +258,10 @@ class MainWindow(QMainWindow):
                 break
             totalTableHeight += table.rowHeight(row)
         table.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
+    
+    def _updateSongsTable(self, table:QTableWidget, playlist:BeatSaberPlaylist):
+        self._clearTable(table)
+        self._addTableRows(table, playlist)
 
     def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
         for mapInstance in playlist:
@@ -287,8 +284,7 @@ class MainWindow(QMainWindow):
         functionDict[direction]() #move up or down
         indexes = self.playlistInstance.getSelectedIndexes()
 
-        self._clearTable(table)
-        self._addTableRows(table, self.playlistInstance)
+        self._updateSongsTable(table, self.playlistInstance)
         self._selectRowsInTable(table, indexes)
 
     def _getSelectedRowsInTable(self, table:QTableWidget) -> list[int]:
@@ -344,6 +340,7 @@ class MainWindow(QMainWindow):
             print('Data from server was not obtained')
             return {}
         return responseDict
+
         
     
 if __name__ == '__main__':
