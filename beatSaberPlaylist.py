@@ -24,6 +24,8 @@ class BeatSaberPlaylist:
         return self.songsList[index]
 
     def loadFromFile(self, filePath:str):
+        self._clearPlaylist()
+        
         fileContent = ''
         with open(filePath, 'r', encoding='utf-8') as file:
             fileContent = ''.join(file.readlines())
@@ -41,6 +43,9 @@ class BeatSaberPlaylist:
         self.setPlaylistAuthor(playlistAuthor)
         self.setImageString(playlistImage)
         self._createSongsListFromJSON(playlistSongs)
+    
+    def _clearPlaylist(self):
+        self.__init__()
     
     def _createSongsListFromJSON(self, songsListJSON:list[dict]):        
         apiCaller = beatSaverAPICaller.BeatSaverAPICaller
