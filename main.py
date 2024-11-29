@@ -192,7 +192,7 @@ class MainWindow(QMainWindow):
         title = self.playlistInstance.getPlaylistTitle()
         author = self.playlistInstance.getPlaylistAuthor()
         image = self.playlistInstance.getImageString()
-        
+
         dialogWindow = PlaylistDataDialog(title, author, image)
         if dialogWindow.exec_() == QDialog.Accepted:
             response = dialogWindow.getData()

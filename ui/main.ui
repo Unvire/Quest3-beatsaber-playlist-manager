@@ -205,7 +205,7 @@
         <item>
          <widget class="QLabel" name="allMapsLabel">
           <property name="text">
-           <string>All maps</string>
+           <string>Quest maps</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
