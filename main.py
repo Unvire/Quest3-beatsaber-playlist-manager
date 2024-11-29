@@ -25,14 +25,14 @@ class MainWindow(QMainWindow):
         self.allMapsTable.setDragEnabled(True)
         self.allMapsTable.setDragDropMode(QTableWidget.DragOnly)
         self.allMapsTable.startDrag = self.sourceTableStartDrag
-        self.allMapsTable.selectionModel().selectionChanged.connect(self.sourceTableOnSelectionChanged)
+        self.allMapsTable.cellClicked.connect(self.sourceTableRowClicked)
 
         self.playlistsMapsTable.setAcceptDrops(True)
         self.playlistsMapsTable.setDragDropMode(QTableWidget.DropOnly)
         self.playlistsMapsTable.dragEnterEvent = self.targetTableDragEnterEvent
         self.playlistsMapsTable.dragMoveEvent = self.targetTableDragMoveEvent 
         self.playlistsMapsTable.dropEvent = self.targetTableDropEvent
-        self.playlistsMapsTable.selectionModel().selectionChanged.connect(self.targetTableOnSelectionChanged)
+        self.playlistsMapsTable.cellClicked.connect(self.targetTableRowClicked)
 
         header = self.mapLevelsTable.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
@@ -143,14 +143,14 @@ class MainWindow(QMainWindow):
     def targetTableDragEnterEvent(self, event):
         event.accept()
 
-    def sourceTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
+    def sourceTableRowClicked(self, row, col):
         selectedRowsList = self._getSelectedRowsInTable(self.allMapsTable)
         if selectedRowsList:
             row = selectedRowsList[0]
             mapInstance = self.allMapsPlaylist[row]
             self.generateMapDetails(mapInstance)
     
-    def targetTableOnSelectionChanged(self, selected: QItemSelection, deselected: QItemSelection):
+    def targetTableRowClicked(self, row, col):
         selectedRowsList = self._getSelectedRowsInTable(self.playlistsMapsTable)
         if len(selectedRowsList) == 1:
             index = selectedRowsList[0]
