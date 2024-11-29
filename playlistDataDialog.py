@@ -21,7 +21,7 @@ class PlaylistDataDialog(QDialog):
         self._setImage(imageBase64String)
 
         self.loadImageButton.clicked.connect(self.loadImage)
-        self.cancelButton.clicked.connect(self.confirmChanges)
+        self.cancelButton.clicked.connect(self.accept)
         self.cancelButton.clicked.connect(self.discardChanges)
     
     def _setImage(self, imageBase64String:str):
@@ -39,7 +39,7 @@ class PlaylistDataDialog(QDialog):
         self.imageLabel.setPixmap(pixmap)
         self.imageBase64String = imageBase64String
     
-    def loadImage(self):
+    def loadImage(self, event):
         filePath, _ = QFileDialog.getOpenFileName(self, "Select image", "","Images (*.png *.jpg *.jpeg *.bmp *.gif *.tiff);;All files (*)")
         if not filePath:
             return
@@ -50,14 +50,16 @@ class PlaylistDataDialog(QDialog):
             base64String = self._pixmapToBase64(scaledPixmap)
             self._setImage(base64String)
 
-    def confirmChanges(self):
-        pass
+    def discardChanges(self, event):
+        self.close()
 
-    def discardChanges(self):
-        pass
-
-    def getData(self):
-        pass
+    def getData(self) -> dict:
+        response = {
+            'title': self.title,
+            'author': self.author,
+            'image': self.imageBase64String
+        }
+        return response
 
     def _pixmapToBase64(self, pixmap:QPixmap) -> str:
         image = pixmap.toImage()
