@@ -677,6 +677,7 @@
     <addaction name="actionGet_songs_from_Quest"/>
     <addaction name="PushPlaylisToQuestAction"/>
     <addaction name="PullPlaylistsFromQuestAction"/>
+    <addaction name="action_debug"/>
    </widget>
    <widget class="QMenu" name="menuPlaylist">
     <property name="title">
@@ -761,6 +762,11 @@
   <action name="actionNewFromDownloadedMaps">
    <property name="text">
     <string>From local downloaded maps</string>
+   </property>
+  </action>
+  <action name="action_debug">
+   <property name="text">
+    <string>[debug]</string>
    </property>
   </action>
  </widget>

@@ -4,19 +4,22 @@ from PyQt5.QtCore import Qt, QMimeData, QByteArray, QItemSelectionModel, QSize
 from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
 
-import os, sys, threading
+import os, sys, threading, time
 
 from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
 from byteStringMusicPlayer import ByteStringMusicPlayer
 from playlistDataDialog import PlaylistDataDialog
+from adbWrapperFactory import AdbWrapperFactory
 
 class MainWindow(QMainWindow):
     def __init__(self):
         self.allMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
+        self.adbWrapper = AdbWrapperFactory('windows')
+
         self.sortingOrder = 'Upload date'
 
         super().__init__()
@@ -38,11 +41,13 @@ class MainWindow(QMainWindow):
         header = self.mapLevelsTable.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
         
-        self.actionConnect.triggered.connect(self.getSongsFromQuest)
+        self.actionConnect.triggered.connect(self.connectToQuest)
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
         self.savePlaylistAction.triggered.connect(self.savePlaylistAs)
         self.loadPlaylistAction.triggered.connect(self.loadPlaylist)
+
+        self.action_debug.triggered.connect(self.getSongsFromQuest)
 
         self.sortAllMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
@@ -106,6 +111,15 @@ class MainWindow(QMainWindow):
         
         self.playlistInstance.loadFromFile(filePath)
         self._updateSongsTable(self.playlistsMapsTable, self.playlistInstance)
+    
+    def connectToQuest(self):
+        MAX_RETRIRES = 30
+        isConnected = False
+        i = 0
+        while not isConnected and i < MAX_RETRIRES:
+            isConnected = self.adbWrapper.isDebugModeEnabled()
+            i += 1
+            time.sleep(1)            
     
     def getSongsFromQuest(self) -> dict:
         mapIDs = self.__mockGetSongsFromQuest()
