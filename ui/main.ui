@@ -675,8 +675,9 @@
     <addaction name="connectAction"/>
     <addaction name="separator"/>
     <addaction name="getSongsFromQuestAction"/>
-    <addaction name="PushPlaylisToQuestAction"/>
-    <addaction name="PullPlaylistsFromQuestAction"/>
+    <addaction name="pullPlaylistsFromQuestAction"/>
+    <addaction name="pushPlaylistsToQuestAction"/>
+    <addaction name="deletePlaylistsFromQuestAction"/>
     <addaction name="action_debug"/>
    </widget>
    <widget class="QMenu" name="menuPlaylist">
@@ -704,7 +705,7 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="PullPlaylistsFromQuestAction">
+  <action name="pullPlaylistsFromQuestAction">
    <property name="text">
     <string>Pull playlists from Quest</string>
    </property>
@@ -734,9 +735,9 @@
     <string>Title/Author</string>
    </property>
   </action>
-  <action name="PushPlaylisToQuestAction">
+  <action name="pushPlaylistsToQuestAction">
    <property name="text">
-    <string>Push playlist to Quest</string>
+    <string>Push playlists to Quest</string>
    </property>
   </action>
   <action name="connectAction">
@@ -767,6 +768,11 @@
   <action name="action_debug">
    <property name="text">
     <string>[debug]</string>
+   </property>
+  </action>
+  <action name="deletePlaylistsFromQuestAction">
+   <property name="text">
+    <string>Delete playlists from Quest</string>
    </property>
   </action>
  </widget>

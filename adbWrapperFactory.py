@@ -23,7 +23,7 @@ class AdbWrapperFactory():
         return self.adbWrapper.getSongKeysFromQuest()
     
     def getPlaylistsNamesFromQuest(self) -> list[str]:
-        self.adbWrapper.getPlaylistsNamesFromQuest()
+        return self.adbWrapper.getPlaylistsNamesFromQuest()
     
     def pullPlaylistsFromQuest(self, playlistNamesList:list[str]):
         self.adbWrapper.pullPlaylistsFromQuest(playlistNamesList)

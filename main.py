@@ -47,7 +47,10 @@ class MainWindow(QMainWindow):
         self.loadPlaylistAction.triggered.connect(self.loadPlaylist)
 
         self.connectAction.triggered.connect(self.connectToQuest)
-        self.getSongsFromQuestAction.triggered.connect(self.getSongsFromQuest)
+        self.getSongsFromQuestAction.triggered.connect(self.getSongsFromQuest),
+        self.pullPlaylistsFromQuestAction.triggered.connect(self.pullPlaylists)
+        self.pushPlaylistsToQuestAction.triggered.connect(self.pushPlaylists)
+        #self.deletePlaylistsFromQuestAction.triggered.connect(...)
 
         self.action_debug.triggered.connect(self.debugGetSongsFromQuest)
 
@@ -130,7 +133,18 @@ class MainWindow(QMainWindow):
     
     def debugGetSongsFromQuest(self) -> dict:
         mapIDs = self.__mockGetSongsFromQuest()
-        self._processAllMapsIds(mapIDs)        
+        self._processAllMapsIds(mapIDs) 
+
+    def pullPlaylists(self):
+        questPlaylists = self.adbWrapper.getPlaylistsNamesFromQuest()
+        self.adbWrapper.pullPlaylistsFromQuest(questPlaylists)
+
+    def pushPlaylists(self):
+        playlistsLocalFolderPath = os.path.join(os.getcwd(), 'playlists')
+        playlists = os.listdir(playlistsLocalFolderPath)
+        for playlist in playlists:
+            playlistPath = os.path.join(playlistsLocalFolderPath, playlist)
+            self.adbWrapper.uploadPlaylistIntoQuest(playlistPath)       
     
     def _processAllMapsIds(self, mapIDs:list):        
         responseDict = self._getResponseJSONFromMapsIDList(mapIDs)

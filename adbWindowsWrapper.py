@@ -40,7 +40,7 @@ class AdbWindowsWrapper:
         return playlists
     
     def pullPlaylistsFromQuest(self, playlistNamesList:list[str]):
-        targetPath = os.path.join(os.getcwd(), 'tempPlaylists')
+        targetPath = os.path.join(os.getcwd(), 'playlists')
         if not os.path.exists(targetPath):
             os.makedirs(targetPath)
                 
@@ -78,4 +78,4 @@ if __name__ == '__main__':
     
     filepath = os.path.join(os.getcwd(), 'playlists', 'test.txt')
     #a.uploadPlaylistIntoQuest(filepath)
-    a.deletePlaylistFromQuest('test.txt')
+    #a.deletePlaylistFromQuest('test.txt')
