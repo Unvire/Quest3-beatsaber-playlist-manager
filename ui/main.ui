@@ -672,9 +672,9 @@
     <property name="title">
      <string>Quest</string>
     </property>
-    <addaction name="actionConnect"/>
+    <addaction name="connectAction"/>
     <addaction name="separator"/>
-    <addaction name="actionGet_songs_from_Quest"/>
+    <addaction name="getSongsFromQuestAction"/>
     <addaction name="PushPlaylisToQuestAction"/>
     <addaction name="PullPlaylistsFromQuestAction"/>
     <addaction name="action_debug"/>
@@ -739,12 +739,12 @@
     <string>Push playlist to Quest</string>
    </property>
   </action>
-  <action name="actionConnect">
+  <action name="connectAction">
    <property name="text">
     <string>Connect</string>
    </property>
   </action>
-  <action name="actionGet_songs_from_Quest">
+  <action name="getSongsFromQuestAction">
    <property name="text">
     <string>Get songs from Quest</string>
    </property>

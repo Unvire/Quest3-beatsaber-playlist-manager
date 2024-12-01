@@ -40,14 +40,16 @@ class MainWindow(QMainWindow):
 
         header = self.mapLevelsTable.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
-        
-        self.actionConnect.triggered.connect(self.connectToQuest)
+    
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
         self.savePlaylistAction.triggered.connect(self.savePlaylistAs)
         self.loadPlaylistAction.triggered.connect(self.loadPlaylist)
 
-        self.action_debug.triggered.connect(self.getSongsFromQuest)
+        self.connectAction.triggered.connect(self.connectToQuest)
+        self.getSongsFromQuestAction.triggered.connect(self.getSongsFromQuest)
+
+        self.action_debug.triggered.connect(self.debugGetSongsFromQuest)
 
         self.sortAllMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
@@ -118,13 +120,20 @@ class MainWindow(QMainWindow):
         i = 0
         while not isConnected and i < MAX_RETRIRES:
             isConnected = self.adbWrapper.isDebugModeEnabled()
+            print(f'Connection attempt {i}. Result is {isConnected}')
             i += 1
             time.sleep(1)            
     
     def getSongsFromQuest(self) -> dict:
+        mapIDs = self.adbWrapper.getSongKeysFromQuest()
+        self._processAllMapsIds(mapIDs)
+    
+    def debugGetSongsFromQuest(self) -> dict:
         mapIDs = self.__mockGetSongsFromQuest()
+        self._processAllMapsIds(mapIDs)        
+    
+    def _processAllMapsIds(self, mapIDs:list):        
         responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
-        
         self.allMapsPlaylist.generateFromResponseDict(responseDict)        
         self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
