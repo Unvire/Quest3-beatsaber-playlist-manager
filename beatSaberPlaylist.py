@@ -23,7 +23,7 @@ class BeatSaberPlaylist:
     def __getitem__(self, index):
         return self.songsList[index]
 
-    def loadFromFile(self, filePath:str):
+    def loadFromFile(self, filePath:str) -> bool:
         self._clearPlaylist()
         
         fileContent = ''
@@ -42,7 +42,11 @@ class BeatSaberPlaylist:
         self.setPlaylistTitle(playlistTitle)
         self.setPlaylistAuthor(playlistAuthor)
         self.setImageString(playlistImage)
-        self._createSongsListFromJSON(playlistSongs)
+        try:
+            self._createSongsListFromJSON(playlistSongs)
+        except Exception:
+            return False
+        return True
     
     def _clearPlaylist(self):
         self.__init__()
