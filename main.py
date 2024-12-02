@@ -151,7 +151,7 @@ class MainWindow(QMainWindow):
         if self._askSaveBeforeClearingPlaylist(self.playlistInstance):
             self.savePlaylistAs()
 
-        filePath, _ = QFileDialog.getOpenFileName(self, 'Select Directory', '','BeatSaber playlist(*.json *.bplist)')
+        filePath, _ = QFileDialog.getOpenFileName(self, 'Select playlist', '','BeatSaber playlist(*.json *.bplist)')
         if not filePath:
             self._infoWarning('No file was selected')
             return
