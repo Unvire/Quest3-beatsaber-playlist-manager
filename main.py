@@ -98,6 +98,9 @@ class MainWindow(QMainWindow):
         filesList = os.listdir(folderPath)
         mapIDs = [fileName.split(' ')[0] for fileName in filesList]
         responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
+        if not responseDict:
+            self._infoWarning('Error with obtaining data from beatsaver.com')
+            return
 
         self.playlistInstance.generateFromResponseDict(responseDict)
         self._updateSongsTable(self.playlistsMapsTable, self.playlistInstance)
@@ -153,10 +156,12 @@ class MainWindow(QMainWindow):
 
         filePath, _ = QFileDialog.getOpenFileName(self, 'Select playlist', '','BeatSaber playlist(*.json *.bplist)')
         if not filePath:
-            self._infoWarning('No file was selected')
             return
         
-        self.playlistInstance.loadFromFile(filePath)
+        isSuccess = self.playlistInstance.loadFromFile(filePath)
+        if not isSuccess:
+            self._infoWarning('Error with obtaining data from beatsaver.com')
+            return
         self._updateSongsTable(self.playlistsMapsTable, self.playlistInstance)
     
     def connectToQuest(self):
@@ -183,9 +188,12 @@ class MainWindow(QMainWindow):
             return
         
         missingMapsIds = self.allMapsPlaylist.checkMissingSongs(self.playlistInstance)
-        misingMapsInstances = self.playlistInstance.getSongsByIds(missingMapsIds)
-        donwloadDialog = DownloadMissingMapsDialog(misingMapsInstances)
-        donwloadDialog.exec_()
+        if missingMapsIds:
+            misingMapsInstances = self.playlistInstance.getSongsByIds(missingMapsIds)
+            donwloadDialog = DownloadMissingMapsDialog(misingMapsInstances)
+            donwloadDialog.exec_()
+        else:
+            self._infoWarning('All maps present in Quest')
     
     def debugGetSongsFromQuest(self) -> dict:
         mapIDs = self.__mockGetSongsFromQuest()
@@ -193,7 +201,7 @@ class MainWindow(QMainWindow):
 
     def pullPlaylists(self):
         if not self.isConnected:
-            print('Quest not connected')
+            self._infoWarning('Quest not connected')
             return
         
         questPlaylists = self.adbWrapper.getPlaylistsNamesFromQuest()
@@ -201,7 +209,7 @@ class MainWindow(QMainWindow):
 
     def pushPlaylists(self):
         if not self.isConnected:
-            print('Quest not connected')
+            self._infoWarning('Quest not connected')
             return
         
         playlistsLocalFolderPath = os.path.join(os.getcwd(), 'playlists')
@@ -212,7 +220,7 @@ class MainWindow(QMainWindow):
         
     def deletePlaylists(self):
         if not self.isConnected:
-            print('Quest not connected')
+            self._infoWarning('Quest not connected')
             return
         
         questPlaylists = self.adbWrapper.getPlaylistsNamesFromQuest()
@@ -220,11 +228,11 @@ class MainWindow(QMainWindow):
         if deleteDialog.exec_() == QDialog.Accepted:
             namesList = deleteDialog.getData()
             self.adbWrapper.deletePlaylistsFromQuest(namesList)
+            self._infoWarning('Selected playlists deleted')
     
     def _processAllMapsIds(self, mapIDs:list):
-        try:        
-            responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
-        except:
+        responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
+        if not responseDict:
             self._infoWarning('Error with obtaining data from beatsaver.com')
             return
         
@@ -473,9 +481,6 @@ class MainWindow(QMainWindow):
     
     def _getResponseJSONFromMapsIDList(self, listID:list[str]) -> dict:
         responseDict = BeatSaverAPICaller.multipleMapsCall(listID)
-        if not responseDict:
-            print('Data from server was not obtained')
-            return {}
         return responseDict
 
     def _yesNoWarning(self, message:str) -> bool:
