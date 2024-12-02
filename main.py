@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         self.adbWrapper = AdbWrapperFactory('windows')
 
         self.sortingOrder = 'Upload date'
+        self.isConnected = False
 
         super().__init__()
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
@@ -119,15 +120,19 @@ class MainWindow(QMainWindow):
     
     def connectToQuest(self):
         MAX_RETRIRES = 30
-        isConnected = False
+        self.isConnected = False
         i = 0
-        while not isConnected and i < MAX_RETRIRES:
-            isConnected = self.adbWrapper.isDebugModeEnabled()
-            print(f'Connection attempt {i}. Result is {isConnected}')
+        while not self.isConnected and i < MAX_RETRIRES:
+            self.isConnected = self.adbWrapper.isDebugModeEnabled()
+            print(f'Connection attempt {i}. Result is {self.isConnected}')
             i += 1
             time.sleep(1)            
     
     def getSongsFromQuest(self) -> dict:
+        if not self.isConnected:
+            print('Quest not connected')
+            return
+        
         mapIDs = self.adbWrapper.getSongKeysFromQuest()
         self._processAllMapsIds(mapIDs)
     
@@ -136,10 +141,18 @@ class MainWindow(QMainWindow):
         self._processAllMapsIds(mapIDs) 
 
     def pullPlaylists(self):
+        if not self.isConnected:
+            print('Quest not connected')
+            return
+        
         questPlaylists = self.adbWrapper.getPlaylistsNamesFromQuest()
         self.adbWrapper.pullPlaylistsFromQuest(questPlaylists)
 
     def pushPlaylists(self):
+        if not self.isConnected:
+            print('Quest not connected')
+            return
+        
         playlistsLocalFolderPath = os.path.join(os.getcwd(), 'playlists')
         playlists = os.listdir(playlistsLocalFolderPath)
         for playlist in playlists:
