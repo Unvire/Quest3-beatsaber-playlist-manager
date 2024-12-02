@@ -104,12 +104,38 @@ class MainWindow(QMainWindow):
         self._updateSongsTable(self.playlistsMapsTable, self.playlistInstance)
     
     def savePlaylistAs(self):
+        def continueWithMissingHeader(playlistInstance:BeatSaberPlaylist) -> bool:
+            isContinue = True
+            isImagePresent = bool(playlistInstance.getImageString())
+            isTitlePresent = bool(playlistInstance.getPlaylistTitle())
+            isAuthorPresent = bool(playlistInstance.getPlaylistAuthor())
+            if not isImagePresent or not isTitlePresent or not isAuthorPresent:
+                message = f'Header is missing some data. '
+                titleMessage = 'Title missing. ' * int(isTitlePresent)
+                authorMessage = 'Author missing. ' * int(isAuthorPresent)
+                imageMessage = 'Image missing. ' * int(isImagePresent)
+                isContinue = self._yesNoWarning(f'{message}{titleMessage}{authorMessage}{imageMessage}Continue?')
+            return isContinue
+        
+        if self.playlistInstance.isEmpty():
+            self._infoWarning('Playlist is empty')
+            return
+        
+        if not continueWithMissingHeader(self.playlistInstance):
+            return
+        
         fileName, ok = QInputDialog.getText(self, "Save playlist as:", "Name of playlist")
-        if not(ok and fileName):
+        if not ok:
+            self._infoWarning('Operation cancelled')
             return
         
         fileName = fileName if fileName.endswith('json') else f'{fileName}.json'
         path = os.path.join(os.getcwd(), 'playlists', fileName)
+        isOverwriteExistingFile = self._yesNoWarning('Playlist {fileName} exists. Overwrite it?') if os.path.exists(path) else True
+        if not isOverwriteExistingFile:
+            self._infoWarning('File was not saved')
+            return 
+        
         playlistContent = self.playlistInstance.serializeInstanceToJSON()
         with open(path, 'w') as file:
             file.write(playlistContent)
@@ -185,8 +211,13 @@ class MainWindow(QMainWindow):
             namesList = deleteDialog.getData()
             self.adbWrapper.deletePlaylistsFromQuest(namesList)
     
-    def _processAllMapsIds(self, mapIDs:list):        
-        responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
+    def _processAllMapsIds(self, mapIDs:list):
+        try:        
+            responseDict = self._getResponseJSONFromMapsIDList(mapIDs)
+        except:
+            self._infoWarning('Error with obtaining data from beatsaver.com')
+            return
+        
         self.allMapsPlaylist.generateFromResponseDict(responseDict)        
         self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
@@ -440,7 +471,9 @@ class MainWindow(QMainWindow):
     def _yesNoWarning(self, message:str) -> bool:
         reply = QMessageBox.warning(self, 'Warning', message, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         return reply == QMessageBox.Yes
-
+    
+    def _infoWarning(self, message:str):
+        QMessageBox.information(self, 'Info', message, QMessageBox.Ok, QMessageBox.Ok)
         
     
 if __name__ == '__main__':
