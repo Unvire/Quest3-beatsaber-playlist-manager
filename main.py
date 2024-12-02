@@ -142,6 +142,10 @@ class MainWindow(QMainWindow):
         self._processAllMapsIds(mapIDs)
     
     def checkMissingMaps(self):
+        if not self.isConnected:
+            print('Quest not connected')
+            return
+        
         missingMapsIds = self.allMapsPlaylist.checkMissingSongs(self.playlistInstance)
         misingMapsInstances = self.playlistInstance.getSongsByIds(missingMapsIds)
         donwloadDialog = DownloadMissingMapsDialog(misingMapsInstances)
