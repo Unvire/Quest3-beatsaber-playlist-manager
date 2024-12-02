@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, QMimeData, QByteArray, QItemSelectionModel, QSize
 from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
 
-import os, sys, threading, time
+import os, sys, threading, time, platform
 
 from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
@@ -18,7 +18,8 @@ class MainWindow(QMainWindow):
         self.allMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
-        self.adbWrapper = AdbWrapperFactory('windows')
+
+        self.adbWrapper = AdbWrapperFactory(platform.system())
 
         self.sortingOrder = 'Upload date'
         self.isConnected = False

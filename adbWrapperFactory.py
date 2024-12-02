@@ -6,6 +6,8 @@ class WrapperNotImplemented(Exception):
 class AdbWrapperFactory():
     WRAPPERS = {
             'windows': adbWindowsWrapper.AdbWindowsWrapper
+            #'linux':
+            #'darwin'
         }
     
     def __init__(self, osName:str):
