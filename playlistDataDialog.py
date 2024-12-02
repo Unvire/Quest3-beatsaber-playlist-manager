@@ -20,7 +20,7 @@ class PlaylistDataDialog(QDialog):
 
         self.loadImageButton.clicked.connect(self.loadImage)
         self.confirmButton.clicked.connect(self.accept)
-        self.cancelButton.clicked.connect(self.discardChanges)
+        self.cancelButton.clicked.connect(self.reject)
     
     def _setImage(self, imageBase64String:str):
         pixmap = QPixmap()
@@ -47,9 +47,6 @@ class PlaylistDataDialog(QDialog):
         if not scaledPixmap.isNull():            
             base64String = self._pixmapToBase64(scaledPixmap)
             self._setImage(base64String)
-
-    def discardChanges(self, event):
-        self.close()
 
     def getData(self) -> dict:
         response = {
