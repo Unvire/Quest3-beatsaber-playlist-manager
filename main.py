@@ -11,6 +11,7 @@ from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
 from byteStringMusicPlayer import ByteStringMusicPlayer
 from playlistDataDialog import PlaylistDataDialog
+from deletePlaylistsDialog import DeletePlaylistsDialog
 from adbWrapperFactory import AdbWrapperFactory
 
 class MainWindow(QMainWindow):
@@ -52,7 +53,7 @@ class MainWindow(QMainWindow):
         self.getSongsFromQuestAction.triggered.connect(self.getSongsFromQuest),
         self.pullPlaylistsFromQuestAction.triggered.connect(self.pullPlaylists)
         self.pushPlaylistsToQuestAction.triggered.connect(self.pushPlaylists)
-        #self.deletePlaylistsFromQuestAction.triggered.connect(...)
+        self.deletePlaylistsFromQuestAction.triggered.connect(self.deletePlaylists)
 
         self.action_debug.triggered.connect(self.debugGetSongsFromQuest)
 
@@ -158,7 +159,18 @@ class MainWindow(QMainWindow):
         playlists = os.listdir(playlistsLocalFolderPath)
         for playlist in playlists:
             playlistPath = os.path.join(playlistsLocalFolderPath, playlist)
-            self.adbWrapper.uploadPlaylistIntoQuest(playlistPath)       
+            self.adbWrapper.uploadPlaylistIntoQuest(playlistPath)
+        
+    def deletePlaylists(self):
+        if not self.isConnected:
+            print('Quest not connected')
+            return
+        
+        questPlaylists = self.adbWrapper.getPlaylistsNamesFromQuest()
+        deleteDialog = DeletePlaylistsDialog(questPlaylists)
+        if deleteDialog.exec_() == QDialog.Accepted:
+            namesList = deleteDialog.getData()
+            self.adbWrapper.deletePlaylistsFromQuest(namesList)
     
     def _processAllMapsIds(self, mapIDs:list):        
         responseDict = self._getResponseJSONFromMapsIDList(mapIDs)

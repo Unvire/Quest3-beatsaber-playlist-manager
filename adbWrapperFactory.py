@@ -7,7 +7,7 @@ class AdbWrapperFactory():
     WRAPPERS = {
             'windows': adbWindowsWrapper.AdbWindowsWrapper
             #'linux':
-            #'darwin'
+            #'darwin
         }
     
     def __init__(self, osName:str):
@@ -35,6 +35,10 @@ class AdbWrapperFactory():
     
     def deletePlaylistFromQuest(self, playlistName:str):
         self.adbWrapper.deletePlaylistFromQuest(playlistName)
+    
+    def deletePlaylistsFromQuest(self, playlistNamesList:list[str]):
+        for playlistName in playlistNamesList:
+            self.adbWrapper.deletePlaylistFromQuest(playlistName)
 
 if __name__ == '__main__':
     wrapper = AdbWrapperFactory('windows')

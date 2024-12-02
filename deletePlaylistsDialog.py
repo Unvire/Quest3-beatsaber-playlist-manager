@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QCheckBox
 from PyQt5 import uic
 
 
-class SelectItemsDialog(QDialog):
+class DeletePlaylistsDialog(QDialog):
     def __init__(self, items):
         super().__init__()
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'deletePlaylistsDialog.ui')
@@ -22,7 +22,7 @@ class SelectItemsDialog(QDialog):
         self.cancelButton.clicked.connect(self.reject)
         self.deleteButton.clicked.connect(self.accept)
 
-    def getSelectedItems(self):
+    def getData(self):
         selectedItems = [checkbox.text() for checkbox in self.checkboxes if checkbox.isChecked()]
         return selectedItems
 
@@ -30,6 +30,6 @@ class SelectItemsDialog(QDialog):
 if __name__ == '__main__':
     items = [f'Element {i + 1}' for i in range(100)]
     app = QApplication(sys.argv)
-    window = SelectItemsDialog(items)
+    window = DeletePlaylistsDialog(items)
     window.show()
     sys.exit(app.exec_())
