@@ -10,9 +10,11 @@ from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
 from byteStringMusicPlayer import ByteStringMusicPlayer
+from adbWrapperFactory import AdbWrapperFactory
+
 from playlistDataDialog import PlaylistDataDialog
 from deletePlaylistsDialog import DeletePlaylistsDialog
-from adbWrapperFactory import AdbWrapperFactory
+from downloadMissingMapsDialog import DownloadMissingMapsDialog
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -140,7 +142,10 @@ class MainWindow(QMainWindow):
         self._processAllMapsIds(mapIDs)
     
     def checkMissingMaps(self):
-        missingSongs = self.allMapsPlaylist.checkMissingMaps(self.playlistInstance)
+        missingMapsIds = self.allMapsPlaylist.checkMissingSongs(self.playlistInstance)
+        misingMapsInstances = self.playlistInstance.getSongsByIds(missingMapsIds)
+        donwloadDialog = DownloadMissingMapsDialog(misingMapsInstances)
+        donwloadDialog.exec_()
     
     def debugGetSongsFromQuest(self) -> dict:
         mapIDs = self.__mockGetSongsFromQuest()
