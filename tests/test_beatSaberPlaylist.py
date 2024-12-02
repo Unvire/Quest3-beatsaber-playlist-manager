@@ -241,3 +241,20 @@ def test_checkMissingMaps(inputData, expected):
     for song in customTargetStringList:
         targetInstance.addSongIfNotPresent(song)
     assert sorted(sourceInstance.checkMissingMaps(targetInstance)) == expected
+
+def test_getSongsByIds():
+    rawStringList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+    customStringList = [CustomString(letter) for letter in rawStringList]
+
+    instance = beatSaberPlaylist.BeatSaberPlaylist()
+    for song in customStringList:
+        instance.addSongIfNotPresent(song)
+    
+    expected = [CustomString('a'), CustomString('c')]
+    assert instance.getSongsByIds(['a', 'c']) == expected
+
+    expected = [CustomString('c'), CustomString('f'), CustomString('i')]
+    assert instance.getSongsByIds(['i', 'c', 'f']) == expected
+
+    expected = []
+    assert instance.getSongsByIds([]) == expected

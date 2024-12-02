@@ -99,6 +99,17 @@ class BeatSaberPlaylist:
             isAdded = True
 
         return isAdded
+    
+    def getSongsByIds(self, mapIdsList:list[str]) -> list[beatSaberMap.BeatSaberMap]:
+        result = []
+        numOfSongs = len(mapIdsList)
+        for song in self.songsList:
+            if song.id in mapIdsList:
+                result.append(song)
+                numOfSongs -= 1
+            if numOfSongs <= 0:
+                break
+        return result
 
     def removeSelectedSongs(self):
         while self._selectedIndexes:
