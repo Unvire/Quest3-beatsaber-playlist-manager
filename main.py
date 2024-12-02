@@ -94,7 +94,6 @@ class MainWindow(QMainWindow):
         
         folderPath = str(QFileDialog.getExistingDirectory(self, 'Select Directory'))
         if not folderPath:
-            self._infoWarning('No folder was selected')
             return
         
         filesList = os.listdir(folderPath)
@@ -126,8 +125,7 @@ class MainWindow(QMainWindow):
             return
         
         fileName, ok = QInputDialog.getText(self, "Save playlist as:", "Name of playlist")
-        if not ok:
-            self._infoWarning('Operation cancelled')
+        if not (ok and fileName):
             return
         
         fileName = fileName if fileName.endswith('json') else f'{fileName}.json'
