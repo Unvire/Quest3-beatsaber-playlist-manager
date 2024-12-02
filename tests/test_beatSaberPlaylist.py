@@ -220,3 +220,24 @@ def test_addSongIfNotPresent():
     assert instance.addSongIfNotPresent(song) == False
     assert instance.songsList == [CustomString('a'), CustomString('b'), CustomString('c')]
     assert instance._idSet == set(['a', 'b', 'c'])
+
+@pytest.mark.parametrize("inputData, expected", [
+                                                 ([], []),
+                                                 (['a', 'b', 'c', 'g', 'h', 'i', 'j'], []), 
+                                                 (['a', 'c', 'i', 'j'], []),
+                                                 (['a', 'b', 'c', 'd'], ['d']),
+                                                 (['d', 'e', 'f'], ['d', 'e', 'f']),
+                                                ])
+def test_checkMissingMaps(inputData, expected):
+    sourceStrings = ['a', 'b', 'c', 'g', 'h', 'i', 'j']
+    customSourceStringList = [CustomString(letter) for letter in sourceStrings]
+    customTargetStringList = [CustomString(letter) for letter in inputData]
+
+    sourceInstance = beatSaberPlaylist.BeatSaberPlaylist()
+    for song in customSourceStringList:
+        sourceInstance.addSongIfNotPresent(song)
+
+    targetInstance = beatSaberPlaylist.BeatSaberPlaylist()
+    for song in customTargetStringList:
+        targetInstance.addSongIfNotPresent(song)
+    assert sorted(sourceInstance.checkMissingMaps(targetInstance)) == expected

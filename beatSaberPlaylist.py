@@ -120,6 +120,13 @@ class BeatSaberPlaylist:
     
     def getSelectedIndexes(self) -> list[int]:
         return self._selectedIndexes[:]
+    
+    def getSongsIds(self) -> list[str]:
+        return list(self._idSet)
+    
+    def checkMissingMaps(self, targetPlaylist:'BeatSaberPlaylist') -> list[str]:
+        targetIndexes = set(targetPlaylist.getSongsIds())
+        return list(targetIndexes - self._idSet)
 
     def moveSelectedItemsUp(self):
         newSongsOrder = self._calculateSongIndexesAfterMoveUp()
