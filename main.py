@@ -50,7 +50,8 @@ class MainWindow(QMainWindow):
         self.loadPlaylistAction.triggered.connect(self.loadPlaylist)
 
         self.connectAction.triggered.connect(self.connectToQuest)
-        self.getSongsFromQuestAction.triggered.connect(self.getSongsFromQuest),
+        self.getSongsFromQuestAction.triggered.connect(self.getSongsFromQuest)
+        self.checkMissingMapsAction.triggered.connect(self.checkMissingMaps)
         self.pullPlaylistsFromQuestAction.triggered.connect(self.pullPlaylists)
         self.pushPlaylistsToQuestAction.triggered.connect(self.pushPlaylists)
         self.deletePlaylistsFromQuestAction.triggered.connect(self.deletePlaylists)
@@ -137,6 +138,9 @@ class MainWindow(QMainWindow):
         
         mapIDs = self.adbWrapper.getSongKeysFromQuest()
         self._processAllMapsIds(mapIDs)
+    
+    def checkMissingMaps(self):
+        missingSongs = self.allMapsPlaylist.checkMissingMaps(self.playlistInstance)
     
     def debugGetSongsFromQuest(self) -> dict:
         mapIDs = self.__mockGetSongsFromQuest()

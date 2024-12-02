@@ -675,6 +675,8 @@
     <addaction name="connectAction"/>
     <addaction name="separator"/>
     <addaction name="getSongsFromQuestAction"/>
+    <addaction name="checkMissingMapsAction"/>
+    <addaction name="separator"/>
     <addaction name="pullPlaylistsFromQuestAction"/>
     <addaction name="pushPlaylistsToQuestAction"/>
     <addaction name="deletePlaylistsFromQuestAction"/>
@@ -773,6 +775,11 @@
   <action name="deletePlaylistsFromQuestAction">
    <property name="text">
     <string>Delete playlists from Quest</string>
+   </property>
+  </action>
+  <action name="checkMissingMapsAction">
+   <property name="text">
+    <string>Check missing maps</string>
    </property>
   </action>
  </widget>

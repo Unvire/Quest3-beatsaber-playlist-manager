@@ -18,6 +18,7 @@ class BeatSaberMap:
         ## urls
         self.coverUrl = ''
         self.previewUrl = ''
+        self.downloadUrl = ''
 
         self.rankedState = ''
         self.diffs = []
@@ -61,7 +62,8 @@ class BeatSaberMap:
         
         coverUrl = responseJSON['versions'][0]['coverURL']
         previewUrl = responseJSON['versions'][0]['previewURL']
-        self.setUrls(coverUrl, previewUrl)
+        downloadUrl = responseJSON['versions'][0]['downloadURL']
+        self.setUrls(coverUrl, previewUrl, downloadUrl)
         
         levelsData = responseJSON['versions'][0]['diffs']
         diffsList = [BeatSaberMapLevel(diffData) for diffData in levelsData]
@@ -91,9 +93,10 @@ class BeatSaberMap:
     def setTagsList(self, tagsList: list[str]):
         self.tagsList = tagsList
     
-    def setUrls(self, coverUrl:str, previewUrl:str):
+    def setUrls(self, coverUrl:str, previewUrl:str, downloadURL:str):
         self.coverUrl = coverUrl
         self.previewUrl = previewUrl
+        self.downloadUrl = downloadURL
     
     def setDiffs(self, diffsList:list[str]):
         self.diffs = diffsList
