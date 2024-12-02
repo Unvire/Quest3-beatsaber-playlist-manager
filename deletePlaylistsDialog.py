@@ -9,15 +9,14 @@ class DeletePlaylistsDialog(QDialog):
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'deletePlaylistsDialog.ui')
         uic.loadUi(uiFilePath, self)
         
-        if not self.scrollAreaWidgetContents.layout():
-            layout = QVBoxLayout(self.scrollAreaWidgetContents)
-            self.scrollAreaWidgetContents.setLayout(layout)
+        layout = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.scrollAreaWidgetContents.setLayout(layout)
 
         self.checkboxes = []
         for item in items:
             checkbox = QCheckBox(item)
             self.checkboxes.append(checkbox)
-            self.scrollAreaWidgetContents.layout().addWidget(checkbox)
+            layout.addWidget(checkbox)
         
         self.cancelButton.clicked.connect(self.reject)
         self.deleteButton.clicked.connect(self.accept)

@@ -20,8 +20,6 @@ class DownloadMissingMapsDialog(QDialog):
             linkLabel.setOpenExternalLinks(True)
             layout.addWidget(linkLabel)
         
-        self.scrollAreaWidgetContents.setMinimumHeight(1)
-        
         self.okButton.clicked.connect(self.accept)
 
 
