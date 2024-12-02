@@ -72,9 +72,8 @@ class MainWindow(QMainWindow):
         self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
     
     def blankNewPlaylist(self):
-        if not self._verifyClearCurrentPlaylistPermission(self.playlistInstance):
+        if self._askSaveBeforeClearingPlaylist(self.playlistInstance):
             self.savePlaylistAs()
-            return
 
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
@@ -88,11 +87,11 @@ class MainWindow(QMainWindow):
         self._setMapImageAndMusic(pixmap, '', '')
     
     def newPlaylistFromDownloadedSongs(self):
-        if not self._verifyClearCurrentPlaylistPermission(self.playlistInstance):
+        if self._askSaveBeforeClearingPlaylist(self.playlistInstance):
             self.savePlaylistAs()
             return
         
-        folderPath = str(QFileDialog.getExistingDirectory(self, 'Select Directory'))
+        folderPath = str(QFileDialog.getExistingDirectory(self, 'Select directory with downloaded songs'))
         if not folderPath:
             return
         
@@ -105,17 +104,25 @@ class MainWindow(QMainWindow):
     
     def savePlaylistAs(self):
         def continueWithMissingHeader(playlistInstance:BeatSaberPlaylist) -> bool:
-            isContinue = True
-            isImagePresent = bool(playlistInstance.getImageString())
-            isTitlePresent = bool(playlistInstance.getPlaylistTitle())
-            isAuthorPresent = bool(playlistInstance.getPlaylistAuthor())
-            if not isImagePresent or not isTitlePresent or not isAuthorPresent:
-                message = f'Header is missing some data. '
-                titleMessage = 'Title missing. ' * int(isTitlePresent)
-                authorMessage = 'Author missing. ' * int(isAuthorPresent)
-                imageMessage = 'Image missing. ' * int(isImagePresent)
-                isContinue = self._yesNoWarning(f'{message}{titleMessage}{authorMessage}{imageMessage}Continue?')
-            return isContinue
+            isTitleMissing = not bool(playlistInstance.getPlaylistTitle())
+            isAuthorMissing = not bool(playlistInstance.getPlaylistAuthor())
+            isImageMissing = not bool(playlistInstance.getImageString())
+
+            strings = ['title', 'author', 'image']
+            absenceList = [isTitleMissing, isAuthorMissing, isImageMissing]
+
+            if any(absenceList):
+                message = f'Header is missing some data: '
+                missingAttributes = [string for isAbsent, string in zip(absenceList, strings) if isAbsent]
+                if len(missingAttributes) == 1:
+                    message += f'{missingAttributes[0]}. '
+                elif len(missingAttributes) == 2:
+                    message += f'{missingAttributes[0]} and {missingAttributes[1]}. '
+                else:
+                    message += f'{missingAttributes[0]}, {missingAttributes[1]} and {missingAttributes[2]}. '
+                return self._yesNoWarning(f'{message}Continue?')
+            else:
+                return True
         
         if self.playlistInstance.isEmpty():
             self._infoWarning('Playlist is empty')
@@ -124,13 +131,13 @@ class MainWindow(QMainWindow):
         if not continueWithMissingHeader(self.playlistInstance):
             return
         
-        fileName, ok = QInputDialog.getText(self, "Save playlist as:", "Name of playlist")
+        fileName, ok = QInputDialog.getText(self, 'Save playlist as:', 'Name of playlist')
         if not (ok and fileName):
             return
         
         fileName = fileName if fileName.endswith('json') else f'{fileName}.json'
         path = os.path.join(os.getcwd(), 'playlists', fileName)
-        isOverwriteExistingFile = self._yesNoWarning('Playlist {fileName} exists. Overwrite it?') if os.path.exists(path) else True
+        isOverwriteExistingFile = self._yesNoWarning(f'Playlist {fileName} exists. Overwrite it?') if os.path.exists(path) else True
         if not isOverwriteExistingFile:
             self._infoWarning('File was not saved')
             return 
@@ -138,14 +145,13 @@ class MainWindow(QMainWindow):
         playlistContent = self.playlistInstance.serializeInstanceToJSON()
         with open(path, 'w') as file:
             file.write(playlistContent)
-        self._infoWarning('Playlist {fileName} saved')
+        self._infoWarning(f'Playlist {fileName} saved')
     
     def loadPlaylist(self):
-        if not self._verifyClearCurrentPlaylistPermission(self.playlistInstance):
+        if self._askSaveBeforeClearingPlaylist(self.playlistInstance):
             self.savePlaylistAs()
-            return
 
-        filePath, _ = QFileDialog.getOpenFileName(self, "Select Directory", "","BeatSaber playlist(*.json *.bplist)")
+        filePath, _ = QFileDialog.getOpenFileName(self, 'Select Directory', '','BeatSaber playlist(*.json *.bplist)')
         if not filePath:
             self._infoWarning('No file was selected')
             return
@@ -479,11 +485,11 @@ class MainWindow(QMainWindow):
     def _infoWarning(self, message:str):
         QMessageBox.information(self, 'Info', message, QMessageBox.Ok, QMessageBox.Ok)
     
-    def _verifyClearCurrentPlaylistPermission(self, playlistInstance:BeatSaberPlaylist) -> bool:
-        result = True
+    def _askSaveBeforeClearingPlaylist(self, playlistInstance:BeatSaberPlaylist) -> bool:
         if not playlistInstance.isEmpty():
-            result = self._yesNoWarning('Current playlist will be cleared. Do you want to save current playlist?')
-        return result
+            return self._yesNoWarning('Current playlist will be cleared. Do you want to save it?')
+        else:
+            return False
                 
     
 if __name__ == '__main__':
