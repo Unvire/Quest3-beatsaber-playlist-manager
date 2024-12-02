@@ -72,13 +72,9 @@ class MainWindow(QMainWindow):
         self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
     
     def blankNewPlaylist(self):
-        isYesClicked = False
-        if not self.playlistInstance.isEmpty():
-            isYesClicked = self._yesNoWarning('Do you want to save current playlist?')
-        
-        if isYesClicked:
+        if not self._verifyClearCurrentPlaylistPermission(self.playlistInstance):
             self.savePlaylistAs()
-
+            return
 
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
@@ -92,8 +88,13 @@ class MainWindow(QMainWindow):
         self._setMapImageAndMusic(pixmap, '', '')
     
     def newPlaylistFromDownloadedSongs(self):
+        if not self._verifyClearCurrentPlaylistPermission(self.playlistInstance):
+            self.savePlaylistAs()
+            return
+        
         folderPath = str(QFileDialog.getExistingDirectory(self, 'Select Directory'))
         if not folderPath:
+            self._infoWarning('No folder was selected')
             return
         
         filesList = os.listdir(folderPath)
@@ -139,11 +140,16 @@ class MainWindow(QMainWindow):
         playlistContent = self.playlistInstance.serializeInstanceToJSON()
         with open(path, 'w') as file:
             file.write(playlistContent)
-        QMessageBox.information(self, "Information", f"Playlist saved")
+        self._infoWarning('Playlist {fileName} saved')
     
     def loadPlaylist(self):
+        if not self._verifyClearCurrentPlaylistPermission(self.playlistInstance):
+            self.savePlaylistAs()
+            return
+
         filePath, _ = QFileDialog.getOpenFileName(self, "Select Directory", "","BeatSaber playlist(*.json *.bplist)")
         if not filePath:
+            self._infoWarning('No file was selected')
             return
         
         self.playlistInstance.loadFromFile(filePath)
@@ -474,7 +480,13 @@ class MainWindow(QMainWindow):
     
     def _infoWarning(self, message:str):
         QMessageBox.information(self, 'Info', message, QMessageBox.Ok, QMessageBox.Ok)
-        
+    
+    def _verifyClearCurrentPlaylistPermission(self, playlistInstance:BeatSaberPlaylist) -> bool:
+        result = True
+        if not playlistInstance.isEmpty():
+            result = self._yesNoWarning('Current playlist will be cleared. Do you want to save current playlist?')
+        return result
+                
     
 if __name__ == '__main__':
     app = QApplication(sys.argv)
