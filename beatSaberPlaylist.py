@@ -135,7 +135,7 @@ class BeatSaberPlaylist:
     def getSongsIds(self) -> list[str]:
         return list(self._idSet)
     
-    def checkMissingMaps(self, targetPlaylist:'BeatSaberPlaylist') -> list[str]:
+    def checkMissingSongs(self, targetPlaylist:'BeatSaberPlaylist') -> list[str]:
         targetIndexes = set(targetPlaylist.getSongsIds())
         return list(targetIndexes - self._idSet)
 
