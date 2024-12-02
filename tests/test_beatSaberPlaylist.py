@@ -228,7 +228,7 @@ def test_addSongIfNotPresent():
                                                  (['a', 'b', 'c', 'd'], ['d']),
                                                  (['d', 'e', 'f'], ['d', 'e', 'f']),
                                                 ])
-def test_checkMissingMaps(inputData, expected):
+def test_checkMissingSongs(inputData, expected):
     sourceStrings = ['a', 'b', 'c', 'g', 'h', 'i', 'j']
     customSourceStringList = [CustomString(letter) for letter in sourceStrings]
     customTargetStringList = [CustomString(letter) for letter in inputData]
@@ -240,7 +240,7 @@ def test_checkMissingMaps(inputData, expected):
     targetInstance = beatSaberPlaylist.BeatSaberPlaylist()
     for song in customTargetStringList:
         targetInstance.addSongIfNotPresent(song)
-    assert sorted(sourceInstance.checkMissingMaps(targetInstance)) == expected
+    assert sorted(sourceInstance.checkMissingSongs(targetInstance)) == expected
 
 def test_getSongsByIds():
     rawStringList = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
