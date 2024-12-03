@@ -69,7 +69,6 @@ class ConnectQuestDialog(QDialog):
         self.accept()
             
     def _updateLabels(self, iAttempt:int, isConnected:bool):
-        print(iAttempt, isConnected)
         self.attemptsLabel.setText(f'{iAttempt}/{ConnectQuestThread.MAX_RETRIES}')
         if isConnected:
             self.resultLabel.setText(f'connected')
