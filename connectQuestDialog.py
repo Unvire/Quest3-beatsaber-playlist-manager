@@ -11,17 +11,17 @@ class ConnectQuestThread(QThread):
     updateLabelsSignal = pyqtSignal(int, bool)
     finishedSignal = pyqtSignal()
 
-    MAX_RETRIES = 30
+    MAX_RETRIES = 60
 
     def __init__(self, wrapperInstance: AdbWrapperFactory):
         super().__init__()
         self.wrapperInstance = wrapperInstance
-        self.isRunning = True
+        self.isThreadRunning = True
         self.isConnected = False
 
     def run(self):
         i = 1
-        while not self.isConnected and i <= ConnectQuestThread.MAX_RETRIES and self.isRunning:
+        while not self.isConnected and i <= ConnectQuestThread.MAX_RETRIES and self.isThreadRunning:
             self.isConnected = self.wrapperInstance.isDebugModeEnabled()
             self.updateLabelsSignal.emit(i, self.isConnected)
             i += 1
@@ -29,7 +29,7 @@ class ConnectQuestThread(QThread):
         self.finishedSignal.emit()
 
     def stop(self):
-        self.isRunning = False
+        self.isThreadRunning = False
     
     def getConnectionResult(self) -> bool:
         return self.isConnected
