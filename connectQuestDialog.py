@@ -3,8 +3,6 @@ from PyQt5.QtWidgets import QApplication, QDialog
 from PyQt5.QtCore import QThread, pyqtSignal
 from PyQt5 import uic
 
-import time
-
 from adbWrapperFactory import AdbWrapperFactory
 
 class ConnectQuestThread(QThread):
@@ -18,14 +16,14 @@ class ConnectQuestThread(QThread):
         self.wrapperInstance = wrapperInstance
         self.isThreadRunning = True
         self.isConnected = False
-
+        
     def run(self):
         i = 1
         while not self.isConnected and i <= ConnectQuestThread.MAX_RETRIES and self.isThreadRunning:
             self.isConnected = self.wrapperInstance.isDebugModeEnabled()
             self.updateLabelsSignal.emit(i, self.isConnected)
             i += 1
-            time.sleep(1)
+            self.sleep(1)
         self.finishedSignal.emit()
 
     def stop(self):
@@ -33,6 +31,8 @@ class ConnectQuestThread(QThread):
     
     def getConnectionResult(self) -> bool:
         return self.isConnected
+    
+
 
 class ConnectQuestDialog(QDialog):
     def __init__(self, wrapperInstance:AdbWrapperFactory):
@@ -48,7 +48,7 @@ class ConnectQuestDialog(QDialog):
         self.workerThread.finishedSignal.connect(self._threadFinished)
 
         self._updateLabels(0, False)
-        self.backButton.clicked.connect(self.accept)
+        self.backButton.clicked.connect(self.buttonPressed)
     
     def show(self):
         super().show()
@@ -59,14 +59,22 @@ class ConnectQuestDialog(QDialog):
 
     def _threadFinished(self):
         self.isConnected = self.workerThread.getConnectionResult()
-        self.workerThread.quit()
     
     def getData(self) -> bool:
         return self.isConnected
 
+    def closeEvent(self, event):
+        self.finishThreadExecution()
+        super().closeEvent(event)
+
     def buttonPressed(self, event):
-        self.workerThread.stop()
+        self.finishThreadExecution()
         self.accept()
+    
+    def finishThreadExecution(self):
+        self.workerThread.stop()
+        self.workerThread.wait()
+        self.deleteLater()
             
     def _updateLabels(self, iAttempt:int, isConnected:bool):
         self.attemptsLabel.setText(f'{iAttempt}/{ConnectQuestThread.MAX_RETRIES}')
