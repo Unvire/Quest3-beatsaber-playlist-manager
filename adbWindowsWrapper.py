@@ -11,18 +11,19 @@ class AdbWindowsWrapper:
         
         if not os.path.exists(self.adbPath):
             raise adbException.AdbFolderDoNotExist
-        
-        try:
-            result = subprocess.run('adb/adb devices', capture_output=True, text=True)
-            if 'List of devices attached' not in result.stdout:
-                raise adbException.AdbExeNotExist
-        except FileNotFoundError:
+
+        if not 'adb.exe' in os.listdir(self.adbPath):
             raise adbException.AdbExeNotExist
-    
+        
+        result = subprocess.run('adb/adb version', capture_output=True, text=True).stdout
+        firstLine = result.splitlines()[0].lower()
+        if 'android debug bridge' not in firstLine:
+            raise adbException.AdbExeNotExist
+
     def isDebugModeEnabled(self) -> bool:
         result = subprocess.run('adb/adb devices', capture_output=True, text=True).stdout
-        lines = result.split('\n')
-        return lines[1] != ''
+        firstDevice = result.splitlines()[1].lower()
+        return firstDevice != '' and 'unauthorized'not in firstDevice
         
     def getSongKeysFromQuest(self) -> list[str]:
         # coping to clipboard is a workaround about the fact that for some IDEs capturing stdo doesn't work
