@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, QMimeData, QByteArray, QItemSelectionModel, QSize
 from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
 
-import os, sys, threading, time, platform
+import os, sys, threading, platform
 
 from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
