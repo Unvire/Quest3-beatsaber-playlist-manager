@@ -176,7 +176,7 @@ class MainWindow(QMainWindow):
     
     def getSongsFromQuest(self) -> dict:
         if not self.isConnected:
-            print('Quest not connected')
+            self._infoWarning('Quest not connected')
             return
         
         mapIDs = self.adbWrapper.getSongKeysFromQuest()
@@ -184,7 +184,7 @@ class MainWindow(QMainWindow):
     
     def checkMissingMaps(self):
         if not self.isConnected:
-            print('Quest not connected')
+            self._infoWarning('Quest not connected')
             return
         
         missingMapsIds = self.allMapsPlaylist.checkMissingSongs(self.playlistInstance)
