@@ -15,6 +15,7 @@ from adbWrapperFactory import AdbWrapperFactory
 from playlistDataDialog import PlaylistDataDialog
 from deletePlaylistsDialog import DeletePlaylistsDialog
 from downloadMissingMapsDialog import DownloadMissingMapsDialog
+from connectQuestDialog import ConnectQuestDialog
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -165,14 +166,10 @@ class MainWindow(QMainWindow):
         self._updateSongsTable(self.playlistsMapsTable, self.playlistInstance)
     
     def connectToQuest(self):
-        MAX_RETRIRES = 30
-        self.isConnected = False
-        i = 0
-        while not self.isConnected and i < MAX_RETRIRES:
-            self.isConnected = self.adbWrapper.isDebugModeEnabled()
-            print(f'Connection attempt {i}. Result is {self.isConnected}')
-            i += 1
-            time.sleep(1)            
+        connectionDialog = ConnectQuestDialog(self.adbWrapper)
+        connectionDialog.show()
+        connectionDialog.exec_()
+        self.isConnected = connectionDialog.getData()
     
     def getSongsFromQuest(self) -> dict:
         if not self.isConnected:
