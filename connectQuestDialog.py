@@ -24,10 +24,11 @@ class ConnectQuestThread(QThread):
             self.updateLabelsSignal.emit(i, self.isConnected)
             i += 1
             self.sleep(1)
-        self.finishedSignal.emit()
+        self.isThreadRunning = False
 
     def stop(self):
         self.isThreadRunning = False
+        self.finishedSignal.emit()
     
     def getConnectionResult(self) -> bool:
         return self.isConnected
@@ -55,6 +56,7 @@ class ConnectQuestDialog(QDialog):
         self._attemptConnection()
     
     def _attemptConnection(self):
+        self.workerThread.wait()
         self.workerThread.start()
 
     def _threadFinished(self):
