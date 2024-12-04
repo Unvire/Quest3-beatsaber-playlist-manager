@@ -367,6 +367,7 @@ class MainWindow(QMainWindow):
     
     def closeEvent(self, event):
         self.musicPlayer.stop()
+        self.adbWrapper.terminateAdb()
         event.accept()
 
     def _generateMapLevelsTable(self, mapInstance:BeatSaberMap):

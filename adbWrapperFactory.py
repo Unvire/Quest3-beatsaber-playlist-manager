@@ -42,6 +42,9 @@ class AdbWrapperFactory():
     def deletePlaylistsFromQuest(self, playlistNamesList:list[str]):
         for playlistName in playlistNamesList:
             self.adbWrapper.deletePlaylistFromQuest(playlistName)
+    
+    def terminateAdb(self):
+        self.adbWrapper.terminateAdb()
 
 if __name__ == '__main__':
     wrapper = AdbWrapperFactory('windows')

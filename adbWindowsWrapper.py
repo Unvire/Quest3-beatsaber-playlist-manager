@@ -59,6 +59,9 @@ class AdbWindowsWrapper:
         command = f'adb shell rm "{AdbWindowsWrapper.BEATSABER_PLAYLISTS_PATH}/{playlistName}"'
         self._executeAdbCommand(command)
     
+    def terminateAdb(self):
+        subprocess.run('taskkill -f -im "adb.exe"', capture_output=True, text=True)
+    
     def _executeAdbCommand(self, command:str) -> str:
         clipboard = pyperclip.paste()
         subprocess.run(command, shell=True, cwd=self.adbPath)
