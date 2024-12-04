@@ -1,8 +1,9 @@
-from PyQt5.QtWidgets import QTableWidget
+from PyQt5.QtWidgets import QTableWidget,QTableWidgetItem
 from PyQt5.QtCore import Qt, QMimeData
 from PyQt5.QtGui import QDrag
 
 from beatSaberPlaylist import BeatSaberPlaylist
+from beatSaberMap import BeatSaberMap
 
 class TableWidgetWrapper:
     def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):
@@ -12,6 +13,17 @@ class TableWidgetWrapper:
     
     def __getattr__(self, name):
         return getattr(self._originalTableWidget, name)
+
+    def appendRow(self, mapInstance:BeatSaberMap):
+        lastRowID = self._originalTableWidget.rowCount()
+        self._originalTableWidget.insertRow(lastRowID)
+        newRow = QTableWidgetItem(f'{mapInstance.title} by {mapInstance.author}')
+        self._originalTableWidget.setItem(lastRowID, 0, newRow)
+    
+    def generateRows(self):
+        self.clear()
+        for mapInstance in self.playlistInstance:
+            self.appendRow(mapInstance)
     
     def getSelectedRows(self) -> list[int]:
         selectedRows = {index.row() for index in self._originalTableWidget.selectionModel().selectedIndexes()}
@@ -62,7 +74,7 @@ class PlaylistSongsTable(TableWidgetWrapper):
     
     def setSourcePlaylist(self, playlistInstance:BeatSaberPlaylist):
         self.sourcePlaylistInstance = playlistInstance
-        
+
     def _dragMoveEvent(self, event):
         event.accept()
     
@@ -74,7 +86,7 @@ class PlaylistSongsTable(TableWidgetWrapper):
         mapInstance = self.sourcePlaylistInstance[mapIndex]
         isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
         if isMapAdded:
-            self.gui._addTableRow(self, mapInstance)      
+            self.appendRow(mapInstance)      
         event.accept()
     
     def _cellClicked(self, row, col):

@@ -114,7 +114,7 @@ class MainWindow(QMainWindow):
             return
 
         self.playlistInstance.generateFromResponseDict(responseDict)
-        self._updateSongsTable(self.playlistsMapsTable, self.playlistInstance)
+        self.playlistsMapsTable.generateRows()
     
     def savePlaylistAs(self):
         def continueWithMissingHeader(playlistInstance:BeatSaberPlaylist) -> bool:
@@ -173,7 +173,7 @@ class MainWindow(QMainWindow):
         if not isSuccess:
             self._infoWarning('Error with obtaining data from beatsaver.com')
             return
-        self._updateSongsTable(self.playlistsMapsTable, self.playlistInstance)
+        self.playlistsMapsTable.generateRows()
     
     def connectToQuest(self):
         connectionDialog = ConnectQuestDialog(self.adbWrapper)
@@ -246,7 +246,7 @@ class MainWindow(QMainWindow):
         self.allMapsPlaylist.generateFromResponseDict(responseDict)        
         self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
-        self._updateSongsTable(self.allMapsTable, self.allMapsPlaylist)
+        self.allMapsTable.generateRows()
 
     def __mockGetSongsFromQuest(self) -> list[str]:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
@@ -271,14 +271,14 @@ class MainWindow(QMainWindow):
         self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
         
         self.allMapsTable.unselectAll()
-        self._updateSongsTable(self.allMapsTable, self.allMapsPlaylist)
+        self.allMapsTable.generateRows()
     
     def reverseAllMapsSorting(self):
         self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
         
         self.allMapsTable.unselectAll()
-        self._updateSongsTable(self.allMapsTable, self.allMapsPlaylist)
+        self.allMapsTable.generateRows()
     
     def playMusic(self):
         self.musicPlayer.play()
@@ -308,7 +308,7 @@ class MainWindow(QMainWindow):
         selectedRowsList = table.getSelectedRows()
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
         self.playlistInstance.removeSelectedSongs()
-        self._updateSongsTable(table, self.playlistInstance)
+        table.generateRows()
     
     def resizeEvent(self, event):
         labels = [self.mapTitleLabel, self.mapAuthorLabel, self.mapMapperLabel, self.mapBPMLabel, self.mapLengthLabel, 
@@ -371,21 +371,7 @@ class MainWindow(QMainWindow):
                 break
             totalTableHeight += table.rowHeight(row)
         table.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
-    
-    def _updateSongsTable(self, table:TableWidgetWrapper, playlist:BeatSaberPlaylist):
-        table.clear()
-        self._addTableRows(table, playlist)
 
-    def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
-        for mapInstance in playlist:
-            self._addTableRow(table, mapInstance)
-
-    def _addTableRow(self, table:QWidget, mapInstance:BeatSaberMap):
-        lastRowID = table.rowCount()
-        table.insertRow(lastRowID)
-        newRow = QTableWidgetItem(f'{mapInstance.title} by {mapInstance.author}')
-        table.setItem(lastRowID, 0, newRow)
-    
     def _moveSelectedRowsUpDown(self, table:TableWidgetWrapper, direction:str):
         functionDict = {
             'up': self.playlistInstance.moveSelectedItemsUp,
@@ -397,7 +383,7 @@ class MainWindow(QMainWindow):
         functionDict[direction]() #move up or down
         indexes = self.playlistInstance.getSelectedIndexes()
 
-        self._updateSongsTable(table, self.playlistInstance)
+        table.generateRows()
         self._selectRowsInTable(table, indexes)
     
     def _selectRowsInTable(self,  table:TableWidgetWrapper, indexList:list[int]):
