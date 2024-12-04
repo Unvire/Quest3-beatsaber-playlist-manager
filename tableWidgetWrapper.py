@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QTableWidget,QTableWidgetItem
-from PyQt5.QtCore import Qt, QMimeData
+from PyQt5.QtCore import Qt, QMimeData, QItemSelectionModel
 from PyQt5.QtGui import QDrag
 
 from beatSaberPlaylist import BeatSaberPlaylist
@@ -24,6 +24,11 @@ class TableWidgetWrapper:
         self.clear()
         for mapInstance in self.playlistInstance:
             self.appendRow(mapInstance)
+    
+    def selectRows(self, indexes:list[int]):
+        selectionModelInstance = self._originalTableWidget.selectionModel()
+        for index in indexes:
+            selectionModelInstance.select(self._originalTableWidget.model().index(index, 0), QItemSelectionModel.Rows | QItemSelectionModel.Select)
     
     def getSelectedRows(self) -> list[int]:
         selectedRows = {index.row() for index in self._originalTableWidget.selectionModel().selectedIndexes()}

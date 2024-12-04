@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QWidget, QTableWidget, QTableWidgetItem, QLabel, QFileDialog, QDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableWidgetItem, QLabel, QFileDialog, QDialog, QMessageBox
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
-from PyQt5.QtCore import Qt, QMimeData, QByteArray, QItemSelectionModel, QSize
-from PyQt5.QtGui import QDrag, QPixmap, QColor
+from PyQt5.QtCore import Qt, QByteArray, QSize
+from PyQt5.QtGui import QPixmap, QColor
 from PyQt5 import uic
 
 import os, sys, threading, platform, subprocess
@@ -384,12 +384,7 @@ class MainWindow(QMainWindow):
         indexes = self.playlistInstance.getSelectedIndexes()
 
         table.generateRows()
-        self._selectRowsInTable(table, indexes)
-    
-    def _selectRowsInTable(self,  table:TableWidgetWrapper, indexList:list[int]):
-        selectionModelInstance = table.selectionModel()
-        for index in indexList:
-            selectionModelInstance.select(table.model().index(index, 0), QItemSelectionModel.Rows | QItemSelectionModel.Select)
+        table.selectRows(indexes)
     
     def _clearTable(self, table:TableWidgetWrapper):
         selectionModelInstance = table.model()
