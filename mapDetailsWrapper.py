@@ -4,6 +4,27 @@ from PyQt5.QtCore import Qt
 from beatSaberMap import BeatSaberMap
 
 class MapDetailsWrapper:
+    def __init__(self):
+        self.webRequestDetails = None
+        self.staticDetails = None
+
+    def setStaticWidgets(self, authorLabel:QLabel, titleLabel:QLabel, mapperLabel:QLabel, bpmLabel:QLabel, lengthTimeLabel:QLabel, 
+                 rankedStateLabel:QLabel, uploadedLabel:QLabel, mapTagsLabel:QLabel, levelsTable:QTableWidget):
+        self.staticDetails = StaticDetails(authorLabel, titleLabel, mapperLabel, bpmLabel, lengthTimeLabel, 
+                 rankedStateLabel, uploadedLabel, mapTagsLabel, levelsTable)
+    
+    def update(self, mapInstance:BeatSaberMap, mainWindow:QMainWindow):
+        self.staticDetails.update(mapInstance, mainWindow)
+    
+    def resizeLabels(self):
+        self.staticDetails.resizeLabels()
+
+
+class WebRequestMapDetails:
+    pass
+
+
+class StaticDetails:
     def __init__(self, authorLabel:QLabel, titleLabel:QLabel, mapperLabel:QLabel, bpmLabel:QLabel, lengthTimeLabel:QLabel, 
                  rankedStateLabel:QLabel, uploadedLabel:QLabel, mapTagsLabel:QLabel, levelsTable:QTableWidget):
         self.mapAuthorLabel = authorLabel

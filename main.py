@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QHeaderView, QTableWidgetItem, QLabel, QFileDialog, QDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QDialog, QMessageBox
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
 from PyQt5.QtCore import Qt, QByteArray, QSize
 from PyQt5.QtGui import QPixmap, QColor
@@ -38,15 +38,16 @@ class MainWindow(QMainWindow):
         self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.playlistInstance, self)
         self.playlistsMapsTable.setSourcePlaylist(self.allMapsPlaylist)
 
-        self.mapDetails = MapDetailsWrapper(authorLabel=self.mapAuthorLabel, 
-                                            titleLabel=self.mapTitleLabel, 
-                                            mapperLabel=self.mapMapperLabel, 
-                                            bpmLabel=self.mapBPMLabel, 
-                                            lengthTimeLabel=self.mapLengthLabel, 
-                                            rankedStateLabel=self.mapRankedStateLabel, 
-                                            uploadedLabel=self.mapUploadedLabel, 
-                                            mapTagsLabel=self.mapTagsLabel, 
-                                            levelsTable=self.mapLevelsTable)
+        self.mapDetails = MapDetailsWrapper()
+        self.mapDetails.setStaticWidgets(authorLabel=self.mapAuthorLabel, 
+                                        titleLabel=self.mapTitleLabel, 
+                                        mapperLabel=self.mapMapperLabel, 
+                                        bpmLabel=self.mapBPMLabel, 
+                                        lengthTimeLabel=self.mapLengthLabel, 
+                                        rankedStateLabel=self.mapRankedStateLabel, 
+                                        uploadedLabel=self.mapUploadedLabel, 
+                                        mapTagsLabel=self.mapTagsLabel, 
+                                        levelsTable=self.mapLevelsTable)
     
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
