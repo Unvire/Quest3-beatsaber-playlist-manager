@@ -14,14 +14,14 @@ class TableWidgetWrapper:
     def getSelectedRows(self) -> list[int]:
         selectedRows = {index.row() for index in self._originalTableWidget.selectionModel().selectedIndexes()}
         return list(selectedRows)
-    
+
 
 class QuestSongsTable(TableWidgetWrapper):
     def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):
-        super().__init__(tableWidget)
+        super().__init__(tableWidget)        
+        self.playlistInstance = playlistInstance
         self._originalTableWidget.setDragEnabled(True)
         self._originalTableWidget.setDragDropMode(QTableWidget.DragOnly)
-        self.playlistInstance = playlistInstance
         self._originalTableWidget.startDrag = self._startDrag
         self._originalTableWidget.cellClicked.connect(self._cellClicked)
 
@@ -45,11 +45,38 @@ class QuestSongsTable(TableWidgetWrapper):
 
 
 class PlaylistSongsTable(TableWidgetWrapper):
-    def __init__(self, tableWidget:QTableWidget, dragEnterFunction, dragMoveFunction, dropFunction, onclickFunction):
-        super().__init__(tableWidget)
+    def __init__(self, tableWidget:QTableWidget, sourcePlaylistInstance:BeatSaberPlaylist, targetPlaylistInstance:BeatSaberPlaylist, gui):
+        super().__init__(tableWidget)        
+        self.sourcePlaylistInstance = sourcePlaylistInstance
+        self.playlistInstance = targetPlaylistInstance
         self._originalTableWidget.setAcceptDrops(True)
         self._originalTableWidget.setDragDropMode(QTableWidget.DropOnly)
-        self._originalTableWidget.dragEnterEvent = dragEnterFunction
-        self._originalTableWidget.dragMoveEvent = dragMoveFunction
-        self._originalTableWidget.dropEvent = dropFunction
-        self._originalTableWidget.cellClicked.connect(onclickFunction)
+        self._originalTableWidget.dragMoveEvent = self._dragMoveEvent
+        self._originalTableWidget.dragEnterEvent = self._dragEnterEvent
+        self._originalTableWidget.dropEvent = self._dropEvent
+        self._originalTableWidget.cellClicked.connect(self._cellClicked)
+
+        self.gui = gui
+    
+    def _dragMoveEvent(self, event):
+        event.accept()
+    
+    def _dragEnterEvent(self, event):
+        event.accept()
+    
+    def _dropEvent(self, event):
+        mapIndex = int(event.mimeData().text())
+        mapInstance = self.sourcePlaylistInstance[mapIndex]
+        isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
+        if isMapAdded:
+            self.gui._addTableRow(self, mapInstance)      
+        event.accept()
+    
+    def _cellClicked(self, row, col):
+        selectedRowsList = self.getSelectedRows()
+        if len(selectedRowsList) == 1:
+            index = selectedRowsList[0]
+            mapInstance = self.playlistInstance[index]
+            self.gui.generateMapDetails(mapInstance)
+
+        self.playlistInstance.setSelectedIndexes(selectedRowsList)

@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         uic.loadUi(uiFilePath, self)
         
         self.allMapsTable = QuestSongsTable(self.allMapsTable, self.allMapsPlaylist, self)
-        self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.targetTableDragEnterEvent, self.targetTableDragMoveEvent, self.targetTableDropEvent, self.targetTableRowClicked)
+        self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.allMapsPlaylist, self.playlistInstance, self)
 
         header = self.mapLevelsTable.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
@@ -263,30 +263,6 @@ class MainWindow(QMainWindow):
         self._setMapDetails(author=mapInstance.author, title=mapInstance.title, mapper=mapInstance.mapper, bpm=mapInstance.bpm, lengthTime=lengthTime,
                             rankedState=mapInstance.rankedState, uploaded=mapInstance.uploaded, tags=tags)
         self._generateMapLevelsTable(mapInstance)    
-
-    def targetTableDropEvent(self, event):
-        mapIndex = int(event.mimeData().text())
-        mapInstance = self.allMapsPlaylist[mapIndex]
-        isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
-
-        if isMapAdded:
-            self._addTableRow(self.playlistsMapsTable, mapInstance)      
-        event.accept()
-    
-    def targetTableDragMoveEvent(self, event):
-        event.accept()
-    
-    def targetTableDragEnterEvent(self, event):
-        event.accept()
-    
-    def targetTableRowClicked(self, row, col):
-        selectedRowsList = self.playlistsMapsTable.getSelectedRows()
-        if len(selectedRowsList) == 1:
-            index = selectedRowsList[0]
-            mapInstance = self.playlistInstance[index]
-            self.generateMapDetails(mapInstance)
-
-        self.playlistInstance.setSelectedIndexes(selectedRowsList)
     
     def sortAllMapsBy(self, index:int):        
         self.sortingOrder = self.sortAllMapsByComboBox.itemText(index)
