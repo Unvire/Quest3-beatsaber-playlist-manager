@@ -11,7 +11,7 @@ from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
 from byteStringMusicPlayer import ByteStringMusicPlayer
 from adbWrapperFactory import AdbWrapperFactory
-from tableWidgetWrapper import TableWidgetWrapper
+from tableWidgetWrapper import TableWidgetWrapper, QuestSongsTable, PlaylistSongsTable
 
 from playlistDataDialog import PlaylistDataDialog
 from deletePlaylistsDialog import DeletePlaylistsDialog
@@ -33,11 +33,8 @@ class MainWindow(QMainWindow):
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
         uic.loadUi(uiFilePath, self)
         
-        self.allMapsTable = TableWidgetWrapper(self.allMapsTable)
-        self.allMapsTable._setSourceMode(self.sourceTableStartDrag, self.sourceTableRowClicked)
-
-        self.playlistsMapsTable = TableWidgetWrapper(self.playlistsMapsTable)
-        self.playlistsMapsTable._setTargetMode(self.targetTableDragEnterEvent, self.targetTableDragMoveEvent, self.targetTableDropEvent, self.targetTableRowClicked)
+        self.allMapsTable = QuestSongsTable(self.allMapsTable, self.sourceTableStartDrag, self.sourceTableRowClicked)
+        self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.targetTableDragEnterEvent, self.targetTableDragMoveEvent, self.targetTableDropEvent, self.targetTableRowClicked)
 
         header = self.mapLevelsTable.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
@@ -346,8 +343,8 @@ class MainWindow(QMainWindow):
     def moveSelectedSongsDown(self):
         self._moveSelectedRowsUpDown(self.playlistsMapsTable, 'down')
 
-    def deleteSelectedSongs(self, table:QTableWidget):
-        selectedRowsList = table.getSelectedRows(table)
+    def deleteSelectedSongs(self, table:TableWidgetWrapper):
+        selectedRowsList = table.getSelectedRows()
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
         self.playlistInstance.removeSelectedSongs()
         self._updateSongsTable(table, self.playlistInstance)
@@ -402,7 +399,7 @@ class MainWindow(QMainWindow):
         self.mapImageLabel.setPixmap(pixmap)
         self.musicPlayer.loadMusicFromByteStr(musicByteStr, fileFormat)
 
-    def _adjustTableHeight(self, table:QTableWidget):
+    def _adjustTableHeight(self, table:TableWidgetWrapper):
         MARGIN_HEIGHT = 2        
         maxHeight = self._calculateAvailableSpaceForMapDetailsTable()
 
@@ -414,7 +411,7 @@ class MainWindow(QMainWindow):
             totalTableHeight += table.rowHeight(row)
         table.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
     
-    def _updateSongsTable(self, table:QTableWidget, playlist:BeatSaberPlaylist):
+    def _updateSongsTable(self, table:TableWidgetWrapper, playlist:BeatSaberPlaylist):
         self._clearTable(table)
         self._addTableRows(table, playlist)
 
@@ -428,7 +425,7 @@ class MainWindow(QMainWindow):
         newRow = QTableWidgetItem(f'{mapInstance.title} by {mapInstance.author}')
         table.setItem(lastRowID, 0, newRow)
     
-    def _moveSelectedRowsUpDown(self, table:QTableWidget, direction:str):
+    def _moveSelectedRowsUpDown(self, table:TableWidgetWrapper, direction:str):
         functionDict = {
             'up': self.playlistInstance.moveSelectedItemsUp,
             'down': self.playlistInstance.moveSelectedItemsDown
@@ -442,15 +439,15 @@ class MainWindow(QMainWindow):
         self._updateSongsTable(table, self.playlistInstance)
         self._selectRowsInTable(table, indexes)
 
-    def _unselectAllRowsInTable(self, table:QTableWidget):
+    def _unselectAllRowsInTable(self, table:TableWidgetWrapper):
         table.selectionModel().clearSelection()
     
-    def _selectRowsInTable(self,  table:QTableWidget, indexList:list[int]):
+    def _selectRowsInTable(self,  table:TableWidgetWrapper, indexList:list[int]):
         selectionModelInstance = table.selectionModel()
         for index in indexList:
             selectionModelInstance.select(table.model().index(index, 0), QItemSelectionModel.Rows | QItemSelectionModel.Select)
     
-    def _clearTable(self, table:QTableWidget):
+    def _clearTable(self, table:TableWidgetWrapper):
         selectionModelInstance = table.model()
         if selectionModelInstance is not None:
             selectionModelInstance.removeRows(0, selectionModelInstance.rowCount())

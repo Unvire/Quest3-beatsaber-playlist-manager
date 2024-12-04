@@ -9,23 +9,26 @@ class TableWidgetWrapper:
     def __getattr__(self, name):
         return getattr(self._originalTableWidget, name)
     
-    def setMode(self, mode:str):
-        pass
+    def getSelectedRows(self) -> list[int]:
+        selectedRows = {index.row() for index in self._originalTableWidget.selectionModel().selectedIndexes()}
+        return list(selectedRows)
+    
 
-    def _setSourceMode(self, startDragFunction, onclickFunction):
+class QuestSongsTable(TableWidgetWrapper):
+    def __init__(self, tableWidget:QTableWidget, startDragFunction, onclickFunction):
+        super().__init__(tableWidget)
         self._originalTableWidget.setDragEnabled(True)
         self._originalTableWidget.setDragDropMode(QTableWidget.DragOnly)
         self._originalTableWidget.startDrag = startDragFunction
         self._originalTableWidget.cellClicked.connect(onclickFunction)
-    
-    def _setTargetMode(self, dragEnterFunction, dragMoveFunction, dropFunction, onclickFunction):
+        
+
+class PlaylistSongsTable(TableWidgetWrapper):
+    def __init__(self, tableWidget:QTableWidget, dragEnterFunction, dragMoveFunction, dropFunction, onclickFunction):
+        super().__init__(tableWidget)
         self._originalTableWidget.setAcceptDrops(True)
         self._originalTableWidget.setDragDropMode(QTableWidget.DropOnly)
         self._originalTableWidget.dragEnterEvent = dragEnterFunction
         self._originalTableWidget.dragMoveEvent = dragMoveFunction
         self._originalTableWidget.dropEvent = dropFunction
         self._originalTableWidget.cellClicked.connect(onclickFunction)
-    
-    def getSelectedRows(self) -> list[int]:
-        selectedRows = {index.row() for index in self._originalTableWidget.selectionModel().selectedIndexes()}
-        return list(selectedRows)
