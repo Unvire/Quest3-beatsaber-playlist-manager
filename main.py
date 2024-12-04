@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
         uic.loadUi(uiFilePath, self)
         
-        self.allMapsTable = QuestSongsTable(self.allMapsTable, self.sourceTableStartDrag, self.sourceTableRowClicked)
+        self.allMapsTable = QuestSongsTable(self.allMapsTable, self.allMapsPlaylist, self)
         self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.targetTableDragEnterEvent, self.targetTableDragMoveEvent, self.targetTableDropEvent, self.targetTableRowClicked)
 
         header = self.mapLevelsTable.horizontalHeader()
@@ -262,16 +262,7 @@ class MainWindow(QMainWindow):
         tags = ", ".join(mapInstance.tagsList)
         self._setMapDetails(author=mapInstance.author, title=mapInstance.title, mapper=mapInstance.mapper, bpm=mapInstance.bpm, lengthTime=lengthTime,
                             rankedState=mapInstance.rankedState, uploaded=mapInstance.uploaded, tags=tags)
-        self._generateMapLevelsTable(mapInstance)
-
-    def sourceTableStartDrag(self, supportedActions):
-        drag = QDrag(self)
-        mimeData = QMimeData()
-        selectedRow = self.allMapsTable.currentRow()
-        
-        mimeData.setText(f'{selectedRow}')
-        drag.setMimeData(mimeData)
-        drag.exec_(Qt.CopyAction)    
+        self._generateMapLevelsTable(mapInstance)    
 
     def targetTableDropEvent(self, event):
         mapIndex = int(event.mimeData().text())

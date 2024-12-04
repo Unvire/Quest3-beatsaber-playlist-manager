@@ -2,6 +2,8 @@ from PyQt5.QtWidgets import QTableWidget
 from PyQt5.QtCore import Qt, QMimeData
 from PyQt5.QtGui import QDrag
 
+from beatSaberPlaylist import BeatSaberPlaylist
+
 class TableWidgetWrapper:
     def __init__(self, tableWidget:QTableWidget):
         self._originalTableWidget = tableWidget
@@ -15,13 +17,32 @@ class TableWidgetWrapper:
     
 
 class QuestSongsTable(TableWidgetWrapper):
-    def __init__(self, tableWidget:QTableWidget, startDragFunction, onclickFunction):
+    def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):
         super().__init__(tableWidget)
         self._originalTableWidget.setDragEnabled(True)
         self._originalTableWidget.setDragDropMode(QTableWidget.DragOnly)
-        self._originalTableWidget.startDrag = startDragFunction
-        self._originalTableWidget.cellClicked.connect(onclickFunction)
+        self.playlistInstance = playlistInstance
+        self._originalTableWidget.startDrag = self._startDrag
+        self._originalTableWidget.cellClicked.connect(self._cellClicked)
+
+        self.gui = gui
+    
+    def _startDrag(self, supportedActions):
+        drag = QDrag(self._originalTableWidget)
+        mimeData = QMimeData()
+        selectedRow = self._originalTableWidget.currentRow()
         
+        mimeData.setText(f'{selectedRow}')
+        drag.setMimeData(mimeData)
+        drag.exec_(Qt.CopyAction)
+
+    def _cellClicked(self, row, col):
+        selectedRowsList = self.getSelectedRows()
+        if selectedRowsList:
+            row = selectedRowsList[0]
+            mapInstance = self.playlistInstance[row]
+            self.gui.generateMapDetails(mapInstance)
+
 
 class PlaylistSongsTable(TableWidgetWrapper):
     def __init__(self, tableWidget:QTableWidget, dragEnterFunction, dragMoveFunction, dropFunction, onclickFunction):
