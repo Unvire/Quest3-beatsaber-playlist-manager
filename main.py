@@ -60,7 +60,7 @@ class MainWindow(QMainWindow):
         self.playMusicButton.clicked.connect(self.playMusic)
         self.stopMusicButton.clicked.connect(self.stopMusic)
 
-        self.setPlaylistHeaderButton.clicked.connect(self.openDialogWindow)
+        self.setPlaylistHeaderButton.clicked.connect(self.openPlaylistDataDialogWindow)
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
         self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
@@ -286,7 +286,7 @@ class MainWindow(QMainWindow):
     def stopMusic(self):
         self.musicPlayer.stop()
     
-    def openDialogWindow(self):
+    def openPlaylistDataDialogWindow(self):
         title = self.playlistInstance.getPlaylistTitle()
         author = self.playlistInstance.getPlaylistAuthor()
         image = self.playlistInstance.getImageString()
