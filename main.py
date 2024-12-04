@@ -11,6 +11,7 @@ from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
 from byteStringMusicPlayer import ByteStringMusicPlayer
 from adbWrapperFactory import AdbWrapperFactory
+from tableWidgetWrapper import TableWidgetWrapper
 
 from playlistDataDialog import PlaylistDataDialog
 from deletePlaylistsDialog import DeletePlaylistsDialog
@@ -32,17 +33,11 @@ class MainWindow(QMainWindow):
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
         uic.loadUi(uiFilePath, self)
         
-        self.allMapsTable.setDragEnabled(True)
-        self.allMapsTable.setDragDropMode(QTableWidget.DragOnly)
-        self.allMapsTable.startDrag = self.sourceTableStartDrag
-        self.allMapsTable.cellClicked.connect(self.sourceTableRowClicked)
+        self.allMapsTable = TableWidgetWrapper(self.allMapsTable)
+        self.allMapsTable._setSourceMode(self.sourceTableStartDrag, self.sourceTableRowClicked)
 
-        self.playlistsMapsTable.setAcceptDrops(True)
-        self.playlistsMapsTable.setDragDropMode(QTableWidget.DropOnly)
-        self.playlistsMapsTable.dragEnterEvent = self.targetTableDragEnterEvent
-        self.playlistsMapsTable.dragMoveEvent = self.targetTableDragMoveEvent 
-        self.playlistsMapsTable.dropEvent = self.targetTableDropEvent
-        self.playlistsMapsTable.cellClicked.connect(self.targetTableRowClicked)
+        self.playlistsMapsTable = TableWidgetWrapper(self.playlistsMapsTable)
+        self.playlistsMapsTable._setTargetMode(self.targetTableDragEnterEvent, self.targetTableDragMoveEvent, self.targetTableDropEvent, self.targetTableRowClicked)
 
         header = self.mapLevelsTable.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)
@@ -297,14 +292,14 @@ class MainWindow(QMainWindow):
         event.accept()
 
     def sourceTableRowClicked(self, row, col):
-        selectedRowsList = self._getSelectedRowsInTable(self.allMapsTable)
+        selectedRowsList = self.allMapsTable.getSelectedRows()
         if selectedRowsList:
             row = selectedRowsList[0]
             mapInstance = self.allMapsPlaylist[row]
             self.generateMapDetails(mapInstance)
     
     def targetTableRowClicked(self, row, col):
-        selectedRowsList = self._getSelectedRowsInTable(self.playlistsMapsTable)
+        selectedRowsList = self.playlistsMapsTable.getSelectedRows()
         if len(selectedRowsList) == 1:
             index = selectedRowsList[0]
             mapInstance = self.playlistInstance[index]
@@ -352,7 +347,7 @@ class MainWindow(QMainWindow):
         self._moveSelectedRowsUpDown(self.playlistsMapsTable, 'down')
 
     def deleteSelectedSongs(self, table:QTableWidget):
-        selectedRowsList = self._getSelectedRowsInTable(table)
+        selectedRowsList = table.getSelectedRows(table)
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
         self.playlistInstance.removeSelectedSongs()
         self._updateSongsTable(table, self.playlistInstance)
@@ -439,17 +434,13 @@ class MainWindow(QMainWindow):
             'down': self.playlistInstance.moveSelectedItemsDown
         }
 
-        selectedRowsList = self._getSelectedRowsInTable(table)
+        selectedRowsList = table.getSelectedRows()
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
         functionDict[direction]() #move up or down
         indexes = self.playlistInstance.getSelectedIndexes()
 
         self._updateSongsTable(table, self.playlistInstance)
         self._selectRowsInTable(table, indexes)
-
-    def _getSelectedRowsInTable(self, table:QTableWidget) -> list[int]:
-        selectedRows = {index.row() for index in table.selectionModel().selectedIndexes()}
-        return list(selectedRows)
 
     def _unselectAllRowsInTable(self, table:QTableWidget):
         table.selectionModel().clearSelection()
