@@ -15,6 +15,13 @@ class TableWidgetWrapper:
         selectedRows = {index.row() for index in self._originalTableWidget.selectionModel().selectedIndexes()}
         return list(selectedRows)
 
+    def clear(self):
+        selectionModelInstance = self._originalTableWidget.model()
+        if selectionModelInstance is not None:
+            selectionModelInstance.removeRows(0, selectionModelInstance.rowCount())
+
+    def unselectAll(self):
+        self._originalTableWidget.selectionModel().clearSelection()
 
 class QuestSongsTable(TableWidgetWrapper):
     def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):

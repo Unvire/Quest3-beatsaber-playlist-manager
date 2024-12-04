@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
 
-        self._clearTable(self.playlistsMapsTable)
+        self.playlistsMapsTable.clear()
         self._clearTable(self.mapLevelsTable)
 
         pixmap = QPixmap(QSize(256, 256))
@@ -269,14 +269,14 @@ class MainWindow(QMainWindow):
         self.allMapsPlaylist.resetSortingReverseMode()
         self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
         
-        self._unselectAllRowsInTable(self.allMapsTable)
+        self.allMapsTable.unselectAll()
         self._updateSongsTable(self.allMapsTable, self.allMapsPlaylist)
     
     def reverseAllMapsSorting(self):
         self.allMapsPlaylist.changeSortingOrder()
         self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
         
-        self._unselectAllRowsInTable(self.allMapsTable)
+        self.allMapsTable.unselectAll()
         self._updateSongsTable(self.allMapsTable, self.allMapsPlaylist)
     
     def playMusic(self):
@@ -372,7 +372,7 @@ class MainWindow(QMainWindow):
         table.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
     
     def _updateSongsTable(self, table:TableWidgetWrapper, playlist:BeatSaberPlaylist):
-        self._clearTable(table)
+        table.clear()
         self._addTableRows(table, playlist)
 
     def _addTableRows(self, table:QWidget, playlist:BeatSaberPlaylist):
@@ -398,9 +398,6 @@ class MainWindow(QMainWindow):
 
         self._updateSongsTable(table, self.playlistInstance)
         self._selectRowsInTable(table, indexes)
-
-    def _unselectAllRowsInTable(self, table:TableWidgetWrapper):
-        table.selectionModel().clearSelection()
     
     def _selectRowsInTable(self,  table:TableWidgetWrapper, indexList:list[int]):
         selectionModelInstance = table.selectionModel()
