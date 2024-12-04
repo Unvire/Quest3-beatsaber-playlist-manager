@@ -34,7 +34,8 @@ class MainWindow(QMainWindow):
         uic.loadUi(uiFilePath, self)
         
         self.allMapsTable = QuestSongsTable(self.allMapsTable, self.allMapsPlaylist, self)
-        self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.allMapsPlaylist, self.playlistInstance, self)
+        self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.playlistInstance, self)
+        self.playlistsMapsTable.setSourcePlaylist(self.allMapsPlaylist)
 
         header = self.mapLevelsTable.horizontalHeader()
         header.setSectionResizeMode(QHeaderView.Stretch)

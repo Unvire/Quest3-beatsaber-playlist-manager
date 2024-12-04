@@ -5,8 +5,10 @@ from PyQt5.QtGui import QDrag
 from beatSaberPlaylist import BeatSaberPlaylist
 
 class TableWidgetWrapper:
-    def __init__(self, tableWidget:QTableWidget):
+    def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):
         self._originalTableWidget = tableWidget
+        self.playlistInstance = playlistInstance        
+        self.gui = gui
     
     def __getattr__(self, name):
         return getattr(self._originalTableWidget, name)
@@ -25,14 +27,11 @@ class TableWidgetWrapper:
 
 class QuestSongsTable(TableWidgetWrapper):
     def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):
-        super().__init__(tableWidget)        
-        self.playlistInstance = playlistInstance
+        super().__init__(tableWidget, playlistInstance, gui)
         self._originalTableWidget.setDragEnabled(True)
         self._originalTableWidget.setDragDropMode(QTableWidget.DragOnly)
         self._originalTableWidget.startDrag = self._startDrag
         self._originalTableWidget.cellClicked.connect(self._cellClicked)
-
-        self.gui = gui
     
     def _startDrag(self, supportedActions):
         drag = QDrag(self._originalTableWidget)
@@ -52,19 +51,18 @@ class QuestSongsTable(TableWidgetWrapper):
 
 
 class PlaylistSongsTable(TableWidgetWrapper):
-    def __init__(self, tableWidget:QTableWidget, sourcePlaylistInstance:BeatSaberPlaylist, targetPlaylistInstance:BeatSaberPlaylist, gui):
-        super().__init__(tableWidget)        
-        self.sourcePlaylistInstance = sourcePlaylistInstance
-        self.playlistInstance = targetPlaylistInstance
+    def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):
+        super().__init__(tableWidget, playlistInstance, gui)
         self._originalTableWidget.setAcceptDrops(True)
         self._originalTableWidget.setDragDropMode(QTableWidget.DropOnly)
         self._originalTableWidget.dragMoveEvent = self._dragMoveEvent
         self._originalTableWidget.dragEnterEvent = self._dragEnterEvent
         self._originalTableWidget.dropEvent = self._dropEvent
         self._originalTableWidget.cellClicked.connect(self._cellClicked)
-
-        self.gui = gui
     
+    def setSourcePlaylist(self, playlistInstance:BeatSaberPlaylist):
+        self.sourcePlaylistInstance = playlistInstance
+        
     def _dragMoveEvent(self, event):
         event.accept()
     
