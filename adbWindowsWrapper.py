@@ -1,6 +1,5 @@
 import os, subprocess
 import pyperclip
-import adbException
 
 class AdbWindowsWrapper:
     BEATSABER_SONGS_PATH = '/sdcard/ModData/com.beatgames.beatsaber/Mods/SongCore/CustomLevels'
@@ -8,17 +7,19 @@ class AdbWindowsWrapper:
 
     def __init__(self):
         self.adbPath = os.path.join(os.getcwd(), 'adb')
-        
+    
+    def checkIfInstalled(self) -> bool:        
         if not os.path.exists(self.adbPath):
-            raise adbException.AdbFolderDoNotExist
+            return False
 
         if not 'adb.exe' in os.listdir(self.adbPath):
-            raise adbException.AdbExeNotExist
+            return False
         
         result = subprocess.run('adb/adb version', capture_output=True, text=True).stdout
         firstLine = result.splitlines()[0].lower()
         if 'android debug bridge' not in firstLine:
-            raise adbException.AdbExeNotExist
+            return False
+        return True
 
     def isDebugModeEnabled(self) -> bool:
         result = subprocess.run('adb/adb devices', capture_output=True, text=True).stdout
@@ -64,6 +65,7 @@ class AdbWindowsWrapper:
         result = pyperclip.paste()
         pyperclip.copy(clipboard)
         return result
+    
     
 
 if __name__ == '__main__':

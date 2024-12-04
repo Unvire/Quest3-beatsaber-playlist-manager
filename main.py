@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt, QMimeData, QByteArray, QItemSelectionModel, QSize
 from PyQt5.QtGui import QDrag, QPixmap, QColor
 from PyQt5 import uic
 
-import os, sys, threading, platform
+import os, sys, threading, platform, subprocess
 
 from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
@@ -71,6 +71,23 @@ class MainWindow(QMainWindow):
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
         self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
+    
+    def checkLibrariesInstalled(self):
+        def checkIfFfmpegInstalled() -> bool:
+            result = subprocess.run('ffmpeg -version', capture_output=True, text=True).stdout
+            firstLine = result.splitlines()[0].lower()
+            return 'ffmpeg version' in firstLine
+
+        messageBuilder = []
+        isAdbInstalled = self.adbWrapper.checkIfInstalled()
+        isFfmpegInstalled = checkIfFfmpegInstalled()
+        if not (isAdbInstalled and isFfmpegInstalled):
+            adbPath = os.path.join(os.getcwd(), 'adb')
+            messageAdb = f'Please download Android Debug Bridge [ADB]:\n  https://developer.android.com/tools/adb\nand unzip it into:\n  {adbPath}'            
+            messageFfmpeg = 'Please install FFMPEG:\n  https://www.ffmpeg.org/'
+
+            messageBuilder = [message for isInstalled, message in zip((isAdbInstalled, isFfmpegInstalled), (messageAdb, messageFfmpeg)) if not isInstalled]
+            self._infoWarning('\n\n'.join(messageBuilder))
     
     def blankNewPlaylist(self):
         if self._askSaveBeforeClearingPlaylist(self.playlistInstance):
@@ -492,10 +509,12 @@ class MainWindow(QMainWindow):
             return self._yesNoWarning('Current playlist will be cleared. Do you want to save it?')
         else:
             return False
+    
                 
     
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     mainWindowInstance = MainWindow()
     mainWindowInstance.show()
+    mainWindowInstance.checkLibrariesInstalled()
     sys.exit(app.exec_())

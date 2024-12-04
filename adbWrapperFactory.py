@@ -18,6 +18,9 @@ class AdbWrapperFactory():
         except KeyError:
             raise WrapperNotImplemented
     
+    def checkIfInstalled(self) -> bool:
+        return self.adbWrapper.checkIfInstalled()
+    
     def isDebugModeEnabled(self) -> bool:
         return self.adbWrapper.isDebugModeEnabled()
         
