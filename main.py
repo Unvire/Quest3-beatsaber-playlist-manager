@@ -12,6 +12,7 @@ from beatSaberMap import BeatSaberMap
 from byteStringMusicPlayer import ByteStringMusicPlayer
 from adbWrapperFactory import AdbWrapperFactory
 from tableWidgetWrapper import TableWidgetWrapper, QuestSongsTable, PlaylistSongsTable
+from mapDetailsWrapper import MapDetailsWrapper
 
 from playlistDataDialog import PlaylistDataDialog
 from deletePlaylistsDialog import DeletePlaylistsDialog
@@ -37,8 +38,15 @@ class MainWindow(QMainWindow):
         self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.playlistInstance, self)
         self.playlistsMapsTable.setSourcePlaylist(self.allMapsPlaylist)
 
-        header = self.mapLevelsTable.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.Stretch)
+        self.mapDetails = MapDetailsWrapper(authorLabel=self.mapAuthorLabel, 
+                                            titleLabel=self.mapTitleLabel, 
+                                            mapperLabel=self.mapMapperLabel, 
+                                            bpmLabel=self.mapBPMLabel, 
+                                            lengthTimeLabel=self.mapLengthLabel, 
+                                            rankedStateLabel=self.mapRankedStateLabel, 
+                                            uploadedLabel=self.mapUploadedLabel, 
+                                            mapTagsLabel=self.mapTagsLabel, 
+                                            levelsTable=self.mapLevelsTable)
     
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
@@ -257,13 +265,8 @@ class MainWindow(QMainWindow):
     
     def generateMapDetails(self, mapInstance:BeatSaberMap):
         thread = threading.Thread(target=self._downloadAndSetImageAndMusic, args=(mapInstance,))
-        thread.start()     
-
-        lengthTime = self._formatSeconds(mapInstance.lengthSeconds)
-        tags = ", ".join(mapInstance.tagsList)
-        self._setMapDetails(author=mapInstance.author, title=mapInstance.title, mapper=mapInstance.mapper, bpm=mapInstance.bpm, lengthTime=lengthTime,
-                            rankedState=mapInstance.rankedState, uploaded=mapInstance.uploaded, tags=tags)
-        self._generateMapLevelsTable(mapInstance)    
+        thread.start()
+        self.mapDetails.update(mapInstance, self)
     
     def sortAllMapsBy(self, index:int):        
         self.sortingOrder = self.sortAllMapsByComboBox.itemText(index)
@@ -311,40 +314,13 @@ class MainWindow(QMainWindow):
         table.generateRows()
     
     def resizeEvent(self, event):
-        labels = [self.mapTitleLabel, self.mapAuthorLabel, self.mapMapperLabel, self.mapBPMLabel, self.mapLengthLabel, 
-                  self.mapRankedStateLabel, self.mapUploadedLabel, self.mapTagsLabel]
-        for label in labels:
-            text = label.toolTip()
-            self._elideLabel(label, text)
+        self.mapDetails.resizeLabels()
         super().resizeEvent(event)
     
     def closeEvent(self, event):
         self.musicPlayer.stop()
         self.adbWrapper.terminateAdb()
         event.accept()
-
-    def _generateMapLevelsTable(self, mapInstance:BeatSaberMap):
-        self._clearTable(self.mapLevelsTable)
-        for level in mapInstance.diffs:
-            rowCount = self.mapLevelsTable.rowCount()
-            self.mapLevelsTable.insertRow(rowCount)
-            self.mapLevelsTable.setItem(rowCount, 0, QTableWidgetItem(f'{level.difficulty}'))
-            self.mapLevelsTable.setItem(rowCount, 1, QTableWidgetItem(f'{level.characteristic}'))
-            self.mapLevelsTable.setItem(rowCount, 2, QTableWidgetItem(f'{level.stars}'))
-            self.mapLevelsTable.setItem(rowCount, 3, QTableWidgetItem(f'{level.njs}'))
-            self.mapLevelsTable.setItem(rowCount, 4, QTableWidgetItem(f'{level.nps}'))
-            self.mapLevelsTable.setItem(rowCount, 5, QTableWidgetItem(f'{level.requiredMods}'))
-        self._adjustTableHeight(self.mapLevelsTable)
-
-    def _setMapDetails(self, author:str='', title:str='', mapper:str='', bpm:str='', lengthTime:str='', rankedState:str='', uploaded:str='', tags:str=''):   
-        self._elideLabel(self.mapAuthorLabel, f'Author: {author}')
-        self._elideLabel(self.mapTitleLabel, f'Title: {title}')
-        self._elideLabel(self.mapMapperLabel, f'Mapper: {mapper}')
-        self._elideLabel(self.mapBPMLabel, f'BPM: {bpm}')
-        self._elideLabel(self.mapLengthLabel, f'Length: {lengthTime}')
-        self._elideLabel(self.mapRankedStateLabel, f'Ranked state: {rankedState}')
-        self._elideLabel(self.mapUploadedLabel, f'Uploaded: {uploaded}')
-        self._elideLabel(self.mapTagsLabel, f'Tags: {tags}')
     
     def _downloadAndSetImageAndMusic(self, mapInstance:BeatSaberMap):
         pixmap, musicByteStr, fileFormat = self._downloadImageAndMusic(mapInstance)
@@ -360,18 +336,6 @@ class MainWindow(QMainWindow):
         self.mapImageLabel.setPixmap(pixmap)
         self.musicPlayer.loadMusicFromByteStr(musicByteStr, fileFormat)
 
-    def _adjustTableHeight(self, table:TableWidgetWrapper):
-        MARGIN_HEIGHT = 2        
-        maxHeight = self._calculateAvailableSpaceForMapDetailsTable()
-
-        totalTableHeight = table.horizontalHeader().height()
-        for row in range(table.rowCount()):
-            rowHeight = table.rowHeight(row)
-            if totalTableHeight + rowHeight > maxHeight + MARGIN_HEIGHT:
-                break
-            totalTableHeight += table.rowHeight(row)
-        table.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
-
     def _moveSelectedRowsUpDown(self, table:TableWidgetWrapper, direction:str):
         functionDict = {
             'up': self.playlistInstance.moveSelectedItemsUp,
@@ -386,16 +350,6 @@ class MainWindow(QMainWindow):
         table.generateRows()
         table.selectRows(indexes)
     
-    def _clearTable(self, table:TableWidgetWrapper):
-        selectionModelInstance = table.model()
-        if selectionModelInstance is not None:
-            selectionModelInstance.removeRows(0, selectionModelInstance.rowCount())
-
-    def _formatSeconds(self, lengthSeconds:int) -> str:
-        minutes, seconds = divmod(lengthSeconds, 60)
-        seconds = f'0{seconds}' if seconds < 10 else seconds
-        return f'{minutes}:{seconds}'
-    
     def _getImagePixmap(self, imageUrl:str) -> QPixmap:
         byteString = BeatSaverAPICaller.getImageByteString(imageUrl)
         byteArray = QByteArray(byteString)
@@ -403,23 +357,6 @@ class MainWindow(QMainWindow):
         pixmap = QPixmap()
         pixmap.loadFromData(byteArray)
         return pixmap
-    
-    def _elideLabel(self, label:QLabel, text:str):
-        label.setToolTip(text)
-        labelWidth = label.width()
-        fontMetrics = label.fontMetrics()
-
-        if labelWidth > 50:
-            elidedText = fontMetrics.elidedText(text, Qt.ElideRight, labelWidth)
-        else:
-            elidedText = "..."
-
-        label.setText(elidedText)
-    
-    def _calculateAvailableSpaceForMapDetailsTable(self) -> int:
-        tableCoords = self.mapLevelsTable.geometry()
-        playButtonCoords = self.playMusicButton.geometry()
-        return playButtonCoords.y() - tableCoords.y()
     
     def _getResponseJSONFromMapsIDList(self, listID:list[str]) -> dict:
         responseDict = BeatSaverAPICaller.multipleMapsCall(listID)
