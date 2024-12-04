@@ -278,13 +278,6 @@ class MainWindow(QMainWindow):
     
     def targetTableDragEnterEvent(self, event):
         event.accept()
-
-    def sourceTableRowClicked(self, row, col):
-        selectedRowsList = self.allMapsTable.getSelectedRows()
-        if selectedRowsList:
-            row = selectedRowsList[0]
-            mapInstance = self.allMapsPlaylist[row]
-            self.generateMapDetails(mapInstance)
     
     def targetTableRowClicked(self, row, col):
         selectedRowsList = self.playlistsMapsTable.getSelectedRows()
