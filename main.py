@@ -1,17 +1,16 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QDialog, QMessageBox
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
-from PyQt5.QtCore import QByteArray, QSize
+from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QPixmap, QColor
 from PyQt5 import uic
 
-import os, sys, threading, platform, subprocess
+import os, sys, platform, subprocess
 
 from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
-from beatSaberMap import BeatSaberMap
 from byteStringMusicPlayer import ByteStringMusicPlayer
 from adbWrapperFactory import AdbWrapperFactory
-from tableWidgetWrapper import TableWidgetWrapper, QuestSongsTable, PlaylistSongsTable
+from tableWidgetWrapper import QuestSongsTable, PlaylistSongsTable
 from mapDetailsWrapper import MapDetailsWrapper
 from labelWrapper import LabelWrapper
 
@@ -25,7 +24,6 @@ class MainWindow(QMainWindow):
         self.allMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
-
         self.adbWrapper = AdbWrapperFactory(platform.system())
 
         self.sortingOrder = 'Upload date'
@@ -102,16 +100,7 @@ class MainWindow(QMainWindow):
         if self._askSaveBeforeClearingPlaylist(self.playlistInstance):
             self.savePlaylistAs()
 
-        self.playlistInstance = BeatSaberPlaylist()
-        self.musicPlayer = ByteStringMusicPlayer()
-
-        self.playlistsMapsTable.clear()
-        self._clearTable(self.mapLevelsTable)
-
-        pixmap = QPixmap(QSize(256, 256))
-        pixmap.fill(QColor(0, 0, 0, 0))
-        self._setMapDetails()
-        self._setMapImageAndMusic(pixmap, '', '')
+        self._clearPlaylist()
     
     def newPlaylistFromDownloadedSongs(self):
         if self._askSaveBeforeClearingPlaylist(self.playlistInstance):
@@ -128,7 +117,8 @@ class MainWindow(QMainWindow):
         if not responseDict:
             self._infoWarning('Error with obtaining data from beatsaver.com')
             return
-
+        
+        self._clearPlaylist()
         self.playlistInstance.generateFromResponseDict(responseDict)
         self.playlistsMapsTable.generateRows()
     
@@ -338,6 +328,12 @@ class MainWindow(QMainWindow):
             return self._yesNoWarning('Current playlist will be cleared. Do you want to save it?')
         else:
             return False
+    
+    def _clearPlaylist(self):
+        self.playlistInstance = BeatSaberPlaylist()
+        self.musicPlayer = ByteStringMusicPlayer()
+        self.playlistsMapsTable.clear()
+        self.mapDetails.resetMapDetails()
     
                 
     

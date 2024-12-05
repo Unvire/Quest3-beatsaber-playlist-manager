@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QTableWidget, QLabel, QTableWidgetItem, QHeaderView
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import QByteArray
+from PyQt5.QtGui import QPixmap, QColor
+from PyQt5.QtCore import QByteArray, QSize
 
 import threading
 
@@ -27,6 +27,10 @@ class MapDetailsWrapper:
     
     def setFirstWidgetBelowTable(self, widget:QWidget):
         self.firstWidgetBelowTable = widget
+    
+    def resetMapDetails(self):
+        self.staticDetails.reset()
+        self.webRequestDetails.reset()
 
     def update(self, mapInstance:BeatSaberMap):
         thread = threading.Thread(target=self.webRequestDetails.update, args=(mapInstance,))
@@ -42,6 +46,11 @@ class WebRequestMapDetails:
     def __init__(self, imageLabel:QLabel, musicPlayer:ByteStringMusicPlayer):
         self.mapImageLabel = imageLabel
         self.musicPlayer = musicPlayer
+    
+    def reset(self):
+        pixmap = QPixmap(QSize(256, 256))
+        pixmap.fill(QColor(0, 0, 0, 0))
+        self._setMapImageAndMusic(pixmap, '', '')
     
     def update(self, mapInstance:BeatSaberMap):
         pixmap, musicByteStr, fileFormat = self._downloadImageAndMusic(mapInstance)
@@ -86,6 +95,10 @@ class StaticDetails:
     
     def setFirstWidgetBelowTable(self, widget:QWidget):
         self.firstWidgetBelowTable = widget
+    
+    def reset(self):
+        self._updateLabels()
+        self.mapLevelsTable.clear()
     
     def update(self, mapInstance:BeatSaberMap):
         lengthTime = self._formatSeconds(mapInstance.lengthSeconds)
