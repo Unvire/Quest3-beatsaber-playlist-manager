@@ -27,6 +27,8 @@ class ByteStringMusicPlayer():
     
     def play(self):
         self.stop()
+        if not isinstance(self.unconvertedByteString, bytes):
+            return
         
         self.player = pyaudio.PyAudio()
         audio = pydub.AudioSegment.from_file(io.BytesIO(self.unconvertedByteString), 
