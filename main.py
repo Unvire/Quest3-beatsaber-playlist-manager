@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QDialog, QMessageBox
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
-from PyQt5.QtCore import Qt, QByteArray, QSize
+from PyQt5.QtCore import QByteArray, QSize
 from PyQt5.QtGui import QPixmap, QColor
 from PyQt5 import uic
 
@@ -54,6 +54,7 @@ class MainWindow(QMainWindow):
                                         bpmLabel=self.mapBPMLabel, lengthTimeLabel=self.mapLengthLabel, rankedStateLabel=self.mapRankedStateLabel, 
                                         uploadedLabel=self.mapUploadedLabel, mapTagsLabel=self.mapTagsLabel, levelsTable=self.mapLevelsTable)
         self.mapDetails.setFirstWidgetBelowTable(self.playMusicButton)
+        self.mapDetails.setWebRequestWidgets(self.mapImageLabel, self.musicPlayer)
     
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
@@ -271,8 +272,6 @@ class MainWindow(QMainWindow):
         return songsIDsList
     
     def generateMapDetails(self, mapInstance:BeatSaberMap):
-        thread = threading.Thread(target=self._downloadAndSetImageAndMusic, args=(mapInstance,))
-        thread.start()
         self.mapDetails.update(mapInstance)
     
     def sortAllMapsBy(self, index:int):        
@@ -328,20 +327,6 @@ class MainWindow(QMainWindow):
         self.musicPlayer.stop()
         self.adbWrapper.terminateAdb()
         event.accept()
-    
-    def _downloadAndSetImageAndMusic(self, mapInstance:BeatSaberMap):
-        pixmap, musicByteStr, fileFormat = self._downloadImageAndMusic(mapInstance)
-        self._setMapImageAndMusic(pixmap, musicByteStr, fileFormat)
-    
-    def _downloadImageAndMusic(self, mapInstance:BeatSaberMap) -> tuple[QPixmap, str, str]:
-        pixmap = self._getImagePixmap(mapInstance.coverUrl)
-        musicByteStr = self.musicPlayer.downloadMusicFromUrl(mapInstance.previewUrl)
-        fileFormat = mapInstance.previewUrl.split('.')[-1]
-        return pixmap, musicByteStr, fileFormat
-    
-    def _setMapImageAndMusic(self, pixmap:QPixmap, musicByteStr:str, fileFormat:str):
-        self.mapImageLabel.setPixmap(pixmap)
-        self.musicPlayer.loadMusicFromByteStr(musicByteStr, fileFormat)
 
     def _moveSelectedRowsUpDown(self, table:TableWidgetWrapper, direction:str):
         functionDict = {
@@ -356,14 +341,6 @@ class MainWindow(QMainWindow):
 
         table.generateRows()
         table.selectRows(indexes)
-    
-    def _getImagePixmap(self, imageUrl:str) -> QPixmap:
-        byteString = BeatSaverAPICaller.getImageByteString(imageUrl)
-        byteArray = QByteArray(byteString)
-
-        pixmap = QPixmap()
-        pixmap.loadFromData(byteArray)
-        return pixmap
     
     def _getResponseJSONFromMapsIDList(self, listID:list[str]) -> dict:
         responseDict = BeatSaverAPICaller.multipleMapsCall(listID)

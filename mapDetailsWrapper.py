@@ -1,12 +1,19 @@
-from PyQt5.QtWidgets import QWidget, QTableWidget, QTableWidgetItem, QMainWindow, QHeaderView
+from PyQt5.QtWidgets import QWidget, QTableWidget, QLabel, QTableWidgetItem, QHeaderView
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import QByteArray
+
+import threading
 
 from beatSaberMap import BeatSaberMap
 from labelWrapper import LabelWrapper
+from byteStringMusicPlayer import ByteStringMusicPlayer
+from beatSaverAPICaller import BeatSaverAPICaller
 
 class MapDetailsWrapper:
     def __init__(self):
         self.webRequestDetails = None
         self.staticDetails = None
+        self.webRequestDetails = None
         self.firstWidgetBelowTable = None
 
     def setStaticWidgets(self, authorLabel:LabelWrapper, titleLabel:LabelWrapper, mapperLabel:LabelWrapper, 
@@ -15,10 +22,15 @@ class MapDetailsWrapper:
         self.staticDetails = StaticDetails(authorLabel, titleLabel, mapperLabel, bpmLabel, lengthTimeLabel, 
                  rankedStateLabel, uploadedLabel, mapTagsLabel, levelsTable)
     
+    def setWebRequestWidgets(self, imageLabel:QLabel, musicPlayer:ByteStringMusicPlayer):
+        self.webRequestDetails = WebRequestMapDetails(imageLabel=imageLabel, musicPlayer=musicPlayer)
+    
     def setFirstWidgetBelowTable(self, widget:QWidget):
         self.firstWidgetBelowTable = widget
 
     def update(self, mapInstance:BeatSaberMap):
+        thread = threading.Thread(target=self.webRequestDetails.update, args=(mapInstance,))
+        thread.start()
         self.staticDetails.setFirstWidgetBelowTable(self.firstWidgetBelowTable)
         self.staticDetails.update(mapInstance)
     
@@ -27,7 +39,32 @@ class MapDetailsWrapper:
 
 
 class WebRequestMapDetails:
-    pass
+    def __init__(self, imageLabel:QLabel, musicPlayer:ByteStringMusicPlayer):
+        self.mapImageLabel = imageLabel
+        self.musicPlayer = musicPlayer
+    
+    def update(self, mapInstance:BeatSaberMap):
+        pixmap, musicByteStr, fileFormat = self._downloadImageAndMusic(mapInstance)
+        self._setMapImageAndMusic(pixmap, musicByteStr, fileFormat)
+    
+    def _downloadImageAndMusic(self, mapInstance:BeatSaberMap) -> tuple[QPixmap, str, str]:
+        pixmap = self._getImagePixmap(mapInstance.coverUrl)
+        musicByteStr = self.musicPlayer.downloadMusicFromUrl(mapInstance.previewUrl)
+        fileFormat = mapInstance.previewUrl.split('.')[-1]
+        return pixmap, musicByteStr, fileFormat
+    
+    def _setMapImageAndMusic(self, pixmap:QPixmap, musicByteStr:str, fileFormat:str):
+        self.mapImageLabel.setPixmap(pixmap)
+        self.musicPlayer.loadMusicFromByteStr(musicByteStr, fileFormat)
+
+    def _getImagePixmap(self, imageUrl:str) -> QPixmap:
+        byteString = BeatSaverAPICaller.getImageByteString(imageUrl)
+        byteArray = QByteArray(byteString)
+
+        pixmap = QPixmap()
+        pixmap.loadFromData(byteArray)
+        return pixmap
+
 
 
 class StaticDetails:
