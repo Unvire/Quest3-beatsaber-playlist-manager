@@ -13,6 +13,7 @@ from byteStringMusicPlayer import ByteStringMusicPlayer
 from adbWrapperFactory import AdbWrapperFactory
 from tableWidgetWrapper import TableWidgetWrapper, QuestSongsTable, PlaylistSongsTable
 from mapDetailsWrapper import MapDetailsWrapper
+from labelWrapper import LabelWrapper
 
 from playlistDataDialog import PlaylistDataDialog
 from deletePlaylistsDialog import DeletePlaylistsDialog
@@ -37,6 +38,16 @@ class MainWindow(QMainWindow):
         self.allMapsTable = QuestSongsTable(self.allMapsTable, self.allMapsPlaylist, self)
         self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.playlistInstance, self)
         self.playlistsMapsTable.setSourcePlaylist(self.allMapsPlaylist)
+
+        self.mapAuthorLabel = LabelWrapper(self.mapAuthorLabel)
+        self.mapTitleLabel = LabelWrapper(self.mapTitleLabel)
+        self.mapMapperLabel = LabelWrapper(self.mapMapperLabel)
+        self.mapBPMLabel = LabelWrapper(self.mapBPMLabel)
+        self.mapLengthLabel = LabelWrapper(self.mapLengthLabel)
+        self.mapRankedStateLabel = LabelWrapper(self.mapRankedStateLabel)
+        self.mapUploadedLabel = LabelWrapper(self.mapUploadedLabel)
+        self.mapTagsLabel = LabelWrapper(self.mapTagsLabel)
+        self.mapLevelsTable = LabelWrapper(self.mapLevelsTable)    
 
         self.mapDetails = MapDetailsWrapper()
         self.mapDetails.setStaticWidgets(authorLabel=self.mapAuthorLabel, 
@@ -315,7 +326,12 @@ class MainWindow(QMainWindow):
         table.generateRows()
     
     def resizeEvent(self, event):
-        self.mapDetails.resizeLabels()
+        labels = [self.mapAuthorLabel, self.mapTitleLabel, self.mapMapperLabel, self.mapBPMLabel, 
+                    self.mapLengthLabel, self.mapRankedStateLabel, self.mapUploadedLabel, 
+                    self.mapTagsLabel]
+        
+        for label in labels:
+            label.resize()
         super().resizeEvent(event)
     
     def closeEvent(self, event):

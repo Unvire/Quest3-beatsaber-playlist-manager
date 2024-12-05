@@ -2,14 +2,16 @@ from PyQt5.QtWidgets import QLabel, QTableWidget, QTableWidgetItem, QMainWindow,
 from PyQt5.QtCore import Qt
 
 from beatSaberMap import BeatSaberMap
+from labelWrapper import LabelWrapper
 
 class MapDetailsWrapper:
     def __init__(self):
         self.webRequestDetails = None
         self.staticDetails = None
 
-    def setStaticWidgets(self, authorLabel:QLabel, titleLabel:QLabel, mapperLabel:QLabel, bpmLabel:QLabel, lengthTimeLabel:QLabel, 
-                 rankedStateLabel:QLabel, uploadedLabel:QLabel, mapTagsLabel:QLabel, levelsTable:QTableWidget):
+    def setStaticWidgets(self, authorLabel:LabelWrapper, titleLabel:LabelWrapper, mapperLabel:LabelWrapper, 
+                         bpmLabel:LabelWrapper, lengthTimeLabel:LabelWrapper, rankedStateLabel:LabelWrapper, 
+                         uploadedLabel:LabelWrapper, mapTagsLabel:LabelWrapper, levelsTable:QTableWidget):
         self.staticDetails = StaticDetails(authorLabel, titleLabel, mapperLabel, bpmLabel, lengthTimeLabel, 
                  rankedStateLabel, uploadedLabel, mapTagsLabel, levelsTable)
     
@@ -25,8 +27,9 @@ class WebRequestMapDetails:
 
 
 class StaticDetails:
-    def __init__(self, authorLabel:QLabel, titleLabel:QLabel, mapperLabel:QLabel, bpmLabel:QLabel, lengthTimeLabel:QLabel, 
-                 rankedStateLabel:QLabel, uploadedLabel:QLabel, mapTagsLabel:QLabel, levelsTable:QTableWidget):
+    def __init__(self, authorLabel:LabelWrapper, titleLabel:LabelWrapper, mapperLabel:LabelWrapper, 
+                 bpmLabel:LabelWrapper, lengthTimeLabel:LabelWrapper, rankedStateLabel:LabelWrapper, 
+                 uploadedLabel:LabelWrapper, mapTagsLabel:LabelWrapper, levelsTable:QTableWidget):
         self.mapAuthorLabel = authorLabel
         self.mapTitleLabel = titleLabel
         self.mapMapperLabel = mapperLabel
@@ -52,15 +55,17 @@ class StaticDetails:
         seconds = f'0{seconds}' if seconds < 10 else seconds
         return f'{minutes}:{seconds}'
 
-    def _updateLabels(self, author:str='', title:str='', mapper:str='', bpm:str='', lengthTime:str='', rankedState:str='', uploaded:str='', tags:str=''):
-        self._elideLabel(self.mapAuthorLabel, f'Author: {author}')
-        self._elideLabel(self.mapTitleLabel, f'Title: {title}')
-        self._elideLabel(self.mapMapperLabel, f'Mapper: {mapper}')
-        self._elideLabel(self.mapBPMLabel, f'BPM: {bpm}')
-        self._elideLabel(self.mapLengthLabel, f'Length: {lengthTime}')
-        self._elideLabel(self.mapRankedStateLabel, f'Ranked state: {rankedState}')
-        self._elideLabel(self.mapUploadedLabel, f'Uploaded: {uploaded}')
-        self._elideLabel(self.mapTagsLabel, f'Tags: {tags}')
+    def _updateLabels(self, author:str='', title:str='', mapper:str='', 
+                      bpm:str='', lengthTime:str='', rankedState:str='', 
+                      uploaded:str='', tags:str=''):
+        self.mapAuthorLabel.setText(f'Author: {author}')
+        self.mapTitleLabel.setText(f'Title: {title}')
+        self.mapMapperLabel.setText(f'Mapper: {mapper}')
+        self.mapBPMLabel.setText(f'BPM: {bpm}')
+        self.mapLengthLabel.setText(f'Length: {lengthTime}')
+        self.mapRankedStateLabel.setText(f'Ranked state: {rankedState}')
+        self.mapUploadedLabel.setText(f'Uploaded: {uploaded}')
+        self.mapTagsLabel.setText(f'Tags: {tags}')
     
     def _updateTable(self, mapInstance:BeatSaberMap, mainWindow:QMainWindow):
         self._clearTable()
@@ -96,22 +101,3 @@ class StaticDetails:
         tableCoords = self.mapLevelsTable.geometry()
         playButtonCoords = mainWindow.playMusicButton.geometry()
         return playButtonCoords.y() - tableCoords.y()
-    
-    def resizeLabels(self):
-        labels = [self.mapTitleLabel, self.mapAuthorLabel, self.mapMapperLabel, self.mapBPMLabel, self.mapLengthLabel, 
-                  self.mapRankedStateLabel, self.mapUploadedLabel, self.mapTagsLabel]
-        for label in labels:
-            text = label.toolTip()
-            self._elideLabel(label, text)
-    
-    def _elideLabel(self, label:QLabel, text:str):
-        label.setToolTip(text)
-        labelWidth = label.width()
-        fontMetrics = label.fontMetrics()
-
-        if labelWidth > 50:
-            elidedText = fontMetrics.elidedText(text, Qt.ElideRight, labelWidth)
-        else:
-            elidedText = "..."
-
-        label.setText(elidedText)
