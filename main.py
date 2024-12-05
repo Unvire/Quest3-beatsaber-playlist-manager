@@ -34,10 +34,6 @@ class MainWindow(QMainWindow):
         super().__init__()
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
         uic.loadUi(uiFilePath, self)
-        
-        self.allMapsTable = QuestSongsTable(self.allMapsTable, self.allMapsPlaylist, self)
-        self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.playlistInstance, self)
-        self.playlistsMapsTable.setSourcePlaylist(self.allMapsPlaylist)
 
         self.mapAuthorLabel = LabelWrapper(self.mapAuthorLabel)
         self.mapTitleLabel = LabelWrapper(self.mapTitleLabel)
@@ -55,6 +51,10 @@ class MainWindow(QMainWindow):
                                         uploadedLabel=self.mapUploadedLabel, mapTagsLabel=self.mapTagsLabel, levelsTable=self.mapLevelsTable)
         self.mapDetails.setFirstWidgetBelowTable(self.playMusicButton)
         self.mapDetails.setWebRequestWidgets(self.mapImageLabel, self.musicPlayer)
+        
+        self.allMapsTable = QuestSongsTable(self.allMapsTable, self.allMapsPlaylist, self.mapDetails.update)
+        self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.playlistInstance, self.mapDetails.update)
+        self.playlistsMapsTable.setSourcePlaylist(self.allMapsPlaylist)
     
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)

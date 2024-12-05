@@ -6,10 +6,12 @@ from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
 
 class TableWidgetWrapper:
-    def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):
+    def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, generateMapDetailsMethodHandle):
         self._originalTableWidget = tableWidget
         self.playlistInstance = playlistInstance        
-        self.gui = gui
+        self.generateMapDetailsMethodHandle = generateMapDetailsMethodHandle
+        
+        self._originalTableWidget.cellClicked.connect(self._cellClicked)
     
     def __getattr__(self, name):
         return getattr(self._originalTableWidget, name)
@@ -41,14 +43,20 @@ class TableWidgetWrapper:
 
     def unselectAll(self):
         self._originalTableWidget.selectionModel().clearSelection()
+    
+    def _cellClicked(self, row, col):
+        selectedRowsList = self.getSelectedRows()
+        if len(selectedRowsList) == 1:
+            index = selectedRowsList[0]
+            mapInstance = self.playlistInstance[index]
+            self.generateMapDetailsMethodHandle(mapInstance)
 
 class QuestSongsTable(TableWidgetWrapper):
-    def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):
-        super().__init__(tableWidget, playlistInstance, gui)
+    def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, generateMapDetailsMethodHandle):
+        super().__init__(tableWidget, playlistInstance, generateMapDetailsMethodHandle)
         self._originalTableWidget.setDragEnabled(True)
         self._originalTableWidget.setDragDropMode(QTableWidget.DragOnly)
         self._originalTableWidget.startDrag = self._startDrag
-        self._originalTableWidget.cellClicked.connect(self._cellClicked)
     
     def _startDrag(self, supportedActions):
         drag = QDrag(self._originalTableWidget)
@@ -59,23 +67,15 @@ class QuestSongsTable(TableWidgetWrapper):
         drag.setMimeData(mimeData)
         drag.exec_(Qt.CopyAction)
 
-    def _cellClicked(self, row, col):
-        selectedRowsList = self.getSelectedRows()
-        if selectedRowsList:
-            row = selectedRowsList[0]
-            mapInstance = self.playlistInstance[row]
-            self.gui.generateMapDetails(mapInstance)
-
 
 class PlaylistSongsTable(TableWidgetWrapper):
-    def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, gui):
-        super().__init__(tableWidget, playlistInstance, gui)
+    def __init__(self, tableWidget:QTableWidget, playlistInstance:BeatSaberPlaylist, generateMapDetailsMethodHandle):
+        super().__init__(tableWidget, playlistInstance, generateMapDetailsMethodHandle)
         self._originalTableWidget.setAcceptDrops(True)
         self._originalTableWidget.setDragDropMode(QTableWidget.DropOnly)
         self._originalTableWidget.dragMoveEvent = self._dragMoveEvent
         self._originalTableWidget.dragEnterEvent = self._dragEnterEvent
         self._originalTableWidget.dropEvent = self._dropEvent
-        self._originalTableWidget.cellClicked.connect(self._cellClicked)
     
     def setSourcePlaylist(self, playlistInstance:BeatSaberPlaylist):
         self.sourcePlaylistInstance = playlistInstance
@@ -95,10 +95,6 @@ class PlaylistSongsTable(TableWidgetWrapper):
         event.accept()
     
     def _cellClicked(self, row, col):
+        super()._cellClicked(row, col)
         selectedRowsList = self.getSelectedRows()
-        if len(selectedRowsList) == 1:
-            index = selectedRowsList[0]
-            mapInstance = self.playlistInstance[index]
-            self.gui.generateMapDetails(mapInstance)
-
         self.playlistInstance.setSelectedIndexes(selectedRowsList)
