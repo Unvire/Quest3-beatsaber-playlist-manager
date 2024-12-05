@@ -80,6 +80,29 @@ class PlaylistSongsTable(TableWidgetWrapper):
     def setSourcePlaylist(self, playlistInstance:BeatSaberPlaylist):
         self.sourcePlaylistInstance = playlistInstance
 
+    def moveSelectedMapsUp(self):
+        moveFunctionHandle = self.playlistInstance.moveSelectedItemsUp
+        self._moveSelectedRowsUpDown(moveFunctionHandle)
+    
+    def moveSelectedMapsDown(self):
+        moveFunctionHandle = self.playlistInstance.moveSelectedItemsDown
+        self._moveSelectedRowsUpDown(moveFunctionHandle)
+
+    def deleteSelectedMaps(self):
+        selectedRowsList = self.getSelectedRows()
+        self.playlistInstance.setSelectedIndexes(selectedRowsList)
+        self.playlistInstance.removeSelectedSongs()
+        self.generateRows()
+    
+    def _moveSelectedRowsUpDown(self, moveFunctionHandle):
+        selectedRowsList = self.getSelectedRows()
+        self.playlistInstance.setSelectedIndexes(selectedRowsList)
+        moveFunctionHandle() #execute move up or down
+
+        indexes = self.playlistInstance.getSelectedIndexes()
+        self.generateRows()
+        self.selectRows(indexes)
+
     def _dragMoveEvent(self, event):
         event.accept()
     

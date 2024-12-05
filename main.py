@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
         self.setPlaylistHeaderButton.clicked.connect(self.openPlaylistDataDialogWindow)
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
-        self.selectionDeleteButton.clicked.connect(lambda: self.deleteSelectedSongs(self.playlistsMapsTable))
+        self.selectionDeleteButton.clicked.connect(self.deleteSelectedSongs)
     
     def checkLibrariesInstalled(self):
         def checkIfFfmpegInstalled() -> bool:
@@ -271,9 +271,6 @@ class MainWindow(QMainWindow):
         songsIDsList = [line.split('\\')[0] for line in buffer]
         return songsIDsList
     
-    def generateMapDetails(self, mapInstance:BeatSaberMap):
-        self.mapDetails.update(mapInstance)
-    
     def sortAllMapsBy(self, index:int):        
         self.sortingOrder = self.sortAllMapsByComboBox.itemText(index)
         self.allMapsPlaylist.resetSortingReverseMode()
@@ -308,16 +305,13 @@ class MainWindow(QMainWindow):
             self.playlistInstance.setImageString(response['image'])
 
     def moveSelectedSongsUp(self):
-        self._moveSelectedRowsUpDown(self.playlistsMapsTable, 'up')
+        self.playlistsMapsTable.moveSelectedMapsUp()
     
     def moveSelectedSongsDown(self):
-        self._moveSelectedRowsUpDown(self.playlistsMapsTable, 'down')
+        self.playlistsMapsTable.moveSelectedMapsDown()
 
-    def deleteSelectedSongs(self, table:TableWidgetWrapper):
-        selectedRowsList = table.getSelectedRows()
-        self.playlistInstance.setSelectedIndexes(selectedRowsList)
-        self.playlistInstance.removeSelectedSongs()
-        table.generateRows()
+    def deleteSelectedSongs(self):
+        self.playlistsMapsTable.deleteSelectedMaps()
     
     def resizeEvent(self, event):
         self.mapDetails.resize()
@@ -327,20 +321,6 @@ class MainWindow(QMainWindow):
         self.musicPlayer.stop()
         self.adbWrapper.terminateAdb()
         event.accept()
-
-    def _moveSelectedRowsUpDown(self, table:TableWidgetWrapper, direction:str):
-        functionDict = {
-            'up': self.playlistInstance.moveSelectedItemsUp,
-            'down': self.playlistInstance.moveSelectedItemsDown
-        }
-
-        selectedRowsList = table.getSelectedRows()
-        self.playlistInstance.setSelectedIndexes(selectedRowsList)
-        functionDict[direction]() #move up or down
-        indexes = self.playlistInstance.getSelectedIndexes()
-
-        table.generateRows()
-        table.selectRows(indexes)
     
     def _getResponseJSONFromMapsIDList(self, listID:list[str]) -> dict:
         responseDict = BeatSaverAPICaller.multipleMapsCall(listID)
