@@ -24,7 +24,7 @@ class AdbWindowsWrapper:
     def isDebugModeEnabled(self) -> bool:
         result = subprocess.run('adb/adb devices', capture_output=True, text=True).stdout
         firstDevice = result.splitlines()[1].lower()
-        return firstDevice != '' and 'unauthorized'not in firstDevice
+        return firstDevice != '' and 'unauthorized' not in firstDevice
         
     def getSongKeysFromQuest(self) -> list[str]:
         # coping to clipboard is a workaround about the fact that for some IDEs capturing stdo doesn't work

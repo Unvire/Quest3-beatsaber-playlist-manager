@@ -10,7 +10,8 @@ class TableWidgetWrapper:
         self._originalTableWidget = tableWidget
         self.playlistInstance = playlistInstance        
         self.generateMapDetailsMethodHandle = generateMapDetailsMethodHandle
-        
+        self.hiddenRows = []
+
         self._originalTableWidget.cellClicked.connect(self._cellClicked)
     
     def __getattr__(self, name):
@@ -43,6 +44,18 @@ class TableWidgetWrapper:
 
     def unselectAll(self):
         self._originalTableWidget.selectionModel().clearSelection()
+    
+    def hideRows(self, indexes:list[int]):
+        self.hiddenRows = indexes[:]
+        for i in self.hiddenRows:
+            self._showHideRow(i, True)
+    
+    def showAllRows(self):
+        for i in self.hiddenRows:
+            self._showHideRow(i, False)
+
+    def _showHideRow(self, i:int, isHide:bool):
+        self._originalTableWidget.setRowHidden(i, isHide)
     
     def _cellClicked(self, row, col):
         selectedRowsList = self.getSelectedRows()
