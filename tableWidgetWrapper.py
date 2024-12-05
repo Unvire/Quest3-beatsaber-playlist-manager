@@ -53,6 +53,10 @@ class TableWidgetWrapper:
     def showAllRows(self):
         for i in self.hiddenRows:
             self._showHideRow(i, False)
+    
+    def scrollToRow(self, i:int):
+        item = self._originalTableWidget.item(i, 0)
+        self._originalTableWidget.scrollToItem(item)
 
     def _showHideRow(self, i:int, isHide:bool):
         self._originalTableWidget.setRowHidden(i, isHide)
