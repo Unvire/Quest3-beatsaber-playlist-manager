@@ -43,9 +43,7 @@ class StaticDetails:
         self.mapUploadedLabel = uploadedLabel
         self.mapTagsLabel = mapTagsLabel
 
-        self.mapLevelsTable = levelsTable
-        header = self.mapLevelsTable.horizontalHeader()
-        header.setSectionResizeMode(QHeaderView.Stretch)
+        self.mapLevelsTable = MapDetailsTable(levelsTable)
 
         self.firstWidgetBelowTable = None
     
@@ -85,36 +83,50 @@ class StaticDetails:
         self.mapTagsLabel.setText(f'Tags: {tags}')
     
     def _updateTable(self, mapInstance:BeatSaberMap):
-        self._clearTable()
-        for level in mapInstance.diffs:
-            rowCount = self.mapLevelsTable.rowCount()
-            self.mapLevelsTable.insertRow(rowCount)
-            self.mapLevelsTable.setItem(rowCount, 0, QTableWidgetItem(f'{level.difficulty}'))
-            self.mapLevelsTable.setItem(rowCount, 1, QTableWidgetItem(f'{level.characteristic}'))
-            self.mapLevelsTable.setItem(rowCount, 2, QTableWidgetItem(f'{level.stars}'))
-            self.mapLevelsTable.setItem(rowCount, 3, QTableWidgetItem(f'{level.njs}'))
-            self.mapLevelsTable.setItem(rowCount, 4, QTableWidgetItem(f'{level.nps}'))
-            self.mapLevelsTable.setItem(rowCount, 5, QTableWidgetItem(f'{level.requiredMods}'))
-        self._adjustTableHeight()
+        self.mapLevelsTable.clear()
+        self.mapLevelsTable.fillRows(mapInstance, self.firstWidgetBelowTable)
+
+        
+
+class MapDetailsTable:
+    def __init__(self, table:QTableWidget):
+        self._originalTableWidget = table
+        
+        header = self._originalTableWidget.horizontalHeader()
+        header.setSectionResizeMode(QHeaderView.Stretch)
     
-    def _clearTable(self):
-        selectionModelInstance = self.mapLevelsTable.model()
+    def __getattr__(self, name):
+        return getattr(self._originalTableWidget, name)
+    
+    def clear(self):
+        selectionModelInstance = self._originalTableWidget.model()
         if selectionModelInstance is not None:
             selectionModelInstance.removeRows(0, selectionModelInstance.rowCount())
     
-    def _adjustTableHeight(self):
+    def fillRows(self, mapInstance:BeatSaberMap, widgetBelowTable:QWidget):
+        for level in mapInstance.diffs:
+            iRow = self._originalTableWidget.rowCount()
+            self._originalTableWidget.insertRow(iRow)
+            for iCol, text in enumerate([level.difficulty, level.characteristic, level.stars, level.njs, level.nps, level.requiredMods]):
+                self.fillCell(iRow, iCol, str(text))
+        self._adjustTableHeight(widgetBelowTable)
+    
+    def fillCell(self, row:int, col:int, text:str):
+        self._originalTableWidget.setItem(row, col, QTableWidgetItem(text))
+    
+    def _adjustTableHeight(self, widgetBelowTable:QWidget):
         MARGIN_HEIGHT = 2        
-        maxHeight = self._calculateAvailableSpaceForTable()
+        maxHeight = self._calculateAvailableSpaceForTable(widgetBelowTable)
 
-        totalTableHeight = self.mapLevelsTable.horizontalHeader().height()
-        for row in range(self.mapLevelsTable.rowCount()):
-            rowHeight = self.mapLevelsTable.rowHeight(row)
+        totalTableHeight = self._originalTableWidget.horizontalHeader().height()
+        for row in range(self._originalTableWidget.rowCount()):
+            rowHeight = self._originalTableWidget.rowHeight(row)
             if totalTableHeight + rowHeight > maxHeight + MARGIN_HEIGHT:
                 break
-            totalTableHeight += self.mapLevelsTable.rowHeight(row)
-        self.mapLevelsTable.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
+            totalTableHeight += self._originalTableWidget.rowHeight(row)
+        self._originalTableWidget.setFixedHeight(totalTableHeight + MARGIN_HEIGHT)
 
-    def _calculateAvailableSpaceForTable(self) -> int:
-        tableCoords = self.mapLevelsTable.geometry()
-        widgetCoords = self.firstWidgetBelowTable.geometry()
+    def _calculateAvailableSpaceForTable(self, widgetBelowTable:QWidget) -> int:
+        tableCoords = self._originalTableWidget.geometry()
+        widgetCoords = widgetBelowTable.geometry()
         return widgetCoords.y() - tableCoords.y()
