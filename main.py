@@ -49,8 +49,8 @@ class MainWindow(QMainWindow):
         self.mapDetails.setWebRequestWidgets(self.mapImageLabel, self.musicPlayer)
         
         self.questMapsTable = QuestSongsTable(self.questMapsTable, self.questMapsPlaylist, self.mapDetails.update)
-        self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.playlistInstance, self.mapDetails.update)
-        self.playlistsMapsTable.setSourcePlaylist(self.questMapsPlaylist)
+        self.playlistMapsTable = PlaylistSongsTable(self.playlistMapsTable, self.playlistInstance, self.mapDetails.update)
+        self.playlistMapsTable.setSourcePlaylist(self.questMapsPlaylist)
     
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
@@ -118,7 +118,7 @@ class MainWindow(QMainWindow):
         
         self._clearPlaylist()
         self.playlistInstance.generateFromResponseDict(responseDict)
-        self.playlistsMapsTable.generateRows()
+        self.playlistMapsTable.generateRows()
     
     def savePlaylistAs(self):
         def continueWithMissingHeader(playlistInstance:BeatSaberPlaylist) -> bool:
@@ -177,7 +177,7 @@ class MainWindow(QMainWindow):
         if not isSuccess:
             self._infoWarning('Error with obtaining data from beatsaver.com')
             return
-        self.playlistsMapsTable.generateRows()
+        self.playlistMapsTable.generateRows()
     
     def connectToQuest(self):
         connectionDialog = ConnectQuestDialog(self.adbWrapper)
@@ -293,13 +293,13 @@ class MainWindow(QMainWindow):
             self.playlistInstance.setImageString(response['image'])
 
     def moveSelectedSongsUp(self):
-        self.playlistsMapsTable.moveSelectedMapsUp()
+        self.playlistMapsTable.moveSelectedMapsUp()
     
     def moveSelectedSongsDown(self):
-        self.playlistsMapsTable.moveSelectedMapsDown()
+        self.playlistMapsTable.moveSelectedMapsDown()
 
     def deleteSelectedSongs(self):
-        self.playlistsMapsTable.deleteSelectedMaps()
+        self.playlistMapsTable.deleteSelectedMaps()
     
     def resizeEvent(self, event):
         self.mapDetails.resize()
@@ -330,7 +330,7 @@ class MainWindow(QMainWindow):
     def _clearPlaylist(self):
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
-        self.playlistsMapsTable.clear()
+        self.playlistMapsTable.clear()
         self.mapDetails.resetMapDetails()
     
                 

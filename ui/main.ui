@@ -74,7 +74,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="10,1">
           <item>
-           <widget class="QTableWidget" name="playlistsMapsTable">
+           <widget class="QTableWidget" name="playlistMapsTable">
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>
@@ -262,7 +262,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="sortAllMapsByComboBox">
+             <widget class="QComboBox" name="sortQuestMapsByComboBox">
               <item>
                <property name="text">
                 <string>Upload date</string>
