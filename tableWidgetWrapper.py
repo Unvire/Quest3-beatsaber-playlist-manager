@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QTableWidget,QTableWidgetItem
-from PyQt5.QtCore import Qt, QMimeData, QItemSelectionModel
-from PyQt5.QtGui import QDrag
+from PyQt5.QtCore import Qt, QMimeData, QItemSelectionModel, QTimer
+from PyQt5.QtGui import QDrag, QColor
 
 from beatSaberPlaylist import BeatSaberPlaylist
 from beatSaberMap import BeatSaberMap
@@ -54,9 +54,28 @@ class TableWidgetWrapper:
         for i in self.hiddenRows:
             self._showHideRow(i, False)
     
+    def scrollAndHighlightRow(self, i:int):
+        self.scrollToRow(i)
+        self.highlightRow(i)
+    
     def scrollToRow(self, i:int):
         item = self._originalTableWidget.item(i, 0)
         self._originalTableWidget.scrollToItem(item)
+    
+    def highlightRow(self, i:int):
+        GREEN = QColor(144, 238, 144)
+        DEFAULT = Qt.white
+        TIME_MS = 1000
+
+        self._setRowBackgroundColor(i, DEFAULT)
+        self._setRowBackgroundColor(i, GREEN)
+        QTimer.singleShot(TIME_MS, lambda: self._setRowBackgroundColor(i, DEFAULT))
+    
+    def _setRowBackgroundColor(self, i:int, color:QColor):
+        numOfColumns = self._originalTableWidget.columnCount()
+        for col in range(numOfColumns):
+            item = self._originalTableWidget.item(i, col)
+            item.setBackground(color)
 
     def _showHideRow(self, i:int, isHide:bool):
         self._originalTableWidget.setRowHidden(i, isHide)
@@ -131,7 +150,11 @@ class PlaylistSongsTable(TableWidgetWrapper):
         mapInstance = self.sourcePlaylistInstance[mapIndex]
         isMapAdded = self.playlistInstance.addSongIfNotPresent(mapInstance)
         if isMapAdded:
-            self.appendRow(mapInstance)      
+            self.appendRow(mapInstance)
+        else:
+            mapID = mapInstance.id
+            index = self.playlistInstance.getListIndexFromMapID(mapID)
+            self.scrollAndHighlightRow(index)    
         event.accept()
     
     def _cellClicked(self, row, col):

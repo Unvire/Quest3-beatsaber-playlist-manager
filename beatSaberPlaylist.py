@@ -173,6 +173,11 @@ class BeatSaberPlaylist:
     
     def isEmpty(self) -> bool:
         return len(self.songsList) == 0
+
+    def getListIndexFromMapID(self, mapID:str) -> int:
+        for i, song in enumerate(self.songsList):
+            if mapID == song.id:
+                return i
     
     def _calculateSongIndexesAfterMoveUp(self) -> list[int]:
         unselectedIndexes = self._getUnselectedIndexes()
