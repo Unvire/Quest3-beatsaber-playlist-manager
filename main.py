@@ -1,7 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog, QDialog, QMessageBox
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
-from PyQt5.QtCore import QSize
-from PyQt5.QtGui import QPixmap, QColor
 from PyQt5 import uic
 
 import os, sys, platform, subprocess
@@ -21,7 +19,7 @@ from connectQuestDialog import ConnectQuestDialog
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        self.allMapsPlaylist = BeatSaberPlaylist()
+        self.questMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
         self.adbWrapper = AdbWrapperFactory(platform.system())
@@ -50,9 +48,9 @@ class MainWindow(QMainWindow):
         self.mapDetails.setFirstWidgetBelowTable(self.playMusicButton)
         self.mapDetails.setWebRequestWidgets(self.mapImageLabel, self.musicPlayer)
         
-        self.allMapsTable = QuestSongsTable(self.allMapsTable, self.allMapsPlaylist, self.mapDetails.update)
+        self.questMapsTable = QuestSongsTable(self.questMapsTable, self.questMapsPlaylist, self.mapDetails.update)
         self.playlistsMapsTable = PlaylistSongsTable(self.playlistsMapsTable, self.playlistInstance, self.mapDetails.update)
-        self.playlistsMapsTable.setSourcePlaylist(self.allMapsPlaylist)
+        self.playlistsMapsTable.setSourcePlaylist(self.questMapsPlaylist)
     
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
@@ -68,7 +66,7 @@ class MainWindow(QMainWindow):
 
         self.action_debug.triggered.connect(self.debugGetSongsFromQuest)
 
-        self.sortAllMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
+        self.sortQuestMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
 
         self.playMusicButton.clicked.connect(self.playMusic)
@@ -200,7 +198,7 @@ class MainWindow(QMainWindow):
             self._infoWarning('Quest not connected')
             return
         
-        missingMapsIds = self.allMapsPlaylist.checkMissingSongs(self.playlistInstance)
+        missingMapsIds = self.questMapsPlaylist.checkMissingSongs(self.playlistInstance)
         if missingMapsIds:
             misingMapsInstances = self.playlistInstance.getSongsByIds(missingMapsIds)
             donwloadDialog = DownloadMissingMapsDialog(misingMapsInstances)
@@ -249,10 +247,10 @@ class MainWindow(QMainWindow):
             self._infoWarning('Error with obtaining data from beatsaver.com')
             return
         
-        self.allMapsPlaylist.generateFromResponseDict(responseDict)        
-        self.allMapsPlaylist.changeSortingOrder()
-        self.allMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
-        self.allMapsTable.generateRows()
+        self.questMapsPlaylist.generateFromResponseDict(responseDict)        
+        self.questMapsPlaylist.changeSortingOrder()
+        self.questMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
+        self.questMapsTable.generateRows()
 
     def __mockGetSongsFromQuest(self) -> list[str]:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
@@ -262,19 +260,19 @@ class MainWindow(QMainWindow):
         return songsIDsList
     
     def sortAllMapsBy(self, index:int):        
-        self.sortingOrder = self.sortAllMapsByComboBox.itemText(index)
-        self.allMapsPlaylist.resetSortingReverseMode()
-        self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
+        self.sortingOrder = self.sortQuestMapsByComboBox.itemText(index)
+        self.questMapsPlaylist.resetSortingReverseMode()
+        self.questMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
         
-        self.allMapsTable.unselectAll()
-        self.allMapsTable.generateRows()
+        self.questMapsTable.unselectAll()
+        self.questMapsTable.generateRows()
     
     def reverseAllMapsSorting(self):
-        self.allMapsPlaylist.changeSortingOrder()
-        self.allMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
+        self.questMapsPlaylist.changeSortingOrder()
+        self.questMapsPlaylist.sortPlaylistInPlaceBy(self.sortingOrder)
         
-        self.allMapsTable.unselectAll()
-        self.allMapsTable.generateRows()
+        self.questMapsTable.unselectAll()
+        self.questMapsTable.generateRows()
     
     def playMusic(self):
         self.musicPlayer.play()
