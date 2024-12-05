@@ -18,8 +18,8 @@ class MapDetailsWrapper:
     def update(self, mapInstance:BeatSaberMap, mainWindow:QMainWindow):
         self.staticDetails.update(mapInstance, mainWindow)
     
-    def resizeLabels(self):
-        self.staticDetails.resizeLabels()
+    def resize(self):
+        self.staticDetails.resize()
 
 
 class WebRequestMapDetails:
@@ -49,6 +49,14 @@ class StaticDetails:
         self._updateLabels(author=mapInstance.author, title=mapInstance.title, mapper=mapInstance.mapper, bpm=mapInstance.bpm, lengthTime=lengthTime,
                             rankedState=mapInstance.rankedState, uploaded=mapInstance.uploaded, tags=tags)
         self._updateTable(mapInstance, mainWindow)
+
+    def resize(self):
+        labels = [self.mapAuthorLabel, self.mapTitleLabel, self.mapMapperLabel, self.mapBPMLabel, 
+                        self.mapLengthLabel, self.mapRankedStateLabel, self.mapUploadedLabel, 
+                        self.mapTagsLabel]
+            
+        for label in labels:
+            label.resize()
     
     def _formatSeconds(self, lengthSeconds:int) -> str:
         minutes, seconds = divmod(lengthSeconds, 60)

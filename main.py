@@ -326,12 +326,7 @@ class MainWindow(QMainWindow):
         table.generateRows()
     
     def resizeEvent(self, event):
-        labels = [self.mapAuthorLabel, self.mapTitleLabel, self.mapMapperLabel, self.mapBPMLabel, 
-                    self.mapLengthLabel, self.mapRankedStateLabel, self.mapUploadedLabel, 
-                    self.mapTagsLabel]
-        
-        for label in labels:
-            label.resize()
+        self.mapDetails.resize()
         super().resizeEvent(event)
     
     def closeEvent(self, event):
