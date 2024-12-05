@@ -50,15 +50,10 @@ class MainWindow(QMainWindow):
         self.mapLevelsTable = LabelWrapper(self.mapLevelsTable)    
 
         self.mapDetails = MapDetailsWrapper()
-        self.mapDetails.setStaticWidgets(authorLabel=self.mapAuthorLabel, 
-                                        titleLabel=self.mapTitleLabel, 
-                                        mapperLabel=self.mapMapperLabel, 
-                                        bpmLabel=self.mapBPMLabel, 
-                                        lengthTimeLabel=self.mapLengthLabel, 
-                                        rankedStateLabel=self.mapRankedStateLabel, 
-                                        uploadedLabel=self.mapUploadedLabel, 
-                                        mapTagsLabel=self.mapTagsLabel, 
-                                        levelsTable=self.mapLevelsTable)
+        self.mapDetails.setStaticWidgets(authorLabel=self.mapAuthorLabel, titleLabel=self.mapTitleLabel, mapperLabel=self.mapMapperLabel, 
+                                        bpmLabel=self.mapBPMLabel, lengthTimeLabel=self.mapLengthLabel, rankedStateLabel=self.mapRankedStateLabel, 
+                                        uploadedLabel=self.mapUploadedLabel, mapTagsLabel=self.mapTagsLabel, levelsTable=self.mapLevelsTable)
+        self.mapDetails.setFirstWidgetBelowTable(self.playMusicButton)
     
         self.actionNewEmptyPlaylist.triggered.connect(self.blankNewPlaylist)
         self.actionNewFromDownloadedMaps.triggered.connect(self.newPlaylistFromDownloadedSongs)
@@ -278,7 +273,7 @@ class MainWindow(QMainWindow):
     def generateMapDetails(self, mapInstance:BeatSaberMap):
         thread = threading.Thread(target=self._downloadAndSetImageAndMusic, args=(mapInstance,))
         thread.start()
-        self.mapDetails.update(mapInstance, self)
+        self.mapDetails.update(mapInstance)
     
     def sortAllMapsBy(self, index:int):        
         self.sortingOrder = self.sortAllMapsByComboBox.itemText(index)
