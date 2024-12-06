@@ -11,7 +11,6 @@ from adbWrapperFactory import AdbWrapperFactory
 from tableWidgetWrapper import QuestSongsTable, PlaylistSongsTable
 from mapDetailsWrapper import MapDetailsWrapper
 from labelWrapper import LabelWrapper
-from playlistSearchEngine import SearchEngine
 
 from playlistDataDialog import PlaylistDataDialog
 from deletePlaylistsDialog import DeletePlaylistsDialog
@@ -253,7 +252,6 @@ class MainWindow(QMainWindow):
         self.questMapsPlaylist.changeSortingOrder()
         self.questMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
         self.questMapsTable.generateRows()
-        self.searchEngine.cachePlaylistData(self.questMapsPlaylist)
 
     def __mockGetSongsFromQuest(self) -> list[str]:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
