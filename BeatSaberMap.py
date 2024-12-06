@@ -98,10 +98,10 @@ class BeatSaberMap:
         self.previewUrl = previewUrl
         self.downloadUrl = downloadURL
     
-    def setDiffs(self, diffsList:list[str]):
+    def setDiffs(self, diffsList:list[BeatSaberMapLevel]):
         self.diffs = diffsList
     
-    def getDiffs(self) -> list[str]:
+    def getDiffs(self) -> list[BeatSaberMapLevel]:
         return self.diffs[:]
     
     def generateDictForPlaylist(self) -> dict:
