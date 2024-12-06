@@ -129,6 +129,42 @@ class BeatSaberMap:
 
     def setUploaded(self, uploadedDateTime:datetime.datetime):
         self.uploaded = uploadedDateTime
+    
+    def getStarsRange(self) -> str|tuple[float, float]:
+        minVal, maxVal = self._getInitialMinMaxValues()
+        for level in self.diffs:
+            if level.stars == '?':
+                return '?'
+            minVal, maxVal = min(minVal, level.nps)
+        return minVal, maxVal 
+
+    def getNpsRange(self) -> tuple[float, float]:
+        minVal, maxVal = self._getInitialMinMaxValues()
+        for level in self.diffs:
+            minVal, maxVal = min(minVal, level.nps)
+        return minVal, maxVal    
+    
+    def getNjsRange(self) -> tuple[float, float]:
+        minVal, maxVal = self._getInitialMinMaxValues()
+        for level in self.diffs:
+            minVal, maxVal = min(minVal, level.njs)
+        return minVal, maxVal 
+    
+    def getRequiredMods(self) -> list[str]:
+        mods = set([level.requiredMods for level in self.diffs])
+        return list(mods)
+
+    def _updateMinMaxValues(self, currentMin:float, currentMax:float, val:float) -> tuple[float, float]:
+        currentMin = min(currentMin, val)
+        currentMax = max(currentMax, val)
+        return currentMin, currentMax
+
+    def _getInitialMinMaxValues(self) -> tuple[float, float]:
+        minVal = float('inf')
+        maxVal = float('-inf')
+        return minVal, maxVal
+    
+
 
 if __name__ == '__main__':
     responseJSONMock = {
