@@ -8,12 +8,12 @@ class SearchEngine:
         self.playlistHandle = None
         self.cache = {}
 
-    def setPlaylistHandle(self, playlistInstance:BeatSaberPlaylist):
+    def cachePlaylistData(self, playlistInstance:BeatSaberPlaylist):
         for i, map in enumerate(playlistInstance):
             mapCache = self._cacheMapData(map)
             self.cache[i] = mapCache
     
-    def _cacheMapData(self, mapInstance:BeatSaberMap):        
+    def cacheMapData(self, mapInstance:BeatSaberMap):        
         diffLongString = ''.join([f'{level.difficulty}{level.characteristic}' for level in mapInstance.getDiffs()])
         longString = f'{mapInstance.title}{mapInstance.author}{mapInstance.mapper}' + diffLongString + ''.join(mapInstance.tagsList)
         longString = longString.replace(' ', '')
