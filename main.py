@@ -22,7 +22,6 @@ class MainWindow(QMainWindow):
         self.questMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
-        self.searchEngine = SearchEngine()
         self.adbWrapper = AdbWrapperFactory(platform.system())
 
         self.sortingOrder = 'Upload date'
