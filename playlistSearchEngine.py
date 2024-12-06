@@ -5,12 +5,12 @@ import re
 
 class SearchEngine:
     def __init__(self):
-        self.playlistHandle = None
         self.cache = {}
+        self.keywords = set(['__length', '__bpm', '__mods', '__nps', '__njs', '__uploaded', '__stars', '__state'])
 
     def cachePlaylistData(self, playlistInstance:BeatSaberPlaylist):
         for i, map in enumerate(playlistInstance):
-            mapCache = self._cacheMapData(map)
+            mapCache = self.cacheMapData(map)
             self.cache[i] = mapCache
     
     def cacheMapData(self, mapInstance:BeatSaberMap):        
@@ -30,3 +30,25 @@ class SearchEngine:
             '__state': mapInstance.rankedState,
         }
         return cacheDict
+    
+    def filterMaps(self, searchRequestString:str) -> list[int]:
+        words = searchRequestString.split(' ')
+        keywordsInRequest = self.keywords & set(words)
+        regexSearchWords = set(words) - keywordsInRequest
+
+        matchingLongStringIndexes = self._checkLongstrings(regexSearchWords)
+
+    def _checkLongstrings(self, regexSearchWords:str) -> list[int]:
+        result = []
+        for i, cacheDict in enumerate(self.cache):
+            isMatch = True
+            for word in regexSearchWords:
+                if re.search(word, cacheDict['longString']):
+                    isMatch = False
+                    break
+            if isMatch:
+                result.append(i)
+        return i
+
+    def _checkKeywords(self, keywords:list[str]) -> list[int]:
+        pass
