@@ -6,9 +6,12 @@ import re
 class SearchEngine:
     def __init__(self):
         self.playlistHandle = None
+        self.cache = {}
 
-    def setPlaylistHandle(self, playlistHandle:BeatSaberPlaylist):
-        self.playlistHandle = playlistHandle
+    def setPlaylistHandle(self, playlistInstance:BeatSaberPlaylist):
+        for i, map in enumerate(playlistInstance):
+            mapCache = self._cacheMapData(map)
+            self.cache[i] = mapCache
     
     def _cacheMapData(self, mapInstance:BeatSaberMap):        
         diffLongString = ''.join([f'{level.difficulty}{level.characteristic}' for level in mapInstance.getDiffs()])
@@ -26,3 +29,4 @@ class SearchEngine:
             '__stars': mapInstance.getStarsRange(),
             '__state': mapInstance.rankedState,
         }
+        return cacheDict
