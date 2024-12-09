@@ -14,5 +14,11 @@ def mockPlaylist():
             playlist._addMapFromJSON(key, mapJSON)
     return playlist
 
-def test_cache(mockPlaylist):
-    print(mockPlaylist)
+def test_buildLongString(mockPlaylist):
+    instance = playlistSearchEngine.SearchEngine()
+    result = instance._buildLongString(mockPlaylist[1])
+    resultWords = sorted(result.split(' '))
+
+    expectedWords = ['Expert', 'ExpertPlus', 'Hard', 'HickeyChan', 'Inabakumori', 'Lagtrain', 'Lawless', 'challenge', 'pop', 'tech', 'vocaloid']
+    assert resultWords == expectedWords
+    

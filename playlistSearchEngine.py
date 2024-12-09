@@ -13,13 +13,9 @@ class SearchEngine:
             mapCache = self.cacheMapData(map)
             self.cache[i] = mapCache
     
-    def cacheMapData(self, mapInstance:BeatSaberMap):        
-        diffLongString = ''.join([f'{level.difficulty}{level.characteristic}' for level in mapInstance.getDiffs()])
-        longString = f'{mapInstance.title}{mapInstance.author}{mapInstance.mapper}' + diffLongString + ''.join(mapInstance.tagsList)
-        longString = longString.replace(' ', '')
-
+    def cacheMapData(self, mapInstance:BeatSaberMap): 
         cacheDict = {
-            'longString': longString,
+            'longString': self._buildLongString(mapInstance),
             '__length': mapInstance.lengthSeconds,
             '__bpm': mapInstance.bpm,
             '__mods': mapInstance.getRequiredMods(),
@@ -30,6 +26,20 @@ class SearchEngine:
             '__state': mapInstance.rankedState,
         }
         return cacheDict
+
+    def _buildLongString(self, mapInstance:BeatSaberMap) -> str:
+        words = set()
+        words.add(mapInstance.title)
+        words.add(mapInstance.author)
+        words.add(mapInstance.mapper)
+
+        for level in mapInstance.getDiffs():
+            words.add(level.difficulty)
+            words.add(level.characteristic)
+        
+        for tag in mapInstance.tagsList:
+            words.add(tag)
+        return ' '.join(list(words))        
     
     def filterMaps(self, searchRequestString:str) -> list[int]:
         if not searchRequestString:
