@@ -25,7 +25,7 @@ class SearchEngine:
             '__mods': mapInstance.getRequiredMods(),
             '__nps': mapInstance.getNpsRange(),
             '__njs': mapInstance.getNjsRange(),
-            #'__uploaded': mapInstance.uploaded, #
+            '__uploaded': mapInstance.uploaded,
             '__stars': mapInstance.getStarsRange(),
             '__state': mapInstance.rankedState,
         }

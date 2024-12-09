@@ -1,16 +1,18 @@
-import pytest
+import pytest, os, json
 import playlistSearchEngine
-import beatSaberMap, beatSaberMapLevel
+import beatSaberMap, beatSaberMapLevel, beatSaberPlaylist
 
 @pytest.fixture
 def mockPlaylist():
-    song1 = beatSaberMap.BeatSaberMap(40750)
-    song2 =
-    song3 =
-    song4 =
-    song5 =
-    song6 =
-    song7 =
-    song8 =
-    song9 =
-    song10 =
+    jsonMockDumpPath = os.path.join(os.getcwd(), 'testFiles', '10songsJSON.txt')    
+    with open(jsonMockDumpPath) as file:
+        fileLines = ''.join(file.readlines())
+        mockJsonResponse = json.loads(fileLines)
+
+    playlist = beatSaberPlaylist.BeatSaberPlaylist()
+    for key, mapJSON in mockJsonResponse.items():
+            playlist._addMapFromJSON(key, mapJSON)
+    return playlist
+
+def test_cache(mockPlaylist):
+    print(mockPlaylist)
