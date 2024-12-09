@@ -184,3 +184,20 @@ def test_setRankedState():
 
     song.setRankedState(isRanked=True, isQualified=False)
     assert song.rankedState == 'Ranked'
+
+def test_getRangesForEngineCache(exampleJSON_data):    
+    song = beatSaberMap.BeatSaberMap('57c2')
+    song.getDataFromBeatSaverJSON(exampleJSON_data)
+
+    assert song.getStarsRange() == (3.4, 3.7)
+
+    song.diffs[0].stars = '?' #assume that song is unranked and has '?' as stars value
+    assert song.getStarsRange() == '?'
+
+    assert song.getNpsRange() == (3.884, 5.053)
+    assert song.getNjsRange() == (13, 17)
+    assert song.getRequiredMods() == ['']
+
+    song.diffs[0].requiredMods = 'chroma, me'
+    song.diffs[1].requiredMods = 'chroma, me'
+    assert song.getRequiredMods() == ['chroma', 'me']

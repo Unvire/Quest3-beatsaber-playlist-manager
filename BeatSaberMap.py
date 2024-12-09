@@ -135,7 +135,7 @@ class BeatSaberMap:
         for level in self.diffs:
             if level.stars == '?':
                 return '?'
-            minVal, maxVal = self._updateMinMaxValues(minVal, maxVal, level.nps)
+            minVal, maxVal = self._updateMinMaxValues(minVal, maxVal, level.stars)
         return minVal, maxVal 
 
     def getNpsRange(self) -> tuple[float, float]:
@@ -151,8 +151,12 @@ class BeatSaberMap:
         return minVal, maxVal 
     
     def getRequiredMods(self) -> list[str]:
-        mods = set([level.requiredMods for level in self.diffs])
-        return list(mods)
+        mods = set()
+        for level in self.diffs:
+            modsString = level.requiredMods.replace(' ', '')
+            for modName in modsString.split(','):
+                mods.add(modName)
+        return sorted(list(mods))
 
     def _updateMinMaxValues(self, currentMin:float, currentMax:float, val:float) -> tuple[float, float]:
         currentMin = min(currentMin, val)
