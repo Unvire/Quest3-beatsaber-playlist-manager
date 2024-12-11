@@ -2,113 +2,6 @@ import pytest
 import beatSaverAPICaller
 
 @pytest.fixture
-def singleCallExpected():
-    response = {
-        "id": "57c2",
-        "name": "Rockefeller Street (Nightcore) -  Getter Jaani",
-        "description": "Hey this is reuploaded since it broke before\nhave fun",
-        "uploader": {
-            "id": 16388,
-            "name": "rinkusenpai",
-            "hash": "5cff0b7398cc5a672c84f6cc",
-            "avatar": "https://www.gravatar.com/avatar/5cff0b7398cc5a672c84f6cc?d=retro",
-            "type": "SIMPLE",
-            "admin": False,
-            "curator": False,
-            "seniorCurator": False,
-            "verifiedMapper": True,
-            "playlistUrl": "https://api.beatsaver.com/users/id/16388/playlist"
-        },
-        "metadata": {
-            "bpm": 162.5,
-            "duration": 145,
-            "songName": "Rockefeller Street (Nightcore)",
-            "songSubName": "",
-            "songAuthorName": "Getter Jaani",
-            "levelAuthorName": "RinkuSenpai"
-        },
-        "uploaded": "2019-07-18T21:40:09.204Z",
-        "automapper": False,
-        "ranked": True,
-        "qualified": False,
-        "versions": [
-            {
-                "hash": "b8c98ffc598703aadb4a3cb921d2830d270b57a5",
-                "key": "57c2",
-                "state": "Published",
-                "createdAt": "2019-07-18T21:40:09.204Z",
-                "sageScore": 6,
-                "diffs": [
-                    {
-                        "njs": 13,
-                        "offset": 0,
-                        "notes": 545,
-                        "bombs": 0,
-                        "obstacles": 8,
-                        "nps": 3.884,
-                        "length": 380,
-                        "characteristic": "Standard",
-                        "difficulty": "Hard",
-                        "events": 2247,
-                        "chroma": False,
-                        "me": False,
-                        "ne": False,
-                        "cinema": False,
-                        "seconds": 140.308,
-                        "paritySummary": {
-                            "errors": 73,
-                            "warns": 61,
-                            "resets": 0
-                        },
-                        "stars": 3.4,
-                        "maxScore": 494155,
-                        "environment": "NiceEnvironment"
-                    },
-                    {
-                        "njs": 17,
-                        "offset": 0,
-                        "notes": 709,
-                        "bombs": 0,
-                        "obstacles": 6,
-                        "nps": 5.053,
-                        "length": 380,
-                        "characteristic": "Standard",
-                        "difficulty": "Expert",
-                        "events": 2247,
-                        "chroma": False,
-                        "me": False,
-                        "ne": False,
-                        "cinema": False,
-                        "seconds": 140.308,
-                        "paritySummary": {
-                            "errors": 87,
-                            "warns": 75,
-                            "resets": 0
-                        },
-                        "stars": 3.7,
-                        "maxScore": 645035,
-                        "environment": "NiceEnvironment"
-                    }
-                ],
-                "downloadURL": "https://r2cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.zip",
-                "coverURL": "https://eu.cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.jpg",
-                "previewURL": "https://eu.cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.mp3"
-            }
-        ],
-        "createdAt": "2019-07-18T21:40:09.204Z",
-        "updatedAt": "2019-07-18T21:40:09.204Z",
-        "lastPublishedAt": "2019-07-18T21:40:09.204Z",
-        "tags": [
-            "pop"
-        ],
-        "bookmarked": False,
-        "declaredAi": "None",
-        "blRanked": False,
-        "blQualified": False
-    }
-    return response
-
-@pytest.fixture
 def multipleCallExpected():
     response = {
     "57c2": {
@@ -422,11 +315,51 @@ def multipleCallExpected():
 }
     return response
 
-def test_singleMapCall(singleCallExpected):
+def test_singleMapCall():
     responseJSON = beatSaverAPICaller.BeatSaverAPICaller.singleMapCall('57c2')
-    responseJSON.pop('stats')
+    ## header
+    assert responseJSON['id'] == '57c2'
+    assert responseJSON['name'] == 'Rockefeller Street (Nightcore) -  Getter Jaani'
+    assert responseJSON['versions'][0]['hash'] == 'b8c98ffc598703aadb4a3cb921d2830d270b57a5'
 
-    assert responseJSON == singleCallExpected
+    ## metdadata
+    assert responseJSON['metadata']['songName'] == 'Rockefeller Street (Nightcore)'
+    assert responseJSON['metadata']['songAuthorName'] == 'Getter Jaani'
+    assert responseJSON['metadata']['levelAuthorName'] == 'RinkuSenpai'
+    assert responseJSON['metadata']['bpm'] == 162.5
+    assert responseJSON['metadata']['duration'] == 145
+    assert responseJSON['ranked'] == True
+    assert responseJSON['qualified'] == False
+    assert responseJSON['uploaded'] == '2019-07-18T21:40:09.204Z'
+    assert responseJSON['tags'] == ['pop']
+    
+    ## links
+    assert responseJSON['versions'][0]['downloadURL'] == 'https://r2cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.zip'
+    assert responseJSON['versions'][0]['coverURL'] == 'https://eu.cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.jpg'
+    assert responseJSON['versions'][0]['previewURL'] == 'https://eu.cdn.beatsaver.com/b8c98ffc598703aadb4a3cb921d2830d270b57a5.mp3'
+
+    ## levels
+    level0 = responseJSON['versions'][0]['diffs'][0]
+    assert level0['difficulty'] == 'Hard'
+    assert level0['characteristic'] == 'Standard'
+    assert level0['njs'] == 13
+    assert level0['nps'] == 3.884
+    assert level0['stars'] == 3.4
+    assert level0['chroma'] == False
+    assert level0['me'] == False
+    assert level0['ne'] == False
+    assert level0['cinema'] == False
+
+    level1 = responseJSON['versions'][0]['diffs'][1]
+    assert level1['difficulty'] == 'Expert'
+    assert level1['characteristic'] == 'Standard'
+    assert level1['njs'] == 17
+    assert level1['nps'] == 5.053
+    assert level1['stars'] == 3.7
+    assert level1['chroma'] == False
+    assert level1['me'] == False
+    assert level1['ne'] == False
+    assert level1['cinema'] == False
 
 def test_singleMapCall_Exception():
     with pytest.raises(beatSaverAPICaller.NotBeatSaverMap):
