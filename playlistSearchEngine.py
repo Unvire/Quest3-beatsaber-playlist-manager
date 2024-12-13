@@ -45,7 +45,8 @@ class SearchEngine:
         if not searchRequestString:
             return [i for i in range(len(self.cache))]
         
-        longStrings, keywords = self._findLongStringsAndPossibleKeywords(searchRequestString)
+        longStrings, keywords = self._findLongStringsAndKeywords(searchRequestString)
+        processedKeyWords = self._processKeywords(keywords)
 
     def _checkLongstrings(self, regexSearchWords:str) -> list[int]:
         result = []
@@ -59,7 +60,7 @@ class SearchEngine:
                 result.append(i)
         return i
     
-    def _findLongStringsAndPossibleKeywords(self, request:str) -> tuple[list[str], list[str]]:
+    def _findLongStringsAndKeywords(self, request:str) -> tuple[list[str], list[str]]:
         words = request.split(' ')
         keywords = []
         longStrings = []
@@ -74,27 +75,28 @@ class SearchEngine:
                 continue
             keywords.append(word)
         return longStrings, keywords
-
-    def _checkKeywords(self, keywords:list[list[str, str]]) -> list[int]:
-        rangeKeywords = ['__length', '__bpm',  '__nps', '__njs', '__stars']
-        stringKeywords = ['__mods', '__state', '__stars']
-        result = []
-        for keyword, criteria in keywords:
-            for i, cacheDict in enumerate(self.cache):
-                if keyword in rangeKeywords:
-                    isInRange = self._checkIfInRange(self, criteria, cacheDict[keyword])
-                    if isInRange:
-                        result.append(i)
-                        
-                if keyword in stringKeywords:
-                    pass
     
-    def _checkIfInRange(self, criteria:str, value:float|int) -> bool:
-        rangePattern = '\[(-?\d*(?:\.\d+)?)?\s*;\s*(-?\d*(?:\.\d+)?)?]' # checks if criteria is 2 numbers [1.2;2.3], 1 number [;1] or [1;] or [;]
-        if not re.match(rangePattern, criteria):
-            return True
-        
-        minValStr, maxValStr = criteria[1:-1].split(';')
-        minVal = float(minValStr) if minValStr else float('-inf')
-        maxVal = float(maxValStr) if maxValStr else float('inf')
-        return minVal <= float(value) <= maxVal
+    def _processKeywords(self, possibleKeyWords:list[str]) -> list[list[str, str] | list[str, float] | list[str, float, float]]:
+        result = []
+        for possibleKeyWord in possibleKeyWords:
+            keyword, data, *_ = possibleKeyWord.split('=')
+            processingResult = self._extractRangeValuesFromString(data)
+            if not processingResult:
+                result.append([keyword, data])
+            else:           
+                val1, val2 = processingResult     
+                buffer = [keyword] + [item for item in [val1, val2] if item]
+                result.append(buffer)
+        return result
+    
+    def _extractRangeValuesFromString(self, keywordData:str) -> None | tuple[float, float]:
+        floatPattern = '(-?\d*(?:\.\d+)?)?' # checks for float 1.2, 0.2 .2 or int
+        rangePattern = f'^\[{floatPattern};{floatPattern}]$' # checks if criteria is 2 numbers [1.2;2.3], 1 number [;1] or [1;] or [;]
+
+        keywordData = keywordData.strip().replace(' ', '')        
+        if re.search(rangePattern, keywordData):
+            minVal, maxVal = keywordData[1:-1].split(';')
+            minVal = float(minVal) if minVal else float('-inf')
+            maxVal = float(maxVal) if maxVal else float('inf')
+            return minVal, maxVal
+        return None
