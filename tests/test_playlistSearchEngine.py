@@ -29,4 +29,11 @@ def test__findLongStringsAndKeywords():
 
     assert longStrings == ['test', '__test', '__test__', '__test=', '!(@#*),asndm,']
     assert keywords == ['__length=1230210,', '__bpm=uavds']
-    
+
+@pytest.mark.parametrize("inputData, expected", [
+    ('ksdmladm', None), ('', None), ('Ranked', None), ('[1]', None),  ('[1.1213123123123;]', (1.1213123123123, float('inf'))), 
+    ('3;3', None), ('[3; 3.5]', (3, 3.5)), ('[;]', (float('-inf'), float('inf'))), ('[;2]', (float('-inf'), 2)), ('[2; -2]', (2, -2)), (';', None)
+                                                ])
+def test__extractRangeValuesFromString(inputData, expected):
+    instance = playlistSearchEngine.SearchEngine()
+    assert instance._extractRangeValuesFromString(inputData) == expected

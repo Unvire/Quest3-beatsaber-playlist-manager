@@ -76,7 +76,7 @@ class SearchEngine:
             keywords.append(word)
         return longStrings, keywords
     
-    def _processKeywords(self, possibleKeyWords:list[str]) -> list[list[str, str] | list[str, float] | list[str, float, float]]:
+    def _processKeywords(self, possibleKeyWords:list[str]) -> list[list[str, str] | list[str, float, float]]:
         result = []
         for possibleKeyWord in possibleKeyWords:
             keyword, data, *_ = possibleKeyWord.split('=')
