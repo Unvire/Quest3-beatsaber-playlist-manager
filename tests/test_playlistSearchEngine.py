@@ -25,7 +25,7 @@ def test_buildLongString(mockPlaylist):
 def test__findLongStringsAndKeywords():
     request = 'test __test __test__ __test= !(@#*),asndm, __length=1230210, __bpm=uavds'
     instance = playlistSearchEngine.SearchEngine()
-    longStrings, keywords = instance._findKeywords(request)
+    longStrings, keywords = instance._findLongStringsAndKeywords(request)
 
     assert longStrings == ['test', '__test', '__test__', '__test=', '!(@#*),asndm,']
     assert keywords == ['__length=1230210,', '__bpm=uavds']
@@ -37,3 +37,10 @@ def test__findLongStringsAndKeywords():
 def test__extractRangeValuesFromString(inputData, expected):
     instance = playlistSearchEngine.SearchEngine()
     assert instance._extractRangeValuesFromString(inputData) == expected
+
+def test__processKeywords():    
+    instance = playlistSearchEngine.SearchEngine()
+    mockKeyWords = ['aaa========1232===13213', 'b=Ranked', 'c=[;]', 'd=[1;2]', 'e=', 'f=[12.3;]', 'f=[;12.3]', 'g=2', 'h=[1;2][;][;][;][3;5]']
+    expected = [['b', 'Ranked'], ['c', float('-inf'), float('inf')], ['d', 1, 2], ['f', 12.3, float('inf')], 
+                ['f', float('-inf'), 12.3], ['g', '2'], ['h', '[1;2][;][;][;][3;5]']]
+    assert instance._processKeywords(mockKeyWords) == expected

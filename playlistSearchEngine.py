@@ -80,6 +80,9 @@ class SearchEngine:
         result = []
         for possibleKeyWord in possibleKeyWords:
             keyword, data, *_ = possibleKeyWord.split('=')
+            if not data:
+                continue
+
             processingResult = self._extractRangeValuesFromString(data)
             if not processingResult:
                 result.append([keyword, data])
