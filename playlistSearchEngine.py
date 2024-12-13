@@ -66,19 +66,21 @@ class SearchEngine:
                 result.append(i)
         return i
     
-    def _findKeywords(self, words:list[str]) -> list[list[str, str]]:
+    def _findPossibleKeywords(self, request:str) -> tuple[list[str], list[str]]:
+        words = request.split(' ')
         keywords = []
+        longStrings = []
         for word in words:
-            subWords = word.split('=')
-            if len(subWords) != 2:
+            if not word.startswith('__'):
+                longStrings.append(word)
                 continue
 
-            if not subWords[0] in self.keywords:
+            potentialKeyword = word.split('=')[0]
+            if not potentialKeyword in self.keywords:
+                longStrings.append(word)
                 continue
-            
-            keyword, criteria = subWords
-            keywords.append([keyword, criteria])
-        return keywords
+            keywords.append(word)
+        return longStrings, keywords
 
     def _checkKeywords(self, keywords:list[list[str, str]]) -> list[int]:
         rangeKeywords = ['__length', '__bpm',  '__nps', '__njs', '__stars']
