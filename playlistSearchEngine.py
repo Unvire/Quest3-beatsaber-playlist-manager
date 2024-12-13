@@ -45,14 +45,7 @@ class SearchEngine:
         if not searchRequestString:
             return [i for i in range(len(self.cache))]
         
-        words = searchRequestString.split(' ')
-        regexSearchWords = words[0] if words[0].startswith('__') else None
-        keywords = self._findKeywords(words)
-
-        if regexSearchWords:
-            matchingLongStringIndexes = self._checkLongstrings(regexSearchWords)
-        if keywords:
-            matchingKeywordsIndexes = self._checkKeywords(keywords)
+        longStrings, keywords = self._findLongStringsAndPossibleKeywords(searchRequestString)
 
     def _checkLongstrings(self, regexSearchWords:str) -> list[int]:
         result = []
@@ -66,7 +59,7 @@ class SearchEngine:
                 result.append(i)
         return i
     
-    def _findPossibleKeywords(self, request:str) -> tuple[list[str], list[str]]:
+    def _findLongStringsAndPossibleKeywords(self, request:str) -> tuple[list[str], list[str]]:
         words = request.split(' ')
         keywords = []
         longStrings = []

@@ -22,7 +22,7 @@ def test_buildLongString(mockPlaylist):
     expectedWords = ['Expert', 'ExpertPlus', 'Hard', 'HickeyChan', 'Inabakumori', 'Lagtrain', 'Lawless', 'challenge', 'pop', 'tech', 'vocaloid']
     assert resultWords == expectedWords
 
-def test__findPossibleKeywords():
+def test__findLongStringsAndPossibleKeywords():
     request = 'test __test __test__ __test= !(@#*),asndm, __length=1230210, __bpm=uavds'
     instance = playlistSearchEngine.SearchEngine()
     longStrings, keywords = instance._findKeywords(request)
