@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>439</width>
+    <width>465</width>
     <height>711</height>
    </rect>
   </property>
@@ -49,17 +49,13 @@
      <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Filter with regex title, author, mapper, tags, level's name and level's characteristic</string>
+        <string>*Filter with regex maps' title, author, mapper, tags and level's name, characteristic*</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::MarkdownText</enum>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="Line" name="line_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -276,6 +272,9 @@
            <height>0</height>
           </size>
          </property>
+         <property name="placeholderText">
+          <string>MM-YYYY</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -283,7 +282,23 @@
      <item>
       <widget class="QLabel" name="label_9">
        <property name="text">
-        <string>Exact search: one value. Range search: [val1;val2] or [;val] or [val;]</string>
+        <string>*Exact search: one value* </string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::MarkdownText</enum>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>*Range search: [val1;val2] or [;val] or [val;]*</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::MarkdownText</enum>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
