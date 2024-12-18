@@ -231,7 +231,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLineEdit" name="bpmEdit_3">
+        <widget class="QLineEdit" name="starsEdit">
          <property name="minimumSize">
           <size>
            <width>200</width>
@@ -265,7 +265,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLineEdit" name="bpmEdit_4">
+        <widget class="QLineEdit" name="uploadedEdit">
          <property name="minimumSize">
           <size>
            <width>200</width>
