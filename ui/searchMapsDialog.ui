@@ -369,7 +369,7 @@
        <item>
         <widget class="QLabel" name="modsLabel">
          <property name="text">
-          <string>Mods: All</string>
+          <string>Mods: Any</string>
          </property>
         </widget>
        </item>
