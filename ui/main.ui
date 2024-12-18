@@ -65,13 +65,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="filterPlaylistMapsEdit">
-          <property name="placeholderText">
-           <string>Search maps</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="10,1">
           <item>
            <widget class="QTableWidget" name="playlistMapsTable">
@@ -119,7 +112,34 @@
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0,1,0,0">
+           <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0,0,0,0,0,0,0,1,0,0">
+            <item>
+             <widget class="QPushButton" name="filterPlaylistButton">
+              <property name="text">
+               <string>Filter maps</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="reseFilterPlaylistButton">
+              <property name="text">
+               <string>Reset filter</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_6">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
             <item>
              <widget class="QPushButton" name="setPlaylistHeaderButton">
               <property name="text">
@@ -220,13 +240,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="searchAllMapsEdit">
-          <property name="placeholderText">
-           <string>Search maps</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
            <widget class="QTableWidget" name="questMapsTable">
@@ -253,7 +266,34 @@
            </widget>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0,0,0,0,0,1">
+            <item>
+             <widget class="QPushButton" name="filterQuestMapsButton">
+              <property name="text">
+               <string>Filter maps</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="resetFilterQuestMapsButton">
+              <property name="text">
+               <string>Reset filter</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
             <item>
              <widget class="QLabel" name="label">
               <property name="text">
