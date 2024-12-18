@@ -49,10 +49,10 @@
      <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>*Filter with regex maps' title, author, mapper, tags and level's name, characteristic*</string>
+        <string>Filter with regex maps' title, author, mapper, tags and level's name, characteristic</string>
        </property>
        <property name="textFormat">
-        <enum>Qt::MarkdownText</enum>
+        <enum>Qt::RichText</enum>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -282,10 +282,10 @@
      <item>
       <widget class="QLabel" name="label_9">
        <property name="text">
-        <string>*Exact search: one value* </string>
+        <string>Exact search: one value</string>
        </property>
        <property name="textFormat">
-        <enum>Qt::MarkdownText</enum>
+        <enum>Qt::RichText</enum>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -295,10 +295,10 @@
      <item>
       <widget class="QLabel" name="label_10">
        <property name="text">
-        <string>*Range search: [val1;val2] or [;val] or [val;]*</string>
+        <string>Range search: [val1;val2] or [;val] or [val;]</string>
        </property>
        <property name="textFormat">
-        <enum>Qt::MarkdownText</enum>
+        <enum>Qt::RichText</enum>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
