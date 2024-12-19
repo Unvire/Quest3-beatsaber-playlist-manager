@@ -1,5 +1,6 @@
 import pytest
 import beatSaberMap
+import datetime
 
 @pytest.fixture
 def exampleJSON_data():
@@ -185,6 +186,15 @@ def test_setRankedState():
     song.setRankedState(isRanked=True, isQualified=False)
     assert song.rankedState == 'Ranked'
 
+def test_buildLongString(exampleJSON_data):
+    song = beatSaberMap.BeatSaberMap('57c2')
+    song.getDataFromBeatSaverJSON(exampleJSON_data)
+    result = song.searchCache['longString']
+    resultWords = sorted(result.split(' '))
+    
+    expected = ['(nightcore)', 'expert', 'getter', 'hard', 'jaani', 'pop', 'rinkusenpai', 'rockefeller', 'standard', 'street']
+    assert resultWords == expected
+
 def test_getRangesForEngineCache(exampleJSON_data):    
     song = beatSaberMap.BeatSaberMap('57c2')
     song.getDataFromBeatSaverJSON(exampleJSON_data)
@@ -201,3 +211,21 @@ def test_getRangesForEngineCache(exampleJSON_data):
     song.diffs[0].requiredMods = 'chroma, me'
     song.diffs[1].requiredMods = 'chroma, me'
     assert song.getRequiredMods() == ['chroma', 'me']
+
+def test_getCacheData(exampleJSON_data):
+    song = beatSaberMap.BeatSaberMap('57c2')
+    song.getDataFromBeatSaverJSON(exampleJSON_data)
+    result = song.getCacheData()
+
+    resultWords = sorted(result['longString'].split(' '))
+    expectedWords = ['(nightcore)', 'expert', 'getter', 'hard', 'jaani', 'pop', 'rinkusenpai', 'rockefeller', 'standard', 'street']
+    assert resultWords == expectedWords
+
+    assert result['length'] == 145
+    assert result['bpm'] == 162.5
+    assert result['mods'] == ['']
+    assert result['nps'] == (3.884, 5.053)
+    assert result['njs'] == (13, 17)
+    assert result['uploaded'] ==  datetime.datetime.strptime('2019-07-18T21:40:09Z', '%Y-%m-%dT%H:%M:%SZ')
+    assert result['stars'] == (3.4, 3.7)
+    assert result['rankedState'] == 'Ranked'

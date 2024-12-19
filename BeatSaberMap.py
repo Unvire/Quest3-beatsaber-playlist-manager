@@ -145,18 +145,18 @@ class BeatSaberMap:
         self.uploaded = uploadedDateTime
 
     def getCacheData(self) -> dict:
-        return self.getCacheData
+        return self.searchCache
     
     def _cacheData(self):
-        self.searchCache['longString'] = self._buildLongString(),
-        self.searchCache['length'] = self.lengthSeconds,
-        self.searchCache['bpm'] = self.bpm,
-        self.searchCache['mods'] = self.getRequiredMods(),
-        self.searchCache['nps'] = self.getNpsRange(),
-        self.searchCache['njs'] = self.getNjsRange(),
-        self.searchCache['uploaded'] = self.uploaded,
-        self.searchCache['stars'] = self.getStarsRange(),
-        self.searchCache['rankedState'] = self.rankedState,
+        self.searchCache['longString'] = self._buildLongString()
+        self.searchCache['length'] = self.lengthSeconds
+        self.searchCache['bpm'] = self.bpm
+        self.searchCache['mods'] = self.getRequiredMods()
+        self.searchCache['nps'] = self.getNpsRange()
+        self.searchCache['njs'] = self.getNjsRange()
+        self.searchCache['uploaded'] = self.uploaded
+        self.searchCache['stars'] = self.getStarsRange()
+        self.searchCache['rankedState'] = self.rankedState
     
     def _buildLongString(self) -> str:
         words = set()
@@ -170,7 +170,7 @@ class BeatSaberMap:
         
         for tag in self.tagsList:
             words.add(tag)
-        return ' '.join(list(words))
+        return ' '.join(list(words)).lower()
     
     def getStarsRange(self) -> str|tuple[float, float]:
         minVal, maxVal = self._getInitialMinMaxValues()
