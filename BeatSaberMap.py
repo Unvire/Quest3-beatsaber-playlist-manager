@@ -197,7 +197,6 @@ class BeatSaberMap:
             for modName in modsString.split(','):
                 if modName:
                     mods.add(modName)
-        print(mods)
         return mods
 
     def _updateMinMaxValues(self, currentMin:float, currentMax:float, val:float) -> tuple[float, float]:
