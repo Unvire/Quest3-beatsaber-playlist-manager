@@ -1,11 +1,14 @@
-import sys, os
-from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QCheckBox
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit
 from PyQt5 import uic
 
+import sys, os, re
 from beatSaberMap import BeatSaberMap
 
 
 class FilterMapsDialog(QDialog):
+    FLOAT_PATTERN = '(-?\d*(?:\.\d+)?)?'
+    RANGE_PATTERN = f'^\[{FLOAT_PATTERN};{FLOAT_PATTERN}]$'
+
     def __init__(self, mapsCacheList:list[dict]):
         super().__init__()
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'searchMapsDialog.ui')
@@ -19,7 +22,6 @@ class FilterMapsDialog(QDialog):
         self.npsEdit.editingFinished.connect(lambda: self._validateEdit(self.npsEdit, 'numeric'))
         self.njsEdit.editingFinished.connect(lambda: self._validateEdit(self.njsEdit, 'numeric'))
         self.starsEdit.editingFinished.connect(lambda: self._validateEdit(self.starsEdit, 'numericOrStr'))
-        self.uploadedEdit.editingFinished.connect(lambda: self._validateEdit(self.uploadedEdit, 'date'))
 
         self.graveyardCheckbox.toggled.connect(lambda state: self._rankedStateCheckboxToggled(state, 'Graveyard'))
         self.qualifiedCheckbox.toggled.connect(lambda state: self._rankedStateCheckboxToggled(state, 'Qualified'))
@@ -36,7 +38,7 @@ class FilterMapsDialog(QDialog):
     
     def _validateEdit(self, editHandle:QLineEdit, editType:str):
         print(editHandle.text(), editType)
-    
+
     def _rankedStateCheckboxToggled(self, state:bool, value:str):
         if state:
             self.rankedStateSelectionSet.add(value)
