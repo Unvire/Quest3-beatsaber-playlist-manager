@@ -148,15 +148,15 @@ class BeatSaberMap:
         return self.getCacheData
     
     def _cacheData(self):
-        self.cacheDict['longString'] = self._buildLongString(),
-        self.cacheDict['length'] = self.lengthSeconds,
-        self.cacheDict['bpm'] = self.bpm,
-        self.cacheDict['mods'] = self.getRequiredMods(),
-        self.cacheDict['nps'] = self.getNpsRange(),
-        self.cacheDict['njs'] = self.getNjsRange(),
-        self.cacheDict['uploaded'] = self.uploaded,
-        self.cacheDict['stars'] = self.getStarsRange(),
-        self.cacheDict['rankedState'] = self.rankedState,
+        self.searchCache['longString'] = self._buildLongString(),
+        self.searchCache['length'] = self.lengthSeconds,
+        self.searchCache['bpm'] = self.bpm,
+        self.searchCache['mods'] = self.getRequiredMods(),
+        self.searchCache['nps'] = self.getNpsRange(),
+        self.searchCache['njs'] = self.getNjsRange(),
+        self.searchCache['uploaded'] = self.uploaded,
+        self.searchCache['stars'] = self.getStarsRange(),
+        self.searchCache['rankedState'] = self.rankedState,
     
     def _buildLongString(self) -> str:
         words = set()
