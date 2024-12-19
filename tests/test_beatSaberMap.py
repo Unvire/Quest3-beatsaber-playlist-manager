@@ -226,6 +226,5 @@ def test_getCacheData(exampleJSON_data):
     assert result['mods'] == ['']
     assert result['nps'] == (3.884, 5.053)
     assert result['njs'] == (13, 17)
-    assert result['uploaded'] ==  datetime.datetime.strptime('2019-07-18T21:40:09Z', '%Y-%m-%dT%H:%M:%SZ')
     assert result['stars'] == (3.4, 3.7)
     assert result['rankedState'] == 'Ranked'

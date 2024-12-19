@@ -32,7 +32,6 @@ class BeatSaberMap:
             'mods': '',
             'nps': '',
             'njs': '',
-            'uploaded': '',
             'stars': '',
             'rankedState': ''
         }
@@ -154,7 +153,6 @@ class BeatSaberMap:
         self.searchCache['mods'] = self.getRequiredMods()
         self.searchCache['nps'] = self.getNpsRange()
         self.searchCache['njs'] = self.getNjsRange()
-        self.searchCache['uploaded'] = self.uploaded
         self.searchCache['stars'] = self.getStarsRange()
         self.searchCache['rankedState'] = self.rankedState
     
