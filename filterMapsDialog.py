@@ -72,17 +72,14 @@ class FilterMapsDialog(QDialog):
         else:
             return requiredValue == cacheVal
     
-    def _extractRangeValuesFromString(self, keywordData:str) -> str | tuple[float, float]:
-        floatPattern = '(-?\d*(?:\.\d+)?)?' # checks for float 1.2, 0.2 .2 or int
-        rangePattern = f'^\[{floatPattern};{floatPattern}]$' # checks if criteria is 2 numbers [1.2;2.3], 1 number [;1] or [1;] or [;]
-
-        keywordData = keywordData.strip().replace(' ', '')        
-        if re.search(rangePattern, keywordData):
-            minVal, maxVal = keywordData[1:-1].split(';')
+    def _extractRangeValuesFromString(self, value:str) -> str | tuple[float, float]:
+        value = value.strip().replace(' ', '')        
+        if re.search(FilterMapsDialog.RANGE_PATTERN, value):
+            minVal, maxVal = value[1:-1].split(';')
             minVal = float(minVal) if minVal else float('-inf')
             maxVal = float(maxVal) if maxVal else float('inf')
             return minVal, maxVal
-        return keywordData
+        return value
 
     def _rankedStateCheckboxToggled(self, state:bool, value:str):
         if state:
