@@ -203,14 +203,13 @@ def test_getRangesForEngineCache(exampleJSON_data):
 
     song.diffs[0].stars = '?' #assume that song is unranked and has '?' as stars value
     assert song.getStarsRange() == '?'
-
     assert song.getNpsRange() == (3.884, 5.053)
     assert song.getNjsRange() == (13, 17)
-    assert song.getRequiredMods() == ['']
+    assert song.getRequiredMods() == set()
 
     song.diffs[0].requiredMods = 'chroma, me'
     song.diffs[1].requiredMods = 'chroma, me'
-    assert song.getRequiredMods() == ['chroma', 'me']
+    assert song.getRequiredMods() == set(['chroma', 'me'])
 
 def test_getCacheData(exampleJSON_data):
     song = beatSaberMap.BeatSaberMap('57c2')
@@ -223,7 +222,7 @@ def test_getCacheData(exampleJSON_data):
 
     assert result['length'] == 145
     assert result['bpm'] == 162.5
-    assert result['mods'] == ['']
+    assert result['mods'] == set()
     assert result['nps'] == (3.884, 5.053)
     assert result['njs'] == (13, 17)
     assert result['stars'] == (3.4, 3.7)

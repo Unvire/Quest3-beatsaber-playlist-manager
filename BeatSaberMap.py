@@ -29,7 +29,7 @@ class BeatSaberMap:
             'longString': '',
             'length': '',
             'bpm': '',
-            'mods': '',
+            'mods': set(),
             'nps': '',
             'njs': '',
             'stars': '',
@@ -195,8 +195,10 @@ class BeatSaberMap:
         for level in self.diffs:
             modsString = level.requiredMods.replace(' ', '')
             for modName in modsString.split(','):
-                mods.add(modName)
-        return sorted(list(mods))
+                if modName:
+                    mods.add(modName)
+        print(mods)
+        return mods
 
     def _updateMinMaxValues(self, currentMin:float, currentMax:float, val:float) -> tuple[float, float]:
         currentMin = min(currentMin, val)
