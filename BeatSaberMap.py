@@ -24,6 +24,18 @@ class BeatSaberMap:
         self.diffs = []
         self.tagsList = []
         self.uploaded = datetime.datetime.strptime('1970-01-01T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.%fZ')
+
+        self.searchCache = {
+            'longString': '',
+            'length': '',
+            'bpm': '',
+            'mods': '',
+            'nps': '',
+            'njs': '',
+            'uploaded': '',
+            'stars': '',
+            'rankedState': ''
+        }
     
     def __repr__(self) -> str:
         result = {
@@ -68,6 +80,8 @@ class BeatSaberMap:
         levelsData = responseJSON['versions'][0]['diffs']
         diffsList = [BeatSaberMapLevel(diffData) for diffData in levelsData]
         self.setDiffs(diffsList)
+
+        self._cacheData()
     
     def setNameAndHash(self, name:str, hash:str):
         self.name = name
@@ -129,6 +143,34 @@ class BeatSaberMap:
 
     def setUploaded(self, uploadedDateTime:datetime.datetime):
         self.uploaded = uploadedDateTime
+
+    def getCacheData(self) -> dict:
+        return self.getCacheData
+    
+    def _cacheData(self):
+        self.cacheDict['longString'] = self._buildLongString(),
+        self.cacheDict['length'] = self.lengthSeconds,
+        self.cacheDict['bpm'] = self.bpm,
+        self.cacheDict['mods'] = self.getRequiredMods(),
+        self.cacheDict['nps'] = self.getNpsRange(),
+        self.cacheDict['njs'] = self.getNjsRange(),
+        self.cacheDict['uploaded'] = self.uploaded,
+        self.cacheDict['stars'] = self.getStarsRange(),
+        self.cacheDict['rankedState'] = self.rankedState,
+    
+    def _buildLongString(self) -> str:
+        words = set()
+        words.add(self.title)
+        words.add(self.author)
+        words.add(self.mapper)
+
+        for level in self.getDiffs():
+            words.add(level.difficulty)
+            words.add(level.characteristic)
+        
+        for tag in self.tagsList:
+            words.add(tag)
+        return ' '.join(list(words))
     
     def getStarsRange(self) -> str|tuple[float, float]:
         minVal, maxVal = self._getInitialMinMaxValues()
