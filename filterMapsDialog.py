@@ -39,14 +39,14 @@ class FilterMapsDialog(QDialog):
         requiredRankedStates = self.rankedStateSelectionSet
         requiredMods = self.modsSelectionSet
 
-        return self._filterMaps(longStringPattern=longStringPattern, requiredLength=requiredLength, requiredBpm=requiredBpm, requiredNps=requiredNps,
+        return self._filterMaps(playlist=self.playlist, longStringPattern=longStringPattern, requiredLength=requiredLength, requiredBpm=requiredBpm, requiredNps=requiredNps,
                                 requiredNjs=requiredNjs, requiredStars=requiredStars, requiredRankedStates=requiredRankedStates, requiredMods=requiredMods)
     
-    def _filterMaps(self, longStringPattern:str='', requiredLength:tuple[float, float]|str='', requiredBpm:tuple[float, float]|str='', 
+    def _filterMaps(self, playlist:BeatSaberPlaylist, longStringPattern:str='', requiredLength:tuple[float, float]|str='', requiredBpm:tuple[float, float]|str='', 
                     requiredNps:tuple[float, float]|str='', requiredNjs:tuple[float, float]|str='', requiredStars:tuple[float, float]|str='', 
                     requiredRankedStates=list[str], requiredMods=list[str]) -> list[int]:
         result = []
-        for i, song in enumerate(self.playlist):
+        for i, song in enumerate(playlist):
             criteriaMatched = []
             cache = song.getCacheData()
 
@@ -64,13 +64,15 @@ class FilterMapsDialog(QDialog):
                 result.append(i)
         return result
     
-    def _checkRangeOrStr(self, cacheVal:str, requiredValue:str|tuple[float, float]) -> bool:
+    def _checkRangeOrStr(self, cacheVal:str|tuple[float, float]|float, requiredValue:str|tuple[float, float]) -> bool:
         if isinstance(requiredValue, tuple):
             requiredMinVal, requiredMaxVal = requiredValue
-            minVal, maxVal = cacheVal
-            return requiredMinVal <= minVal and requiredMaxVal >= maxVal
-        else:
-            return requiredValue == cacheVal
+            if isinstance(cacheVal, tuple):
+                minVal, maxVal = cacheVal
+                return requiredMinVal >= minVal and requiredMaxVal <= maxVal
+            elif isinstance(cacheVal, float) or isinstance(cacheVal, int):
+                return requiredMinVal <= cacheVal <= requiredMaxVal
+        return requiredValue == cacheVal
     
     def _extractRangeValuesFromString(self, value:str) -> str | tuple[float, float]:
         value = value.strip().replace(' ', '')        
