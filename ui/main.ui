@@ -720,7 +720,6 @@
     <addaction name="pullPlaylistsFromQuestAction"/>
     <addaction name="pushPlaylistsToQuestAction"/>
     <addaction name="deletePlaylistsFromQuestAction"/>
-    <addaction name="action_debug"/>
    </widget>
    <widget class="QMenu" name="menuPlaylist">
     <property name="title">

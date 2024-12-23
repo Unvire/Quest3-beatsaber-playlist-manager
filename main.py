@@ -68,7 +68,7 @@ class MainWindow(QMainWindow):
         self.pushPlaylistsToQuestAction.triggered.connect(self.pushPlaylists)
         self.deletePlaylistsFromQuestAction.triggered.connect(self.deletePlaylists)
 
-        self.action_debug.triggered.connect(self.debugGetSongsFromQuest)
+        #self.action_debug.triggered.connect(self.debugGetSongsFromQuest)
 
         self.sortQuestMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
