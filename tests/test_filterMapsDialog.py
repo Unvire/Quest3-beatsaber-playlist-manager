@@ -39,15 +39,33 @@ def test__extractRangeValuesFromString(inputData, expected, mockApp):
 
 def test__filterMaps_noCritertia(mockApp):    
     assert mockApp._filterMaps() == []
+    assert mockApp.previousSearchParameters == mockApp._defaultPreviousSearchParameters()
 
-def test__filterMaps_longString(mockApp):
+def test__filterMaps_andPreviousSearch(mockApp):
     assert mockApp._filterMaps(longStringPattern='expert') == [0]
+    assert mockApp.previousSearchParameters['longString'] == 'expert'
+
     assert mockApp._filterMaps(longStringPattern='hard') == [4, 6]
+    assert mockApp.previousSearchParameters['longString'] == 'hard'
+    
     assert mockApp._filterMaps(longStringPattern='hard ') == [4, 6, 7]
+    assert mockApp.previousSearchParameters['longString'] == 'hard '
+
     assert mockApp._filterMaps(longStringPattern='(hard|pop)') == [4, 6]
+    assert mockApp.previousSearchParameters['longString'] == '(hard|pop)'
 
     assert mockApp._filterMaps(requiredLength=(100, 200)) == [0, 1, 3, 4, 7]
+    assert mockApp.previousSearchParameters['length'] == (100, 200)
+    
     assert mockApp._filterMaps(longStringPattern='expert', requiredLength=(100, 200)) == [0, 1, 3, 4, 7]
+    assert mockApp.previousSearchParameters['longString'] == 'expert'
+    assert mockApp.previousSearchParameters['length'] == (100, 200)
 
     assert mockApp._filterMaps(requiredBpm=184, requiredLength=(100, 200)) == [0, 1, 2, 3, 4, 5, 7]
+    assert mockApp.previousSearchParameters['length'] == (100, 200)
+    assert mockApp.previousSearchParameters['bpm'] == 184
+
     assert mockApp._filterMaps(requiredBpm=184, requiredLength=(100, 200), requiredNps=4) == [0, 1, 2, 3, 4, 5, 6, 7]
+    assert mockApp.previousSearchParameters['length'] == (100, 200)
+    assert mockApp.previousSearchParameters['bpm'] == 184
+    assert mockApp.previousSearchParameters['nps'] == 4

@@ -17,6 +17,7 @@ class FilterMapsDialog(QDialog):
             uiFilePath = os.path.join(os.getcwd(), 'ui', 'searchMapsDialog.ui')
         uic.loadUi(uiFilePath, self)
 
+        self.previousSearchParameters = self._defaultPreviousSearchParameters()
         self.playlist = playlist
 
         self.rankedStateSelectionSet = set()
@@ -35,7 +36,20 @@ class FilterMapsDialog(QDialog):
         self.okButton.clicked.connect(self.accept)
         self.cancelButton.clicked.connect(self.reject)
     
-    def getData(self) -> list[int]:
+    def _defaultPreviousSearchParameters(self) -> dict:
+        default = {
+            'longString': '', 
+            'length': 0, 
+            'bpm': 0, 
+            'nps': 0, 
+            'njs': 0, 
+            'stars': '?', 
+            'rankedState': set(), 
+            'mods': set(['No mods'])
+        }
+        return default
+        
+    def getHideIndexesList(self) -> list[int]:
         longStringPattern = self.parametersEdit.text()
         requiredLength = self._extractRangeValuesFromString(self.lengthEdit.text())
         requiredBpm = self._extractRangeValuesFromString(self.bpmEdit.text())
@@ -59,9 +73,14 @@ class FilterMapsDialog(QDialog):
         }
         keyNames = ['longString', 'length', 'bpm', 'nps', 'njs', 'stars', 'rankedState', 'mods']
         allCriterias = [longStringPattern, requiredLength, requiredBpm, requiredNps, requiredNjs, requiredStars, requiredRankedStates, requiredMods]
+        
+        self.previousSearchParameters = self._defaultPreviousSearchParameters()
+        criteriaTuples = []
+        for keyName, criteria in zip(keyNames, allCriterias):
+            if criteria:
+                self.previousSearchParameters[keyName] = criteria
+                criteriaTuples.append((keyName, criteria))
 
-
-        criteriaTuples = [(keyName, criteria) for keyName, criteria in zip(keyNames, allCriterias) if criteria]
         result = []
         for i, song in enumerate(self.playlist):
             songNode = BaseCacheNode(song.getCacheData())

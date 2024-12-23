@@ -310,7 +310,7 @@ class MainWindow(QMainWindow):
     def filterMaps(self, playlist:BeatSaberPlaylist, table:QuestSongsTable|PlaylistSongsTable):
         dialogWindow = FilterMapsDialog(playlist)
         if dialogWindow.exec_() == QDialog.Accepted:
-            indexesToHide = dialogWindow.getData()
+            indexesToHide = dialogWindow.getHideIndexesList()
             table.hideRows(indexesToHide)
     
     def resetMapsFilter(self, table:QuestSongsTable|PlaylistSongsTable):
