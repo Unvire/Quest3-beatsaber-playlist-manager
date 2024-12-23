@@ -4,6 +4,7 @@ from PyQt5 import uic
 import sys, os, re
 from beatSaberMap import BeatSaberMap
 from beatSaberPlaylist import BeatSaberPlaylist
+from filterMapCacheDecorators import BaseCacheNode, CheckLongString, CheckRangeOrString, CheckValueSet
 
 
 class FilterMapsDialog(QDialog):
@@ -46,25 +47,27 @@ class FilterMapsDialog(QDialog):
     def _filterMaps(self, longStringPattern:str='', requiredLength:tuple[float, float]|str=None, requiredBpm:tuple[float, float]|str=None, 
                     requiredNps:tuple[float, float]|str=None, requiredNjs:tuple[float, float]|str=None, requiredStars:tuple[float, float]|str=None, 
                     requiredRankedStates:list[str]=None, requiredMods:list[str]=None) -> list[int]:
+        
+        decoratorsDict = {
+            'longString': CheckLongString,
+            'rankedState': CheckValueSet,
+            'mods': CheckValueSet
+        }
+        keyNames = ['longString', 'length', 'bpm', 'nps', 'njs', 'stars', 'rankedState', 'mods']
+        allCriterias = [longStringPattern, requiredLength, requiredBpm, requiredNps, requiredNjs, requiredStars, requiredRankedStates, requiredMods]
+
+
+        criteriaTuples = [(keyName, criteria) for keyName, criteria in zip(keyNames, allCriterias) if criteria]
         result = []
         for i, song in enumerate(self.playlist):
-            criteriaMatched = []
-            cache = song.getCacheData()
+            songNode = BaseCacheNode(song.getCacheData())
 
-            criteriaMatched.append(bool(re.match(longStringPattern, cache['longString'])))
-            criteriaMatched.append(self._checkRangeOrStr(cache['length'], requiredLength))
-            criteriaMatched.append(self._checkRangeOrStr(cache['bpm'], requiredBpm))
-            criteriaMatched.append(self._checkRangeOrStr(cache['nps'], requiredNps))
-            criteriaMatched.append(self._checkRangeOrStr(cache['njs'], requiredNjs))            
-            criteriaMatched.append(self._checkRangeOrStr(cache['stars'], requiredStars))
+            # chain filtering decorators
+            for key, criteria in criteriaTuples:
+                decorator = decoratorsDict.get(key, CheckRangeOrString)
+                songNode = decorator(songNode, key, criteria) 
             
-            if requiredRankedStates:
-                criteriaMatched.append(cache['rankedState'] in requiredRankedStates)
-            if requiredMods:
-                requiredMods = set(requiredMods)
-                criteriaMatched.append(not requiredMods or bool(cache['mods'] & requiredMods))
-
-            if not all(criteriaMatched):
+            if not songNode.checkCriteria():
                 result.append(i)
         return result
     

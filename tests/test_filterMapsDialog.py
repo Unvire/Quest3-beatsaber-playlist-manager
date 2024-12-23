@@ -36,9 +36,9 @@ def test_windowInit(mockApp):
                                                 ])
 def test__extractRangeValuesFromString(inputData, expected, mockApp):
     assert mockApp._extractRangeValuesFromString(inputData) == expected
-    
+
 def test__filterMaps_noCritertia(mockApp):    
-    assert mockApp._filterMaps() == [0, 1, 2, 3, 4, 5, 6, 7]
+    assert mockApp._filterMaps() == []
 
 def test__filterMaps_longString(mockApp):
-     assert mockApp._filterMaps(longStringPattern='expert') == [1, 2, 3, 4, 5, 6, 7]
+    assert mockApp._filterMaps(longStringPattern='expert') == [0]

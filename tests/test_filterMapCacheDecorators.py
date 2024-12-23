@@ -62,7 +62,6 @@ def test_decoratorChaining(inputDataList, expected, mockBaseNode):
         'mods': filterMapCacheDecorators.CheckValueSet
     }
 
-    print(inputDataList)
     for criteriaTuple in inputDataList:
         key, criteria = criteriaTuple
         decorator = decoratorsDict.get(key, filterMapCacheDecorators.CheckRangeOrString)
