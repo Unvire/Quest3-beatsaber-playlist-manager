@@ -16,7 +16,7 @@ class FilterMapsDialog(QDialog):
             uiFilePath = os.path.join(os.getcwd(), 'ui', 'searchMapsDialog.ui')
         uic.loadUi(uiFilePath, self)
 
-        self.previousSearchParameters = self._defaultPreviousSearchParameters()
+        self.previousSearchParameters = FilterMapsDialog.defaultPreviousSearchParameters()
         self.playlist = playlist
 
         self.rankedStateSelectionSet = set()
@@ -41,7 +41,7 @@ class FilterMapsDialog(QDialog):
         self._setWidgets(previousSearchParameters)
     
     def clearSearchParameters(self):
-        parametersDict = self._defaultPreviousSearchParameters()
+        parametersDict = FilterMapsDialog.defaultPreviousSearchParameters()
         self._setWidgets(parametersDict)
     
     def _setWidgets(self, parametersDict:dict):
@@ -73,7 +73,8 @@ class FilterMapsDialog(QDialog):
         self.meCheckbox.setChecked('me' in self.modsSelectionSet)
         self.cinemaCheckbox.setChecked('cinema' in self.modsSelectionSet)
     
-    def _defaultPreviousSearchParameters(self) -> dict:
+    @staticmethod
+    def defaultPreviousSearchParameters() -> dict:
         default = {
             'longString': '', 
             'length': '', 
@@ -114,7 +115,7 @@ class FilterMapsDialog(QDialog):
         keyNames = ['longString', 'length', 'bpm', 'nps', 'njs', 'stars', 'rankedState', 'mods']
         allCriterias = [longStringPattern, requiredLength, requiredBpm, requiredNps, requiredNjs, requiredStars, requiredRankedStates, requiredMods]
         
-        self.previousSearchParameters = self._defaultPreviousSearchParameters()
+        self.previousSearchParameters = FilterMapsDialog.defaultPreviousSearchParameters()
         criteriaTuples = []
         for keyName, criteria in zip(keyNames, allCriterias):
             if criteria:
