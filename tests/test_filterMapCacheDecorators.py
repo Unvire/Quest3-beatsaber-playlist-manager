@@ -11,7 +11,7 @@ def mockBaseNode():
         'nps': (3.862, 4.101), 
         'njs': 16.0,
         'stars': '?', 
-        'rankedState': 'Graveyard'
+        'rankedState': set(['Graveyard'])
     }
     return filterMapCacheDecorators.BaseCacheNode(cache)
 
@@ -53,14 +53,16 @@ def test_CheckLongString(inputData, expected, mockBaseNode):
         ([('longString', 'tests'), ('length', (250, 270)), ('njs', 16)], False),
         ([('length', (250, 270)), ('njs', 16), ('nps', (3.9, 4.0)), ('stars', '?')], True), 
         ([('length', (250, 270)), ('njs', 16), ('nps', (3.9, 4.8)), ('stars', '?')], False), 
-        ([('rankedState', 'Graveyard'), ('longString', 'vocal'), ('length', (250, 270)), ('njs', 16), ('mods', ['chroma'])], True),
+        ([('rankedState', ['Graveyard', 'Ranked']), ('longString', 'vocal'), ('length', (250, 270)), ('njs', 16), ('mods', ['chroma'])], True),
     ])
 def test_decoratorChaining(inputDataList, expected, mockBaseNode):
     decoratorsDict = {
         'longString': filterMapCacheDecorators.CheckLongString,
+        'rankedState': filterMapCacheDecorators.CheckValueSet,
         'mods': filterMapCacheDecorators.CheckValueSet
     }
 
+    print(inputDataList)
     for criteriaTuple in inputDataList:
         key, criteria = criteriaTuple
         decorator = decoratorsDict.get(key, filterMapCacheDecorators.CheckRangeOrString)

@@ -33,7 +33,7 @@ class BeatSaberMap:
             'nps': '',
             'njs': '',
             'stars': '',
-            'rankedState': ''
+            'rankedState': set()
         }
     
     def __repr__(self) -> str:
@@ -154,7 +154,7 @@ class BeatSaberMap:
         self.searchCache['nps'] = self.getNpsRange()
         self.searchCache['njs'] = self.getNjsRange()
         self.searchCache['stars'] = self.getStarsRange()
-        self.searchCache['rankedState'] = self.rankedState
+        self.searchCache['rankedState'] = set([self.rankedState])
     
     def _buildLongString(self) -> str:
         words = set()
