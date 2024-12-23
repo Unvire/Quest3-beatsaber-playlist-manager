@@ -20,7 +20,6 @@ def mockBaseNode():
     (2, (0, 3), True), (-2, (0, 3), False), (0, (0, 3), True), (3, (0, 3), True),
     ('test', 'test', True), ('test', '', False), ('', '', True)])
 def test__checkRangeOrStr(inputCacheValue, inputRequiredValue, expected):
-    print(inputCacheValue, inputRequiredValue, expected)
     assert filterMapCacheDecorators.CheckRangeOrString._checkRangeOrStr(None, inputCacheValue, inputRequiredValue) == expected
 
 @pytest.mark.parametrize('inputData, expected', [('chall', True), ('test', False), ('.....', True), ('(pop|hard|eeeasy)', True)])
@@ -38,3 +37,9 @@ def test_CheckRangeOrString_oneValueCached(inputData, expected, mockBaseNode):
 def test_CheckRangeOrString_RangeCached(inputData, expected, mockBaseNode):
     #'nps': (3.862, 4.101)
     mockBaseNode = filterMapCacheDecorators.CheckRangeOrString(mockBaseNode, 'nps', inputData) == expected
+
+@pytest.mark.parametrize('inputData, expected', [(['ne'], True), (['chroma'], True), (['ne', 'chroma'], True), ([], False), (['me'], False), (['me', 'chroma'], True)])
+def test_CheckLongString(inputData, expected, mockBaseNode):
+    #'mods': {'ne', 'chroma'}
+    mockBaseNode = filterMapCacheDecorators.CheckValueSet(mockBaseNode, 'mods', inputData)
+    assert mockBaseNode.checkCriteria() == expected

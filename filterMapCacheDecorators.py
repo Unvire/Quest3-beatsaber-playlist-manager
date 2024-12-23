@@ -32,7 +32,7 @@ class CheckLongString(AbstractCriteriaNode):
         return self.next.checkCriteria()
 
 class CheckRangeOrString(AbstractCriteriaNode):
-    def __init__(self, node:'BaseCacheNode|AbstractCriteriaNode', cacheKey:str, criteria:str):
+    def __init__(self, node:'BaseCacheNode|AbstractCriteriaNode', cacheKey:str, criteria:str|tuple[float, float]):
         super().__init__(node)
         self.cacheKey = cacheKey
         self.criteria = criteria
@@ -52,6 +52,20 @@ class CheckRangeOrString(AbstractCriteriaNode):
             elif isinstance(cacheVal, float) or isinstance(cacheVal, int):
                 return requiredMinVal <= cacheVal <= requiredMaxVal
         return requiredValue == cacheVal
+
+class CheckValueSet(AbstractCriteriaNode):
+    def __init__(self, node:'BaseCacheNode|AbstractCriteriaNode', cacheKey:str, criteria:list[str]):
+        super().__init__(node)
+        self.cacheKey = cacheKey
+        self.criteria = criteria
+    
+    def checkCriteria(self) -> bool:
+        cachedSet = self.cache[self.cacheKey]
+        criteriaSet = set(self.criteria)
+        result = cachedSet & criteriaSet
+        if not result:
+            return False
+        return self.next.checkCriteria()
 
 if __name__ == '__main__':
     cache = {
