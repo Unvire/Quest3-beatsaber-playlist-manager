@@ -10,9 +10,10 @@ class FilterMapsDialog(QDialog):
     FLOAT_PATTERN = '(-?\d*(?:\.\d+)?)?'
     RANGE_PATTERN = f'^\[{FLOAT_PATTERN};{FLOAT_PATTERN}]$'
 
-    def __init__(self, playlist:BeatSaberPlaylist):
+    def __init__(self, playlist:BeatSaberPlaylist, uiFilePath=''):
         super().__init__()
-        uiFilePath = os.path.join(os.getcwd(), 'ui', 'searchMapsDialog.ui')
+        if not uiFilePath:
+            uiFilePath = os.path.join(os.getcwd(), 'ui', 'searchMapsDialog.ui')
         uic.loadUi(uiFilePath, self)
 
         self.playlist = playlist
@@ -42,11 +43,11 @@ class FilterMapsDialog(QDialog):
         return self._filterMaps(playlist=self.playlist, longStringPattern=longStringPattern, requiredLength=requiredLength, requiredBpm=requiredBpm, requiredNps=requiredNps,
                                 requiredNjs=requiredNjs, requiredStars=requiredStars, requiredRankedStates=requiredRankedStates, requiredMods=requiredMods)
     
-    def _filterMaps(self, playlist:BeatSaberPlaylist, longStringPattern:str='', requiredLength:tuple[float, float]|str='', requiredBpm:tuple[float, float]|str='', 
+    def _filterMaps(self, longStringPattern:str='', requiredLength:tuple[float, float]|str='', requiredBpm:tuple[float, float]|str='', 
                     requiredNps:tuple[float, float]|str='', requiredNjs:tuple[float, float]|str='', requiredStars:tuple[float, float]|str='', 
                     requiredRankedStates=list[str], requiredMods=list[str]) -> list[int]:
         result = []
-        for i, song in enumerate(playlist):
+        for i, song in enumerate(self.playlist):
             criteriaMatched = []
             cache = song.getCacheData()
 
@@ -62,6 +63,7 @@ class FilterMapsDialog(QDialog):
             criteriaMatched.append(not requiredMods or bool(cache['mods'] & requiredMods))
             if not all(criteriaMatched):
                 result.append(i)
+        print(result, i)
         return result
     
     def _checkRangeOrStr(self, cacheVal:str|tuple[float, float]|float, requiredValue:str|tuple[float, float]) -> bool:
