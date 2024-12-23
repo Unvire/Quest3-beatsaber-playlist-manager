@@ -45,7 +45,7 @@ class FilterMapsDialog(QDialog):
         requiredRankedStates = self.rankedStateSelectionSet
         requiredMods = self.modsSelectionSet
 
-        return self._filterMaps(playlist=self.playlist, longStringPattern=longStringPattern, requiredLength=requiredLength, requiredBpm=requiredBpm, requiredNps=requiredNps,
+        return self._filterMaps(longStringPattern=longStringPattern, requiredLength=requiredLength, requiredBpm=requiredBpm, requiredNps=requiredNps,
                                 requiredNjs=requiredNjs, requiredStars=requiredStars, requiredRankedStates=requiredRankedStates, requiredMods=requiredMods)
     
     def _filterMaps(self, longStringPattern:str='', requiredLength:tuple[float, float]|str=None, requiredBpm:tuple[float, float]|str=None, 
@@ -95,6 +95,15 @@ class FilterMapsDialog(QDialog):
         self.rankedStateLabel.setText(f'Ranked state: {selectedStates}')
     
     def _modsCheckboxToggled(self, state:bool, value:str):
+        modsDict = {
+            'No mods': 'No mods',
+            'Chroma': 'chroma',
+            'Noodle Extensions': 'ne',
+            'Mapping Extensions': 'me',
+            'Cinema': 'cinema'
+        }
+
+        value = modsDict[value]
         if state:
             self.modsSelectionSet.add(value)
         else:

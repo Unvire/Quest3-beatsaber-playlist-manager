@@ -11,19 +11,18 @@ from adbWrapperFactory import AdbWrapperFactory
 from tableWidgetWrapper import QuestSongsTable, PlaylistSongsTable
 from mapDetailsWrapper import MapDetailsWrapper
 from labelWrapper import LabelWrapper
-from playlistSearchEngine import SearchEngine
 
 from playlistDataDialog import PlaylistDataDialog
 from deletePlaylistsDialog import DeletePlaylistsDialog
 from downloadMissingMapsDialog import DownloadMissingMapsDialog
 from connectQuestDialog import ConnectQuestDialog
+from filterMapsDialog import FilterMapsDialog
 
 class MainWindow(QMainWindow):
     def __init__(self):
         self.questMapsPlaylist = BeatSaberPlaylist()
         self.playlistInstance = BeatSaberPlaylist()
         self.musicPlayer = ByteStringMusicPlayer()
-        self.searchEngine = SearchEngine()
         self.adbWrapper = AdbWrapperFactory(platform.system())
 
         self.sortingOrder = 'Upload date'
@@ -78,6 +77,11 @@ class MainWindow(QMainWindow):
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
         self.selectionDeleteButton.clicked.connect(self.deleteSelectedSongs)
+
+        self.filterQuestMapsButton.clicked.connect(lambda: self.filterMaps(self.questMapsPlaylist, self.questMapsTable))
+        self.resetFilterQuestMapsButton.clicked.connect(lambda: self.resetMapsFilter(self.questMapsTable))
+        self.filterPlaylistButton.clicked.connect(lambda: self.filterMaps(self.playlistInstance, self.playlistMapsTable))
+        self.resetFilterPlaylistButton.clicked.connect(lambda: self.resetMapsFilter(self.playlistMapsTable))
     
     def checkLibrariesInstalled(self):
         def checkIfFfmpegInstalled() -> bool:
@@ -253,7 +257,6 @@ class MainWindow(QMainWindow):
         self.questMapsPlaylist.changeSortingOrder()
         self.questMapsPlaylist.sortPlaylistInPlaceBy('Upload date')
         self.questMapsTable.generateRows()
-        self.searchEngine.cachePlaylistData(self.questMapsPlaylist)
 
     def __mockGetSongsFromQuest(self) -> list[str]:
         mapsIDsPath = os.path.join(os.getcwd(), 'other', 'ls_questSongs.txt')
@@ -304,6 +307,15 @@ class MainWindow(QMainWindow):
     def deleteSelectedSongs(self):
         self.playlistMapsTable.deleteSelectedMaps()
     
+    def filterMaps(self, playlist:BeatSaberPlaylist, table:QuestSongsTable|PlaylistSongsTable):
+        dialogWindow = FilterMapsDialog(playlist)
+        if dialogWindow.exec_() == QDialog.Accepted:
+            indexesToHide = dialogWindow.getData()
+            table.hideRows(indexesToHide)
+    
+    def resetMapsFilter(self, table:QuestSongsTable|PlaylistSongsTable):
+        table.showAllRows()
+
     def resizeEvent(self, event):
         self.mapDetails.resize()
         super().resizeEvent(event)

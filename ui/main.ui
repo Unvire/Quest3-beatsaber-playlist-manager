@@ -121,9 +121,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="reseFilterPlaylistButton">
+             <widget class="QPushButton" name="resetFilterPlaylistButton">
               <property name="text">
-               <string>Reset filter</string>
+               <string>Reset filters</string>
               </property>
              </widget>
             </item>
@@ -277,7 +277,7 @@
             <item>
              <widget class="QPushButton" name="resetFilterQuestMapsButton">
               <property name="text">
-               <string>Reset filter</string>
+               <string>Reset filters</string>
               </property>
              </widget>
             </item>
