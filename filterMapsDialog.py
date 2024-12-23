@@ -21,6 +21,10 @@ class FilterMapsDialog(QDialog):
 
         self.rankedStateSelectionSet = set()
         self.modsSelectionSet = set()
+
+        self.graveyardCheckbox.toggled.connect(lambda state: self._rankedStateCheckboxToggled(state, 'Graveyard'))
+        self.qualifiedCheckbox.toggled.connect(lambda state: self._rankedStateCheckboxToggled(state, 'Qualified'))
+        self.rankedCheckbox.toggled.connect(lambda state: self._rankedStateCheckboxToggled(state, 'Ranked'))
         
         self.noModsCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'No mods'))
         self.chromaCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'Chroma'))
