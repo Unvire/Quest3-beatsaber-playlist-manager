@@ -1,8 +1,6 @@
 import pytest, os, json
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtTest import QTest
 from filterMapsDialog import FilterMapsDialog
-import beatSaberMap, beatSaberMapLevel, beatSaberPlaylist
+import beatSaberPlaylist
 
 @pytest.fixture
 def mockPlaylist():

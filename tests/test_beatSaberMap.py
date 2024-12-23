@@ -1,6 +1,5 @@
 import pytest
 import beatSaberMap
-import datetime
 
 @pytest.fixture
 def exampleJSON_data():
