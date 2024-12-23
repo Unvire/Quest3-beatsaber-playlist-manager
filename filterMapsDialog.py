@@ -3,7 +3,7 @@ from PyQt5 import uic
 
 import sys, os, re
 from beatSaberPlaylist import BeatSaberPlaylist
-from filterMapCacheDecorators import BaseCacheNode, CheckLongString, CheckRangeOrString, CheckValueSet
+from filterMapCacheDecorators import BaseCacheNode, CheckLongStringDecorator, CheckRangeOrStringDecorator, CheckValueSetDecorator
 
 
 class FilterMapsDialog(QDialog):
@@ -108,9 +108,9 @@ class FilterMapsDialog(QDialog):
                     requiredRankedStates:list[str]=None, requiredMods:list[str]=None) -> list[int]:
         
         decoratorsDict = {
-            'longString': CheckLongString,
-            'rankedState': CheckValueSet,
-            'mods': CheckValueSet
+            'longString': CheckLongStringDecorator,
+            'rankedState': CheckValueSetDecorator,
+            'mods': CheckValueSetDecorator
         }
         keyNames = ['longString', 'length', 'bpm', 'nps', 'njs', 'stars', 'rankedState', 'mods']
         allCriterias = [longStringPattern, requiredLength, requiredBpm, requiredNps, requiredNjs, requiredStars, requiredRankedStates, requiredMods]
@@ -128,7 +128,7 @@ class FilterMapsDialog(QDialog):
 
             # chain filtering decorators
             for key, criteria in criteriaTuples:
-                decorator = decoratorsDict.get(key, CheckRangeOrString)
+                decorator = decoratorsDict.get(key, CheckRangeOrStringDecorator)
                 songNode = decorator(songNode, key, criteria) 
             
             if not songNode.checkCriteria():

@@ -9,8 +9,8 @@ class BaseCacheNode:
     def checkCriteria(self) -> bool:
         return True
 
-class AbstractCriteriaNode:
-    def __init__(self, node:'BaseCacheNode|AbstractCriteriaNode'):
+class AbstractCriteriaDecorator:
+    def __init__(self, node:'BaseCacheNode|AbstractCriteriaDecorator'):
         self.cache = node.cache
         self.next = node
         self.criteria = None
@@ -18,8 +18,8 @@ class AbstractCriteriaNode:
     def checkCriteria(self) -> bool:
         pass
 
-class CheckLongString(AbstractCriteriaNode):
-    def __init__(self, node:'BaseCacheNode|AbstractCriteriaNode', cacheKey:str, pattern:str):
+class CheckLongStringDecorator(AbstractCriteriaDecorator):
+    def __init__(self, node:'BaseCacheNode|AbstractCriteriaDecorator', cacheKey:str, pattern:str):
         super().__init__(node)
         self.cacheKey = cacheKey
         self.pattern = pattern
@@ -31,8 +31,8 @@ class CheckLongString(AbstractCriteriaNode):
             return False
         return self.next.checkCriteria()
 
-class CheckRangeOrString(AbstractCriteriaNode):
-    def __init__(self, node:'BaseCacheNode|AbstractCriteriaNode', cacheKey:str, criteria:str|tuple[float, float]):
+class CheckRangeOrStringDecorator(AbstractCriteriaDecorator):
+    def __init__(self, node:'BaseCacheNode|AbstractCriteriaDecorator', cacheKey:str, criteria:str|tuple[float, float]):
         super().__init__(node)
         self.cacheKey = cacheKey
         self.criteria = criteria
@@ -53,8 +53,8 @@ class CheckRangeOrString(AbstractCriteriaNode):
                 return requiredMinVal <= cacheVal <= requiredMaxVal
         return requiredValue == cacheVal
 
-class CheckValueSet(AbstractCriteriaNode):
-    def __init__(self, node:'BaseCacheNode|AbstractCriteriaNode', cacheKey:str, criteria:list[str]):
+class CheckValueSetDecorator(AbstractCriteriaDecorator):
+    def __init__(self, node:'BaseCacheNode|AbstractCriteriaDecorator', cacheKey:str, criteria:list[str]):
         super().__init__(node)
         self.cacheKey = cacheKey
         self.criteria = criteria
@@ -82,24 +82,24 @@ if __name__ == '__main__':
     cacheNode = BaseCacheNode(cache)
     print(cacheNode.checkCriteria()) #Default Case is True 
 
-    node = CheckLongString(cacheNode, 'longString', 'expert')
-    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
+    node = CheckLongStringDecorator(cacheNode, 'longString', 'expert')
+    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
     print(node.checkCriteria()) # 2 criteria checked, both matching so result is True
 
-    node = CheckLongString(cacheNode, 'longString', 'expert')
-    node = CheckRangeOrString(cacheNode, 'length', (250, 210))
+    node = CheckLongStringDecorator(cacheNode, 'longString', 'expert')
+    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 210))
     print(node.checkCriteria()) # 2 criteria checked, length is no matching so result is False
 
-    node = CheckLongString(cacheNode, 'longString', 'test')
-    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
+    node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
+    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
     print(node.checkCriteria()) # 2 criteria checked, longstring is no matching so result is False
 
-    node = CheckLongString(cacheNode, 'longString', 'test')
-    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
-    node = CheckLongString(cacheNode, 'longString', 'test')
-    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
-    node = CheckLongString(cacheNode, 'longString', 'test')
-    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
-    node = CheckLongString(cacheNode, 'longString', 'test')
-    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
+    node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
+    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
+    node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
+    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
+    node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
+    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
+    node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
+    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
     print(node.checkCriteria()) # True, criteria can be chained
