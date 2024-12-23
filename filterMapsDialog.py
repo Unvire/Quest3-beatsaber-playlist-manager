@@ -1,8 +1,7 @@
-from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit
+from PyQt5.QtWidgets import QApplication, QDialog
 from PyQt5 import uic
 
 import sys, os, re
-from beatSaberMap import BeatSaberMap
 from beatSaberPlaylist import BeatSaberPlaylist
 from filterMapCacheDecorators import BaseCacheNode, CheckLongString, CheckRangeOrString, CheckValueSet
 
@@ -28,24 +27,62 @@ class FilterMapsDialog(QDialog):
         self.rankedCheckbox.toggled.connect(lambda state: self._rankedStateCheckboxToggled(state, 'Ranked'))
         
         self.noModsCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'No mods'))
-        self.chromaCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'Chroma'))
-        self.neCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'Noodle Extensions'))
-        self.meCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'Mapping Extensions'))
-        self.cinemaCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'Cinema'))
+        self.chromaCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'chroma'))
+        self.neCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'ne'))
+        self.meCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'me'))
+        self.cinemaCheckbox.toggled.connect(lambda state: self._modsCheckboxToggled(state, 'cinema'))
 
+        self.clearSearchParametersButton.clicked.connect(self.clearSearchParameters)
         self.okButton.clicked.connect(self.accept)
         self.cancelButton.clicked.connect(self.reject)
+    
+    def setPreviousSearchParameters(self, previousSearchParameters:dict):
+        self.previousSearchParameters = previousSearchParameters
+        self._setWidgets(previousSearchParameters)
+    
+    def clearSearchParameters(self):
+        parametersDict = self._defaultPreviousSearchParameters()
+        self._setWidgets(parametersDict)
+    
+    def _setWidgets(self, parametersDict:dict):
+        def valueToString(value):
+            if isinstance(value, tuple):
+                minVal, maxVal = value
+                minVal = '' if minVal in (float('inf'), float('-inf')) else minVal                
+                maxVal = '' if maxVal in (float('inf'), float('-inf')) else maxVal
+                return f'[{minVal};{maxVal}]'
+            return f'{value}'
+
+        self.parametersEdit.setText(parametersDict['longString'])
+        
+        self.lengthEdit.setText(valueToString(parametersDict['length']))        
+        self.bpmEdit.setText(valueToString(parametersDict['bpm']))        
+        self.npsEdit.setText(valueToString(parametersDict['nps']))        
+        self.njsEdit.setText(valueToString(parametersDict['njs']))        
+        self.starsEdit.setText(valueToString(parametersDict['stars']))
+
+        self.rankedStateSelectionSet = parametersDict['rankedState']
+        self.graveyardCheckbox.setChecked('Graveyard' in self.rankedStateSelectionSet)
+        self.qualifiedCheckbox.setChecked('Qualified' in self.rankedStateSelectionSet)
+        self.rankedCheckbox.setChecked('Ranked' in self.rankedStateSelectionSet)
+
+        self.modsSelectionSet = parametersDict['mods']
+        self.noModsCheckbox.setChecked('No mods' in self.modsSelectionSet)
+        self.chromaCheckbox.setChecked('chroma' in self.modsSelectionSet)
+        self.neCheckbox.setChecked('ne' in self.modsSelectionSet)
+        self.meCheckbox.setChecked('me' in self.modsSelectionSet)
+        self.cinemaCheckbox.setChecked('cinema' in self.modsSelectionSet)
     
     def _defaultPreviousSearchParameters(self) -> dict:
         default = {
             'longString': '', 
-            'length': 0, 
-            'bpm': 0, 
-            'nps': 0, 
-            'njs': 0, 
-            'stars': '?', 
+            'length': '', 
+            'bpm': '',
+            'nps': '',
+            'njs': '',
+            'stars': '', 
             'rankedState': set(), 
-            'mods': set(['No mods'])
+            'mods': set()
         }
         return default
         
@@ -61,6 +98,9 @@ class FilterMapsDialog(QDialog):
 
         return self._filterMaps(longStringPattern=longStringPattern, requiredLength=requiredLength, requiredBpm=requiredBpm, requiredNps=requiredNps,
                                 requiredNjs=requiredNjs, requiredStars=requiredStars, requiredRankedStates=requiredRankedStates, requiredMods=requiredMods)
+
+    def getPreviousSearchParameters(self) -> dict:
+        return self.previousSearchParameters
     
     def _filterMaps(self, longStringPattern:str='', requiredLength:tuple[float, float]|str=None, requiredBpm:tuple[float, float]|str=None, 
                     requiredNps:tuple[float, float]|str=None, requiredNjs:tuple[float, float]|str=None, requiredStars:tuple[float, float]|str=None, 
@@ -107,7 +147,7 @@ class FilterMapsDialog(QDialog):
         if state:
             self.rankedStateSelectionSet.add(value)
         else:
-            self.rankedStateSelectionSet.remove(value)
+            self.rankedStateSelectionSet.discard(value)
         
         selectedStates = ', '.join(sorted(list(self.rankedStateSelectionSet)))
         selectedStates = 'Any' if not selectedStates else selectedStates
@@ -116,26 +156,38 @@ class FilterMapsDialog(QDialog):
     def _modsCheckboxToggled(self, state:bool, value:str):
         modsDict = {
             'No mods': 'No mods',
-            'Chroma': 'chroma',
-            'Noodle Extensions': 'ne',
-            'Mapping Extensions': 'me',
-            'Cinema': 'cinema'
+            'chroma': 'Chroma',
+            'ne': 'Noodle Extensions',
+            'me': 'Mapping Extensions',
+            'cinema': 'Cinema'
         }
-
-        value = modsDict[value]
+        
         if state:
             self.modsSelectionSet.add(value)
         else:
-            self.modsSelectionSet.remove(value)
+            self.modsSelectionSet.discard(value)
         
-        selectedStates = ', '.join(sorted(list(self.modsSelectionSet)))
+        modsNames = [modsDict[val] for val in list(self.modsSelectionSet)]
+        selectedStates = ', '.join(sorted(modsNames))
         selectedStates = 'Any' if not selectedStates else selectedStates
         self.modsLabel.setText(f'Mods: {selectedStates}')
 
 
 if __name__ == '__main__':
+    previousSearchParameters = {
+            'longString': 'expert', 
+            'length': 120, 
+            'bpm': (120, 180), 
+            'nps': 16, 
+            'njs': 4, 
+            'stars': '?', 
+            'rankedState': set(['Ranked']), 
+            'mods': set(['No mods', 'chroma'])
+        }
+
     items = BeatSaberPlaylist()
     app = QApplication(sys.argv)
     window = FilterMapsDialog(items)
     window.show()
+    window.setPreviousSearchParameters(previousSearchParameters)
     sys.exit(app.exec_())
