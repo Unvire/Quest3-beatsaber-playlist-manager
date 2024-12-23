@@ -699,6 +699,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -736,16 +737,9 @@
     <addaction name="savePlaylistAction"/>
     <addaction name="loadPlaylistAction"/>
    </widget>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-   </widget>
    <addaction name="menuPlaylist"/>
    <addaction name="menuFile"/>
-   <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="pullPlaylistsFromQuestAction">
    <property name="text">
     <string>Pull playlists from Quest</string>

@@ -8,7 +8,7 @@ from beatSaverAPICaller import BeatSaverAPICaller
 from beatSaberPlaylist import BeatSaberPlaylist
 from byteStringMusicPlayer import ByteStringMusicPlayer
 from adbWrapperFactory import AdbWrapperFactory
-from tableWidgetWrapper import QuestSongsTable, PlaylistSongsTable
+from tabletWidgetWrapper import QuestSongsTable, PlaylistSongsTable
 from mapDetailsWrapper import MapDetailsWrapper
 from labelWrapper import LabelWrapper
 
