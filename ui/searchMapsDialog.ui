@@ -94,7 +94,7 @@
        <item>
         <widget class="QLabel" name="label_7">
          <property name="text">
-          <string>Regex search: Title, Author, Mapper, Tags,Levels' names, Levels' characteristic</string>
+          <string>Regex search: Title, Author, Mapper, Tags, Levels' names, Levels' characteristic</string>
          </property>
          <property name="textFormat">
           <enum>Qt::RichText</enum>
