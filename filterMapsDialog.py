@@ -63,7 +63,6 @@ class FilterMapsDialog(QDialog):
             criteriaMatched.append(not requiredMods or bool(cache['mods'] & requiredMods))
             if not all(criteriaMatched):
                 result.append(i)
-        print(result, i)
         return result
     
     def _checkRangeOrStr(self, cacheVal:str|tuple[float, float]|float, requiredValue:str|tuple[float, float]) -> bool:
