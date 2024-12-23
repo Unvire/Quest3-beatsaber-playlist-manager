@@ -39,7 +39,7 @@ def test__extractRangeValuesFromString(inputData, expected, mockApp):
 
 def test__filterMaps_noCritertia(mockApp):    
     assert mockApp._filterMaps() == []
-    assert mockApp.previousSearchParameters == mockApp._defaultPreviousSearchParameters()
+    assert mockApp.previousSearchParameters == FilterMapsDialog.defaultPreviousSearchParameters()
 
 def test__filterMaps_andPreviousSearch(mockApp):
     assert mockApp._filterMaps(longStringPattern='expert') == [0]
