@@ -36,13 +36,9 @@ def test_windowInit(mockApp):
                                                 ])
 def test__extractRangeValuesFromString(inputData, expected, mockApp):
     assert mockApp._extractRangeValuesFromString(inputData) == expected
-
-@pytest.mark.parametrize('inputCacheValue, inputRequiredValue, expected', [
-    ((1, 3), (0, 3), False), ((1, 3), (2, 3), True), ((0, 4), (2, 3), True), ((2, 3), (2, 3), True), ((2, 3), (3, 2), True), ((2, 3), (0, 4), False), ((0, 2), (0, 3), False),
-    (2, (0, 3), True), (-2, (0, 3), False), (0, (0, 3), True), (3, (0, 3), True),
-    ('test', 'test', True), ('test', '', False), ('', '', True)])
-def test__checkRangeOrStr(inputCacheValue, inputRequiredValue, expected, mockApp):
-    assert mockApp._checkRangeOrStr(inputCacheValue, inputRequiredValue) == expected
-
-def test__filterMaps(mockApp):    
+    
+def test__filterMaps_noCritertia(mockApp):    
     assert mockApp._filterMaps() == [0, 1, 2, 3, 4, 5, 6, 7]
+
+def test__filterMaps_longString(mockApp):
+     assert mockApp._filterMaps(longStringPattern='expert') == [1, 2, 3, 4, 5, 6, 7]

@@ -43,9 +43,9 @@ class FilterMapsDialog(QDialog):
         return self._filterMaps(playlist=self.playlist, longStringPattern=longStringPattern, requiredLength=requiredLength, requiredBpm=requiredBpm, requiredNps=requiredNps,
                                 requiredNjs=requiredNjs, requiredStars=requiredStars, requiredRankedStates=requiredRankedStates, requiredMods=requiredMods)
     
-    def _filterMaps(self, longStringPattern:str='', requiredLength:tuple[float, float]|str='', requiredBpm:tuple[float, float]|str='', 
-                    requiredNps:tuple[float, float]|str='', requiredNjs:tuple[float, float]|str='', requiredStars:tuple[float, float]|str='', 
-                    requiredRankedStates=list[str], requiredMods=list[str]) -> list[int]:
+    def _filterMaps(self, longStringPattern:str='', requiredLength:tuple[float, float]|str=None, requiredBpm:tuple[float, float]|str=None, 
+                    requiredNps:tuple[float, float]|str=None, requiredNjs:tuple[float, float]|str=None, requiredStars:tuple[float, float]|str=None, 
+                    requiredRankedStates:list[str]=None, requiredMods:list[str]=None) -> list[int]:
         result = []
         for i, song in enumerate(self.playlist):
             criteriaMatched = []
@@ -57,23 +57,16 @@ class FilterMapsDialog(QDialog):
             criteriaMatched.append(self._checkRangeOrStr(cache['nps'], requiredNps))
             criteriaMatched.append(self._checkRangeOrStr(cache['njs'], requiredNjs))            
             criteriaMatched.append(self._checkRangeOrStr(cache['stars'], requiredStars))
-            criteriaMatched.append(not requiredRankedStates or cache['rankedState'] in requiredRankedStates)
+            
+            if requiredRankedStates:
+                criteriaMatched.append(cache['rankedState'] in requiredRankedStates)
+            if requiredMods:
+                requiredMods = set(requiredMods)
+                criteriaMatched.append(not requiredMods or bool(cache['mods'] & requiredMods))
 
-            requiredMods = set(requiredMods)
-            criteriaMatched.append(not requiredMods or bool(cache['mods'] & requiredMods))
             if not all(criteriaMatched):
                 result.append(i)
         return result
-    
-    def _checkRangeOrStr(self, cacheVal:str|tuple[float, float]|float, requiredValue:str|tuple[float, float]) -> bool:
-        if isinstance(requiredValue, tuple):
-            requiredMinVal, requiredMaxVal = requiredValue
-            if isinstance(cacheVal, tuple):
-                minVal, maxVal = cacheVal
-                return requiredMinVal >= minVal and requiredMaxVal <= maxVal
-            elif isinstance(cacheVal, float) or isinstance(cacheVal, int):
-                return requiredMinVal <= cacheVal <= requiredMaxVal
-        return requiredValue == cacheVal
     
     def _extractRangeValuesFromString(self, value:str) -> str | tuple[float, float]:
         value = value.strip().replace(' ', '')        
