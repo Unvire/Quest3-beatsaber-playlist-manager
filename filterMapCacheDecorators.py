@@ -22,10 +22,11 @@ class CheckLongString(AbstractCriteriaNode):
     def __init__(self, node:'BaseCacheNode|AbstractCriteriaNode', cacheKey:str, pattern:str):
         super().__init__(node)
         self.cacheKey = cacheKey
-        self.criteria = pattern
+        self.pattern = pattern
     
     def checkCriteria(self) -> bool:
-        result = re.match(self.criteria, self.cache[self.cacheKey])
+        longString = self.cache[self.cacheKey]
+        result = re.search(self.pattern, longString)
         if not result:
             return False
         return self.next.checkCriteria()

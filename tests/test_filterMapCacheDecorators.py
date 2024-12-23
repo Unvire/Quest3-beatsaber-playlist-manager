@@ -2,7 +2,7 @@ import pytest
 import filterMapCacheDecorators
 
 @pytest.fixture
-def mockCache():
+def mockBaseNode():
     cache = {
         'longString': 'inabakumori challenge expert tech lawless hard lagtrain pop hickeychan expertplus vocaloid', 
         'length': 252, 
@@ -13,7 +13,7 @@ def mockCache():
         'stars': '?', 
         'rankedState': 'Graveyard'
     }
-    return cache
+    return filterMapCacheDecorators.BaseCacheNode(cache)
 
 @pytest.mark.parametrize('inputCacheValue, inputRequiredValue, expected', [
     ((1, 3), (0, 3), False), ((1, 3), (2, 3), True), ((0, 4), (2, 3), True), ((2, 3), (2, 3), True), ((2, 3), (3, 2), True), ((2, 3), (0, 4), False), ((0, 2), (0, 3), False),
@@ -22,3 +22,9 @@ def mockCache():
 def test__checkRangeOrStr(inputCacheValue, inputRequiredValue, expected):
     print(inputCacheValue, inputRequiredValue, expected)
     assert filterMapCacheDecorators.CheckRangeOrString._checkRangeOrStr(None, inputCacheValue, inputRequiredValue) == expected
+
+@pytest.mark.parametrize('inputData, expected', [('chall', True), ('test', False), ('.....', True), ('(pop|hard|eeeasy)', True)])
+def test__CheckLongString(inputData, expected, mockBaseNode):
+    mockBaseNode = filterMapCacheDecorators.CheckLongString(mockBaseNode, 'longString', inputData)
+    assert mockBaseNode.checkCriteria() == expected
+
