@@ -74,8 +74,32 @@ if __name__ == '__main__':
         'bpm': 147.0, 
         'mods': {'ne', 'chroma'}, 
         'nps': (3.862, 4.101), 
-        'njs': (16.0, 16.0), 
+        'njs': 16.0, 
         'stars': '?', 
         'rankedState': 'Graveyard'
     }
     
+    cacheNode = BaseCacheNode(cache)
+    print(cacheNode.checkCriteria()) #Default Case is True 
+
+    node = CheckLongString(cacheNode, 'longString', 'expert')
+    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
+    print(node.checkCriteria()) # 2 criteria checked, both matching so result is True
+
+    node = CheckLongString(cacheNode, 'longString', 'expert')
+    node = CheckRangeOrString(cacheNode, 'length', (250, 210))
+    print(node.checkCriteria()) # 2 criteria checked, length is no matching so result is False
+
+    node = CheckLongString(cacheNode, 'longString', 'test')
+    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
+    print(node.checkCriteria()) # 2 criteria checked, longstring is no matching so result is False
+
+    node = CheckLongString(cacheNode, 'longString', 'test')
+    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
+    node = CheckLongString(cacheNode, 'longString', 'test')
+    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
+    node = CheckLongString(cacheNode, 'longString', 'test')
+    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
+    node = CheckLongString(cacheNode, 'longString', 'test')
+    node = CheckRangeOrString(cacheNode, 'length', (250, 270))
+    print(node.checkCriteria()) # True, criteria can be chained
