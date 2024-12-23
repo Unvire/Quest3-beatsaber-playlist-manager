@@ -51,6 +51,8 @@ def test_CheckLongString(inputData, expected, mockBaseNode):
         ([('longString', 'expert'), ('length', (250, 270)), ('njs', 16)], True),
         ([('longString', 'expert'), ('length', (250, 270)), ('njs', (12, 13))], False),
         ([('longString', 'tests'), ('length', (250, 270)), ('njs', 16)], False),
+        ([('length', (250, 270)), ('njs', 16), ('nps', (3.9, 4.0)), ('stars', '?')], True), 
+        ([('length', (250, 270)), ('njs', 16), ('nps', (3.9, 4.8)), ('stars', '?')], False), 
         ([('rankedState', 'Graveyard'), ('longString', 'vocal'), ('length', (250, 270)), ('njs', 16), ('mods', ['chroma'])], True),
     ])
 def test_decoratorChaining(inputDataList, expected, mockBaseNode):
