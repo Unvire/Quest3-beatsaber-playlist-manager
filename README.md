@@ -26,7 +26,7 @@ When closing application cmd terminal can appear. It is desired function - appli
 -- **Save** - saves playlist to a *playlists*folder
 
 - **Quest** - options for communicating with Quest using ADB
--- **Connect** - opens a dialog window for connecting with Quest. Connection is successful when user allows for debug connection in VR device
+-- **Connect** - opens a dialog window for connecting with Quest. Connection is successful when user connects Quest with USB cable and allows for debug connection in VR device
 -- **Get songs** - checks the songs downloaded in the Quest and adds them to Quest maps Table
 -- **Check missing maps** - compares playlist with Quest Maps. If there are any missing maps on VR device a dialog window with download links will appear.
 -- **Pull playlists from Quest** - downloads playlists from Quest to the *playlists* folder. This action wil overwrite files with the same name.
