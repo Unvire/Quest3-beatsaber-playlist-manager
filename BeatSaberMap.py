@@ -24,6 +24,17 @@ class BeatSaberMap:
         self.diffs = []
         self.tagsList = []
         self.uploaded = datetime.datetime.strptime('1970-01-01T00:00:00.000Z', '%Y-%m-%dT%H:%M:%S.%fZ')
+
+        self.searchCache = {
+            'longString': '',
+            'length': '',
+            'bpm': '',
+            'mods': set(),
+            'nps': '',
+            'njs': '',
+            'stars': '',
+            'rankedState': set()
+        }
     
     def __repr__(self) -> str:
         result = {
@@ -68,6 +79,8 @@ class BeatSaberMap:
         levelsData = responseJSON['versions'][0]['diffs']
         diffsList = [BeatSaberMapLevel(diffData) for diffData in levelsData]
         self.setDiffs(diffsList)
+
+        self._cacheData()
     
     def setNameAndHash(self, name:str, hash:str):
         self.name = name
@@ -129,30 +142,67 @@ class BeatSaberMap:
 
     def setUploaded(self, uploadedDateTime:datetime.datetime):
         self.uploaded = uploadedDateTime
+
+    def getCacheData(self) -> dict:
+        return self.searchCache
+    
+    def _cacheData(self):
+        self.searchCache['longString'] = self._buildLongString()
+        self.searchCache['length'] = self.lengthSeconds
+        self.searchCache['bpm'] = self.bpm
+        self.searchCache['mods'] = self.getRequiredMods()
+        self.searchCache['nps'] = self.getNpsRange()
+        self.searchCache['njs'] = self.getNjsRange()
+        self.searchCache['stars'] = self.getStarsRange()
+        self.searchCache['rankedState'] = set([self.rankedState])
+    
+    def _buildLongString(self) -> str:
+        words = set()
+        words.add(self.title)
+        words.add(self.author)
+        words.add(self.mapper)
+
+        for level in self.getDiffs():
+            words.add(level.difficulty)
+            words.add(level.characteristic)
+        
+        for tag in self.tagsList:
+            words.add(tag)
+        return ' '.join(list(words)).lower()
     
     def getStarsRange(self) -> str|tuple[float, float]:
         minVal, maxVal = self._getInitialMinMaxValues()
         for level in self.diffs:
             if level.stars == '?':
                 return '?'
-            minVal, maxVal = self._updateMinMaxValues(minVal, maxVal, level.nps)
-        return minVal, maxVal 
+            minVal, maxVal = self._updateMinMaxValues(minVal, maxVal, level.stars)
+        return self._tupleOrValue(minVal, maxVal)
 
     def getNpsRange(self) -> tuple[float, float]:
         minVal, maxVal = self._getInitialMinMaxValues()
         for level in self.diffs:
             minVal, maxVal = self._updateMinMaxValues(minVal, maxVal, level.nps)
-        return minVal, maxVal    
+        return self._tupleOrValue(minVal, maxVal)  
     
     def getNjsRange(self) -> tuple[float, float]:
         minVal, maxVal = self._getInitialMinMaxValues()
         for level in self.diffs:
             minVal, maxVal = self._updateMinMaxValues(minVal, maxVal, level.njs)
-        return minVal, maxVal 
+        return self._tupleOrValue(minVal, maxVal)
     
     def getRequiredMods(self) -> list[str]:
-        mods = set([level.requiredMods for level in self.diffs])
-        return list(mods)
+        mods = set()
+        for level in self.diffs:
+            modsString = level.requiredMods.replace(' ', '')
+            for modName in modsString.split(','):
+                if modName:
+                    mods.add(modName)
+        return mods or set(['No mods'])
+
+    def _tupleOrValue(self, val1:float, val2:float) -> tuple[float] | float:
+        if val1 == val2:
+            return val1
+        return val1, val2
 
     def _updateMinMaxValues(self, currentMin:float, currentMax:float, val:float) -> tuple[float, float]:
         currentMin = min(currentMin, val)

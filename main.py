@@ -16,6 +16,7 @@ from playlistDataDialog import PlaylistDataDialog
 from deletePlaylistsDialog import DeletePlaylistsDialog
 from downloadMissingMapsDialog import DownloadMissingMapsDialog
 from connectQuestDialog import ConnectQuestDialog
+from filterMapsDialog import FilterMapsDialog
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -26,6 +27,9 @@ class MainWindow(QMainWindow):
 
         self.sortingOrder = 'Upload date'
         self.isConnected = False
+
+        self.questPreviousSearchParameters = FilterMapsDialog.defaultPreviousSearchParameters()
+        self.playlistPreviousParameters = FilterMapsDialog.defaultPreviousSearchParameters()
 
         super().__init__()
         uiFilePath = os.path.join(os.getcwd(), 'ui', 'main.ui')
@@ -64,7 +68,7 @@ class MainWindow(QMainWindow):
         self.pushPlaylistsToQuestAction.triggered.connect(self.pushPlaylists)
         self.deletePlaylistsFromQuestAction.triggered.connect(self.deletePlaylists)
 
-        self.action_debug.triggered.connect(self.debugGetSongsFromQuest)
+        #self.action_debug.triggered.connect(self.debugGetSongsFromQuest)
 
         self.sortQuestMapsByComboBox.currentIndexChanged.connect(self.sortAllMapsBy)
         self.reverseSortingOrderButton.clicked.connect(self.reverseAllMapsSorting)
@@ -76,6 +80,11 @@ class MainWindow(QMainWindow):
         self.selectionUpButton.clicked.connect(self.moveSelectedSongsUp)
         self.selectionDownButton.clicked.connect(self.moveSelectedSongsDown)
         self.selectionDeleteButton.clicked.connect(self.deleteSelectedSongs)
+
+        self.filterQuestMapsButton.clicked.connect(lambda: self.filterMaps(self.questMapsPlaylist, self.questMapsTable, 'quest'))
+        self.resetFilterQuestMapsButton.clicked.connect(lambda: self.resetMapsFilter(self.questMapsTable))
+        self.filterPlaylistButton.clicked.connect(lambda: self.filterMaps(self.playlistInstance, self.playlistMapsTable, 'playlist'))
+        self.resetFilterPlaylistButton.clicked.connect(lambda: self.resetMapsFilter(self.playlistMapsTable))
     
     def checkLibrariesInstalled(self):
         def checkIfFfmpegInstalled() -> bool:
@@ -301,6 +310,46 @@ class MainWindow(QMainWindow):
     def deleteSelectedSongs(self):
         self.playlistMapsTable.deleteSelectedMaps()
     
+    def filterMaps(self, playlist:BeatSaberPlaylist, table:QuestSongsTable|PlaylistSongsTable, tableName:str):
+        settersDict = {
+            'quest': self.setQuestPreviousSearchParameters,
+            'playlist': self.setPlaylistPreviousSearchParameters
+        }
+
+        gettersDict = {
+            'quest': self.getQuestPreviousSearchParameters,
+            'playlist': self.getPlaylistPreviousSearchParameters
+        }
+
+        previousParameters = gettersDict[tableName]()
+
+        dialogWindow = FilterMapsDialog(playlist)
+        dialogWindow.setPreviousSearchParameters(previousParameters)
+        if dialogWindow.exec_() == QDialog.Accepted:
+            indexesToHide = dialogWindow.getHideIndexesList()
+            searchParameters = dialogWindow.getPreviousSearchParameters()
+            settersDict[tableName](searchParameters)
+
+            if indexesToHide:
+                table.hideRows(indexesToHide)
+            else:
+                self.resetMapsFilter(table)
+    
+    def setQuestPreviousSearchParameters(self, parametersDict:dict):
+        self.questPreviousSearchParameters = parametersDict
+    
+    def setPlaylistPreviousSearchParameters(self, parametersDict:dict):
+        self.playlistPreviousParameters = parametersDict
+
+    def getQuestPreviousSearchParameters(self) -> dict:
+        return self.questPreviousSearchParameters
+    
+    def getPlaylistPreviousSearchParameters(self) -> dict:
+        return self.playlistPreviousParameters
+    
+    def resetMapsFilter(self, table:QuestSongsTable|PlaylistSongsTable):
+        table.showAllRows()
+
     def resizeEvent(self, event):
         self.mapDetails.resize()
         super().resizeEvent(event)
