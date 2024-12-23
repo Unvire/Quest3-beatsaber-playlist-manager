@@ -205,7 +205,7 @@ def test_getRangesForEngineCache(exampleJSON_data):
     assert song.getStarsRange() == '?'
     assert song.getNpsRange() == (3.884, 5.053)
     assert song.getNjsRange() == (13, 17)
-    assert song.getRequiredMods() == set()
+    assert song.getRequiredMods() == set(['No mods'])
 
     song.diffs[0].requiredMods = 'chroma, me'
     song.diffs[1].requiredMods = 'chroma, me'
@@ -222,7 +222,7 @@ def test_getCacheData(exampleJSON_data):
 
     assert result['length'] == 145
     assert result['bpm'] == 162.5
-    assert result['mods'] == set()
+    assert result['mods'] == set(['No mods'])
     assert result['nps'] == (3.884, 5.053)
     assert result['njs'] == (13, 17)
     assert result['stars'] == (3.4, 3.7)

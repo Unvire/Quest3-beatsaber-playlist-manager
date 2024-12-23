@@ -197,7 +197,7 @@ class BeatSaberMap:
             for modName in modsString.split(','):
                 if modName:
                     mods.add(modName)
-        return mods
+        return mods or set(['No mods'])
 
     def _tupleOrValue(self, val1:float, val2:float) -> tuple[float] | float:
         if val1 == val2:
