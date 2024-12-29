@@ -11,7 +11,7 @@ Author used this release for modding beatsaber: https://mbf.bsquest.xyz/.
 2. Clone/download repository. 
 3. Open terminal in the cloned/downloaded repository and install required python packages with a command:
 `pip install -r requirements.txt`
-4. Create folder named *adb* in the cloned/downloaded repository. Download Android Debug Bridge (https://developer.android.com/tools/adb) and unzip it into that folder.
+4. Create folder named *adb* in the cloned/downloaded repository. Download Android Debug Bridge (https://developer.android.com/tools/adb) and unzip contents of deepest folder it into that folder.
 5. Download FFMPEG (https://www.ffmpeg.org/) and install it.
 6. Run *main.pyw*.
 
