@@ -83,23 +83,23 @@ if __name__ == '__main__':
     print(cacheNode.checkCriteria()) #Default Case is True 
 
     node = CheckLongStringDecorator(cacheNode, 'longString', 'expert')
-    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
+    node = CheckRangeOrStringDecorator(node, 'length', (250, 270))
     print(node.checkCriteria()) # 2 criteria checked, both matching so result is True
 
     node = CheckLongStringDecorator(cacheNode, 'longString', 'expert')
-    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 210))
+    node = CheckRangeOrStringDecorator(node, 'length', (250, 210))
     print(node.checkCriteria()) # 2 criteria checked, length is no matching so result is False
 
     node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
-    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
+    node = CheckRangeOrStringDecorator(node, 'length', (250, 270))
     print(node.checkCriteria()) # 2 criteria checked, longstring is no matching so result is False
 
-    node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
-    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
-    node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
-    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
-    node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
-    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
-    node = CheckLongStringDecorator(cacheNode, 'longString', 'test')
-    node = CheckRangeOrStringDecorator(cacheNode, 'length', (250, 270))
-    print(node.checkCriteria()) # True, criteria can be chained
+    node = CheckLongStringDecorator(cacheNode, 'longString', 'tech')
+    node = CheckRangeOrStringDecorator(node, 'length', (250, 270))
+    node = CheckLongStringDecorator(node, 'longString', 'challenge')
+    node = CheckRangeOrStringDecorator(node, 'length', (250, 270))
+    node = CheckLongStringDecorator(node, 'longString', 'expert')
+    node = CheckRangeOrStringDecorator(node, 'length', (250, 270))
+    node = CheckLongStringDecorator(node, 'longString', 'tech')
+    node = CheckRangeOrStringDecorator(node, 'length', (250, 270))
+    print(node.checkCriteria()) # True, criteria can be chained without hard coded limit
